@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.aimedicationweb.service.OpenFdaMedicationService;
+import com.example.service.OpenFdaMedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

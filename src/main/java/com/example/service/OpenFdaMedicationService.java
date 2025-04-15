@@ -1,7 +1,7 @@
 package com.example.service;
 
-import com.example.aimedicationweb.model.Medication;
-import com.example.aimedicationweb.repository.MedicationRepository;
+import com.example.model.Medication;
+import com.example.repository.MedicationRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

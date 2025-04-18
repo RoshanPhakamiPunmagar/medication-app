@@ -1,4 +1,4 @@
-package com.example.meditime;
+/*package com.example.meditime;
 
 import com.example.meditime.model.Role;
 import com.example.meditime.repository.RoleRepository;
@@ -35,8 +35,8 @@ public class MediTimeApplication {
     }
 }
 
-
-/*// Amy Wickham 12178502
+*/
+// Amy Wickham 12178502
 // File: MediTimeApplication.java
 
 
@@ -326,4 +326,3 @@ RoleRepository roleRepository = context.getBean(RoleRepository.class);
     }
                 
 }
-*/

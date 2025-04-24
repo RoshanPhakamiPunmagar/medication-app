@@ -1,0 +1,41 @@
+package com.example.medicationapp.model
+
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import java.time.LocalDate
+
+@Entity(
+    tableName = "client_medications",
+    foreignKeys = [
+        ForeignKey(
+            entity = Client::class,
+            parentColumns = ["clientId"],
+            childColumns = ["clientId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Medication::class,
+            parentColumns = ["medicationId"],
+            childColumns = ["medicationId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index("clientId"),                       // ← index both FKs
+        Index("medicationId")
+    ]
+)
+data class ClientMedication(
+    @PrimaryKey(autoGenerate = true)
+    val clientMedicationId: Long = 0,
+    val clientId: Long,
+    val medicationId: Long,
+    val dosage: String,
+    val frequency: String,
+    val startDate: LocalDate,      // ISO format: "YYYY-MM-DD"
+    val endDate: LocalDate,
+    val isPaused: Boolean = false
+
+)

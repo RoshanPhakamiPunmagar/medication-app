@@ -22,7 +22,7 @@ data class Client(
     val clientId: Long = 0,
 
     val name: String,
-    val dob: String, // If you'd like to use LocalDate, use TypeConverters
+    val dob: String,
     val contactInfo: String,
     var carerId: Long? = null,
     var managerId: Long

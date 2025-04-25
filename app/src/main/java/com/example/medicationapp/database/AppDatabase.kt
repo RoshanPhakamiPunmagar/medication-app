@@ -67,7 +67,7 @@ abstract class AppDatabase : RoomDatabase() {
                 super.onCreate(db)
                 INSTANCE?.let { database ->
                     CoroutineScope(Dispatchers.IO).launch {
-                        // Seed data when the database is first created (onCreate)
+
                         seedInitialData(database)
                     }
                 }
@@ -81,13 +81,12 @@ abstract class AppDatabase : RoomDatabase() {
             val clientDao = db.clientDao()
             val medicationDao = db.medicationDao()
 
-            // Seed roles only if they are empty
+
             if (roleDao.getAllRoles().isEmpty()) {
                 roleDao.insertRole(Role(1, "Manager"))
                 roleDao.insertRole(Role(2, "Carer"))
             }
 
-            // Seed manager user only if they don't exist
             var manager = userDao.getUserByEmail("manager@app.com")
             val managerId = if (manager == null) {
                 userDao.insertUser(
@@ -133,7 +132,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
             }
 
-            // ✅ Seed medications
+            // Seed medications
             if (medicationDao.getAllMedications().isEmpty()) {
                 medicationDao.insertMedication(
                     Medication(

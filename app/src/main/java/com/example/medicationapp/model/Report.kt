@@ -27,8 +27,8 @@ data class Report @RequiresApi(Build.VERSION_CODES.O) constructor(
     @PrimaryKey(autoGenerate = true)
     val reportId: Long = 0,
 
-    val carerId: Int,           // Reference to User (Carer)
-    val clientId: Long,         // Reference to Client
+    val carerId: Int,
+    val clientId: Long,
 
     val notes: String,
 

@@ -24,5 +24,5 @@ interface ReminderDao {
     suspend fun getRemindersForClientMedication(cmId: Int): List<Reminder>
 
     @Query("SELECT * FROM reminders")
-    suspend fun getAllReminders(): List<Reminder> // <-- Add this!
+    suspend fun getAllReminders(): List<Reminder>
 }

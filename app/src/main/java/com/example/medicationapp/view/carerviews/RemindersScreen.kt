@@ -26,7 +26,7 @@ fun RemindersScreen(reminderController: ReminderController) {
     var reminderTime by remember { mutableStateOf(LocalTime.now()) }
     var clientMedicationId by remember { mutableStateOf(0L) }
 
-    // Load reminders
+
     LaunchedEffect(Unit) {
         reminders = reminderController.getAllReminders()
     }
@@ -79,7 +79,7 @@ fun RemindersScreen(reminderController: ReminderController) {
                 onValueChange = {
                     try {
                         reminderTime = LocalTime.parse(it)
-                    } catch (e: Exception) { /* ignore parse error */ }
+                    } catch (e: Exception) {}
                 },
                 label = { Text("Reminder Time (HH:mm)") },
                 modifier = Modifier.fillMaxWidth()

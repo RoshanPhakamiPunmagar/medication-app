@@ -23,7 +23,7 @@ import java.time.LocalDate
         )
     ],
     indices = [
-        Index("clientId"),                       // ← index both FKs
+        Index("clientId"),
         Index("medicationId")
     ]
 )
@@ -34,7 +34,7 @@ data class ClientMedication(
     val medicationId: Long,
     val dosage: String,
     val frequency: String,
-    val startDate: LocalDate,      // ISO format: "YYYY-MM-DD"
+    val startDate: LocalDate,
     val endDate: LocalDate,
     val isPaused: Boolean = false
 

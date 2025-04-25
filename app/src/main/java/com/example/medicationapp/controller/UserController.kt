@@ -14,7 +14,7 @@ class UserController(context: Context) {
     suspend fun preloadRoles() {
         val existing = roleRepository.getAllRoles()
         if (existing.isEmpty()) {
-            roleRepository.insertRole(1L, "Manager") // Use Long literal (1L)
+            roleRepository.insertRole(1L, "Manager")
             roleRepository.insertRole(2L, "Carer")
         }
     }
@@ -29,7 +29,7 @@ class UserController(context: Context) {
     suspend fun loginUser(email: String, password: String): User? =
         userRepository.login(email, password)
 
-    suspend fun getRoleNameById(roleId: Long): String? = // ← changed to Long
+    suspend fun getRoleNameById(roleId: Long): String? =
         roleRepository.getRoleById(roleId)?.roleName
 
     suspend fun getRoles(): List<String> =

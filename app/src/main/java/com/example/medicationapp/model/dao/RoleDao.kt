@@ -16,11 +16,11 @@ interface RoleDao {
     suspend fun getAllRoles(): List<Role>
 
     @Query("SELECT roleId FROM roles WHERE roleName = :roleName")
-    suspend fun getRoleIdByName(roleName: String): Long?        // ← add this
+    suspend fun getRoleIdByName(roleName: String): Long?
 
     @Query("SELECT roleName FROM roles")
     suspend fun getAllRoleNames(): List<String>
 
     @Query("SELECT * FROM roles WHERE roleId = :id")
-    suspend fun getRoleById(id: Long): Role?// ← and this
+    suspend fun getRoleById(id: Long): Role?
 }

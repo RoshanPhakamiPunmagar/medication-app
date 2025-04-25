@@ -14,22 +14,21 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientSelectionScreen(
-    clientId: Long?,
     clientController: ClientController,
     navController: NavController
 ) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
+    var selectedClient by remember { mutableStateOf<Client?>(null) }
 
+    // Load clients on launch
     LaunchedEffect(Unit) {
         clients = clientController.getAllClients()
     }
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Select Client") }
-            )
+            CenterAlignedTopAppBar(title = { Text("Select Client") })
         }
     ) { innerPadding ->
         Column(
@@ -39,6 +38,11 @@ fun ClientSelectionScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Text(
+                "Tap on a client to start your shift",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
             if (clients.isEmpty()) {
                 Text("No clients available.")
             } else {
@@ -47,6 +51,7 @@ fun ClientSelectionScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                selectedClient = client
                             },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -54,11 +59,33 @@ fun ClientSelectionScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(client.name, style = MaterialTheme.typography.titleMedium)
-                            Text("ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
+                            Text("Client ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
             }
+        }
+
+
+        selectedClient?.let { client ->
+            AlertDialog(
+                onDismissRequest = { selectedClient = null },
+                title = { Text("Start Shift") },
+                text = { Text("Are you sure you want to start your shift with ${client.name}?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        selectedClient = null
+                        navController.navigate("carer_dashboard/${client.clientId}")
+                    }) {
+                        Text("Yes")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { selectedClient = null }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }

@@ -17,7 +17,7 @@ import androidx.room.*
         )
     ],
     indices = [
-        Index("medication_id_1"),                // ← index both FKs
+        Index("medication_id_1"),
         Index("medication_id_2")
     ]
 )

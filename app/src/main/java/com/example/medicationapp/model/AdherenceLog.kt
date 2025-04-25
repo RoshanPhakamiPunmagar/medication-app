@@ -24,7 +24,7 @@ import java.time.LocalDateTime
         )
     ],
     indices = [
-        Index("clientMedicationId"),            // ← index both FKs
+        Index("clientMedicationId"),
         Index("userId")
     ]
 )
@@ -34,6 +34,6 @@ data class AdherenceLog(
 
     val clientMedicationId: Long,
     val userId: Int,
-    val checkedTime: LocalDateTime, // use ISO 8601 string format or a converter for LocalDateTime
+    val checkedTime: LocalDateTime,
     val adherenceRate: Double
 )

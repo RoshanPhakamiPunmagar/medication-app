@@ -9,7 +9,7 @@ import java.time.LocalDateTime
         ForeignKey(
             entity = ClientMedication::class,
             parentColumns = ["clientMedicationId"],
-            childColumns = ["client_medication_id"], // ✅ CORRECT
+            childColumns = ["client_medication_id"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(

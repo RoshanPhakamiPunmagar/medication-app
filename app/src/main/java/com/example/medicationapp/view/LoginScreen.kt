@@ -54,7 +54,6 @@ fun LoginScreen(
                 scope.launch {
                     val user = controller.loginUser(email, password)
                     if (user != null) {
-                        // **NEW**: fetch the human‑readable name by ID
                         val roleName = controller.getRoleNameById(user.roleId)
                         if (roleName != null) {
                             onLoginSuccess(roleName)

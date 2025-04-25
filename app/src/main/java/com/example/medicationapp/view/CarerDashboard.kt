@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CarerDashboard(
+    clientId: Long?,
     onNavigateToReminders: () -> Unit,
     onNavigateToClientSelection: () -> Unit,
     onNavigateToIncidentNotes: () -> Unit,
@@ -21,11 +22,29 @@ fun CarerDashboard(
     ) {
         Text("Carer Dashboard", style = MaterialTheme.typography.headlineMedium)
 
+        // Display current client if selected
+        if (clientId != null) {
+            Text(
+                text = "Currently selected client ID: $clientId",
+                style = MaterialTheme.typography.bodyLarge
+            )
+        } else {
+            Text(
+                text = "No client selected. Please select a client to begin shift.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
         Button(onClick = onNavigateToClientSelection, modifier = Modifier.fillMaxWidth()) {
             Text("Start Shift / Select Client")
         }
 
-        Button(onClick = onNavigateToReminders, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            onClick = onNavigateToReminders,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = clientId != null
+        ) {
             Text("View Medication Reminders")
         }
 

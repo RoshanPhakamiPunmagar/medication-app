@@ -9,7 +9,7 @@ import com.example.medicationapp.model.User
 @Dao
 interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: User): Long // ✅ this name matters
+    suspend fun insertUser(user: User): Long
 
     @Query("SELECT * FROM users")
     suspend fun getAllUsers(): List<User>

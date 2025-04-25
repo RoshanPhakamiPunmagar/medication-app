@@ -40,7 +40,7 @@ fun AppNavigation() {
                 onLoginSuccess = { role ->
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer"   -> navController.navigate("carer_dashboard")  // Default clientId
+                        "Carer"   ->  navController.navigate("client_selection")
                     }
                 },
                 onNavigateToSignup = {
@@ -72,9 +72,11 @@ fun AppNavigation() {
         }
 
         // Carer Dashboard
-        composable("carer_dashboard") {
+        composable("carer_dashboard/{clientId}") { backStackEntry ->
+            val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
 
             CarerDashboard(
+                clientId = clientId,
                 onNavigateToReminders = { navController.navigate("reminders") },
                 onNavigateToClientSelection = { navController.navigate("client_selection") },
                 onNavigateToIncidentNotes = { navController.navigate("incident_notes") },
@@ -111,23 +113,13 @@ fun AppNavigation() {
             LiveComplianceScreen()
         }
 
-        // Optional clientId in path
         composable("client_selection") {
             ClientSelectionScreen(
-                clientId = null,
                 clientController = clientController,
                 navController = navController
             )
         }
 
-        composable("client_selection/{clientId}") { backStackEntry ->
-            val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
-            ClientSelectionScreen(
-                clientId = clientId,
-                clientController = clientController,
-                navController = navController
-            )
-        }
 
 
         composable("reminders") {

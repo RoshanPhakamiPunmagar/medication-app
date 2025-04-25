@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignupScreen(
     context: Context,
-    onSignupSuccess: () -> Unit  // Add necessary parameters here
+    onSignupSuccess: () -> Unit
 ) {
     val controller = remember { UserController(context) }
     val scope = rememberCoroutineScope()
@@ -78,7 +78,6 @@ fun SignupScreen(
         )
         Spacer(Modifier.height(16.dp))
 
-        // Role dropdown - Using a basic implementation
         Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
                 value = selectedRole,
@@ -120,7 +119,6 @@ fun SignupScreen(
             onClick = {
                 error = null
 
-                // Validation
                 when {
                     password != confirmPassword -> error = "Passwords do not match."
                     selectedRole.isBlank() -> error = "Please select a role."

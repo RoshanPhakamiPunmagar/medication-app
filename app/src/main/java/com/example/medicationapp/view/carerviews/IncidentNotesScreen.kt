@@ -35,7 +35,7 @@ fun IncidentNotesScreen() {
 
             Button(
                 onClick = {
-                    // Submit notes logic here
+
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {

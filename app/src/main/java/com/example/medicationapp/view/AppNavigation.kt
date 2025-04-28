@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
 import com.example.medicationapp.controller.ClientController
@@ -19,11 +21,29 @@ import com.example.medicationapp.view.managerviews.ClientListScreen
 import com.example.medicationapp.view.managerviews.LiveComplianceScreen
 import com.example.medicationapp.view.managerviews.ReportsScreen
 import com.example.medicationapp.view.managerviews.ScanMedicationScreen
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+
+sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
+    object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
+    object AssignMedication : BottomNavItemForManager("assign_medication", Icons.Default.Add, "Reminders")
+    object Reports : BottomNavItemForManager("generate_reports", Icons.Default.DateRange, "Reports")
+    object Settings : BottomNavItemForManager("settings", Icons.Default.Settings, "Settings") // Create screen later
+}
+
+sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val label: String) {
+    object SeeClient : BottomNavItemForCarer("client_selection", Icons.Default.Home, "See Client")
+    object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
+    object Settings : BottomNavItemForCarer("settings", Icons.Default.Settings, "Settings") // Create screen later
+}
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation() {
+fun AppNavigation(modifier:Modifier = Modifier) {
     val navController = rememberNavController()
     val context       = LocalContext.current
 
@@ -40,7 +60,7 @@ fun AppNavigation() {
                 onLoginSuccess = { role ->
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer"   ->  navController.navigate("client_selection")
+                        "Carer"   -> navController.navigate("carer_dashboard")  // Default clientId
                     }
                 },
                 onNavigateToSignup = {
@@ -61,22 +81,15 @@ fun AppNavigation() {
 
         // Manager Dashboard
         composable("manager_dashboard") {
-            ManagerDashboard(
-                onNavigateToClients = { navController.navigate("manage_clients") },
-                onNavigateToAssignMedication = { navController.navigate("assign_medication") },
-                onNavigateToAssignCarer = { navController.navigate("assign_carer") },
-                onNavigateToScanMedication = { navController.navigate("scan_medication") },
-                onNavigateToReports = { navController.navigate("generate_reports") },
-                onNavigateToLiveCompliance = { navController.navigate("live_compliance") },
-            )
+            ManagerMainScreen(clientController, medicationController)
         }
 
         // Carer Dashboard
-        composable("carer_dashboard/{clientId}") { backStackEntry ->
+        composable("carer_dashboard") { backStackEntry ->
             val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
+            CarrerMainScreen(clientId, clientController, navController)}
 
             CarerDashboard(
-                clientId = clientId,
                 onNavigateToReminders = { navController.navigate("reminders") },
                 onNavigateToClientSelection = { navController.navigate("client_selection") },
                 onNavigateToIncidentNotes = { navController.navigate("incident_notes") },
@@ -113,13 +126,23 @@ fun AppNavigation() {
             LiveComplianceScreen()
         }
 
+        // Optional clientId in path
         composable("client_selection") {
             ClientSelectionScreen(
+                clientId = null,
                 clientController = clientController,
                 navController = navController
             )
         }
 
+        composable("client_selection/{clientId}") { backStackEntry ->
+            val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
+            ClientSelectionScreen(
+                clientId = clientId,
+                clientController = clientController,
+                navController = navController
+            )
+        }
 
 
         composable("reminders") {

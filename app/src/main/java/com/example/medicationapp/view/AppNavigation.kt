@@ -45,9 +45,9 @@ sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val
 @Composable
 fun AppNavigation(modifier:Modifier = Modifier) {
     val navController = rememberNavController()
-    val context       = LocalContext.current
+    val context = LocalContext.current
 
-    val clientController     = remember { ClientController(context) }
+    val clientController = remember { ClientController(context) }
     val medicationController = remember { MedicationController(context) }
     val reminderController = remember { ReminderController(context) }
 
@@ -60,7 +60,7 @@ fun AppNavigation(modifier:Modifier = Modifier) {
                 onLoginSuccess = { role ->
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer"   -> navController.navigate("carer_dashboard")  // Default clientId
+                        "Carer" -> navController.navigate("carer_dashboard")  // Default clientId
                     }
                 },
                 onNavigateToSignup = {
@@ -87,14 +87,7 @@ fun AppNavigation(modifier:Modifier = Modifier) {
         // Carer Dashboard
         composable("carer_dashboard") { backStackEntry ->
             val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
-            CarrerMainScreen(clientId, clientController, navController)}
-
-            CarerDashboard(
-                onNavigateToReminders = { navController.navigate("reminders") },
-                onNavigateToClientSelection = { navController.navigate("client_selection") },
-                onNavigateToIncidentNotes = { navController.navigate("incident_notes") },
-                onNavigateToOfflineMode = { navController.navigate("offline_mode") }
-            )
+            CarrerMainScreen(clientId, clientController, navController)
         }
 
 
@@ -159,5 +152,6 @@ fun AppNavigation(modifier:Modifier = Modifier) {
         }
     }
 }
+
 
 

@@ -49,6 +49,7 @@ fun ClientSelectionScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // Client selection UI
             if (selectedClient == null) {
                 Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
 
@@ -75,6 +76,7 @@ fun ClientSelectionScreen(
                     }
                 }
             } else {
+                // Medication selection UI
                 Text("Medications for ${selectedClient?.name}:", style = MaterialTheme.typography.titleMedium)
 
                 if (medications.isEmpty()) {
@@ -155,60 +157,98 @@ fun ClientSelectionScreen(
                 },
                 confirmButton = {
                     Column {
+                        // Buttons to log medication status
                         MedicationStatusButton("Given") {
                             status = MedicationLog.Status.Given
+                            actualTime = LocalDateTime.now() // Set actualTime to current time
+
+                            // Debug log to check if clientId is set correctly
+                            println("Logging medication with status: $status, actualTime: $actualTime")
+                            println("clientId before logging medication: ${selectedClient?.clientId}")
+
+
                             coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = clientId,
-                                    scheduledTime = scheduledTime,
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
+                                val currentClientId = selectedClient?.clientId
+                                if (currentClientId == null) {
+                                    println("Error: selectedClient or clientId is null. Cannot log medication.")
+                                    return@launch
+                                }
+
+                                try {
+                                    logMedication(
+                                        clientMedication = clientMedication,
+                                        status = status,
+                                        clientId = currentClientId, // Use selectedClient.clientId instead!
+                                        scheduledTime = scheduledTime,
+                                        actualTime = actualTime,
+                                        notes = notes,
+                                        clientController = clientController
+                                    )
+                                    println("Medication logged successfully!")
+                                } catch (e: Exception) {
+                                    println("Error while logging medication: ${e.message}")
+                                }
                             }
+
                         }
+
                         MedicationStatusButton("Skipped") {
                             status = MedicationLog.Status.Skipped
+                            actualTime = null // No actual time for skipped
                             coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = clientId,
-                                    scheduledTime = scheduledTime,
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
+                                try {
+                                    logMedication(
+                                        clientMedication = clientMedication,
+                                        status = status,
+                                        clientId = clientId,
+                                        scheduledTime = scheduledTime,
+                                        actualTime = actualTime,
+                                        notes = notes,
+                                        clientController = clientController
+                                    )
+                                } catch (e: Exception) {
+                                    println("Error while logging medication: ${e.message}")
+                                }
                             }
                         }
+
                         MedicationStatusButton("Missed") {
                             status = MedicationLog.Status.Missed
+                            actualTime = null // No actual time for missed
                             coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = clientId,
-                                    scheduledTime = scheduledTime,
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
+                                try {
+                                    logMedication(
+                                        clientMedication = clientMedication,
+                                        status = status,
+                                        clientId = clientId,
+                                        scheduledTime = scheduledTime,
+                                        actualTime = actualTime,
+                                        notes = notes,
+                                        clientController = clientController
+                                    )
+                                } catch (e: Exception) {
+                                    println("Error while logging medication: ${e.message}")
+                                }
                             }
                         }
+
                         MedicationStatusButton("Late") {
                             status = MedicationLog.Status.Late
+                            actualTime = LocalDateTime.now() // Set actualTime to current time
                             coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = clientId,
-                                    scheduledTime = scheduledTime,
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
+                                try {
+                                    logMedication(
+                                        clientMedication = clientMedication,
+                                        status = status,
+                                        clientId = clientId,
+                                        scheduledTime = scheduledTime,
+                                        actualTime = actualTime,
+                                        notes = notes,
+                                        clientController = clientController
+                                    )
+                                } catch (e: Exception) {
+                                    println("Error while logging medication: ${e.message}")
+                                }
                             }
                         }
                     }
@@ -223,7 +263,7 @@ fun ClientSelectionScreen(
     }
 }
 
-// Function to log medication entry inside coroutine scope
+// Function to log medication entry
 suspend fun logMedication(
     clientMedication: ClientMedication,
     status: MedicationLog.Status,
@@ -234,24 +274,23 @@ suspend fun logMedication(
     clientController: ClientController
 ) {
     if (clientId == null) {
-        // Handle the error if clientId is null
         println("Error: clientId is null.")
         return
     }
 
-    // Log the medication entry inside LaunchedEffect to handle coroutine scope properly
-    clientController.logMedication(
-        MedicationLog(
-            clientMedicationId = clientMedication.clientMedicationId,
-            carerId = clientId, // Use the passed clientId
-            scheduledTime = scheduledTime, // Use the user-provided scheduled time
-            actualTime = actualTime, // Use the user-provided actual time
-            status = status, // Use the selected status
-            notes = notes // Include notes from the form
-        )
+    val medicationLog = MedicationLog(
+        clientMedicationId = clientMedication.clientMedicationId,
+        carerId = clientId, // Use the passed clientId
+        scheduledTime = scheduledTime, // Use the user-provided scheduled time
+        actualTime = actualTime, // Use the user-provided actual time
+        status = status, // Use the selected status
+        notes = notes // Include notes from the form
     )
+
+    clientController.logMedication(medicationLog)
 }
 
+// MedicationStatusButton Composable
 @Composable
 fun MedicationStatusButton(text: String, onClick: () -> Unit) {
     Button(

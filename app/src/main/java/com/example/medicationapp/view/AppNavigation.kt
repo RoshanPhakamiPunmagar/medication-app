@@ -128,14 +128,14 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             )
         }
 
-        composable("client_selection/{clientId}") { backStackEntry ->
-            val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
-            ClientSelectionScreen(
-                clientId = clientId,
-                clientController = clientController,
-                navController = navController
-            )
-        }
+//        composable("client_selection/{clientId}") { backStackEntry ->
+//            val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
+//            ClientSelectionScreen(
+//                clientId = clientId,
+//                clientController = clientController,
+//                navController = navController
+//            )
+//        }
 
 
         composable("reminders") {

@@ -13,7 +13,7 @@ interface MedicationDao {
     suspend fun getAllMedications(): List<Medication>
 
     @Query("SELECT * FROM medications WHERE medicationId = :id")
-    suspend fun getMedicationById(id: Int): Medication?
+    suspend fun getMedicationById(id: Long): Medication?
 
     @Update
     suspend fun updateMedication(medication: Medication)

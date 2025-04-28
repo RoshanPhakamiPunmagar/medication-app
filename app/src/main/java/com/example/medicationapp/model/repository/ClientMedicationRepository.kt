@@ -13,10 +13,6 @@ class ClientMedicationRepository(private val dao: ClientMedicationDao) {
         return dao.getAllClientMedications()
     }
 
-    suspend fun getMedicationsForClient(clientId: Int): List<ClientMedication> {
-        return dao.getMedicationsForClient(clientId)
-    }
-
     suspend fun getClientsForMedication(medicationId: Int): List<ClientMedication> {
         return dao.getClientsForMedication(medicationId)
     }

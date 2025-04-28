@@ -72,7 +72,7 @@ class MedicationController(context: Context) {
     }
 
     // Fetch all medications assigned to a specific client
-    suspend fun getClientMedications(clientId: Int): List<ClientMedication> {
+    suspend fun getClientMedications(clientId: Long): List<ClientMedication> {
         return clientMedicationDao.getMedicationsForClient(clientId)
     }
 }

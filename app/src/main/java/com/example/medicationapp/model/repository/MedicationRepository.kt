@@ -13,9 +13,6 @@ class MedicationRepository(private val medicationDao: MedicationDao) {
         return medicationDao.getAllMedications()
     }
 
-    suspend fun getMedicationById(id: Int): Medication? {
-        return medicationDao.getMedicationById(id)
-    }
 
     suspend fun updateMedication(medication: Medication) {
         medicationDao.updateMedication(medication)

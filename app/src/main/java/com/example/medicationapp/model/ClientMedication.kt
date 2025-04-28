@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Entity(
     tableName = "client_medications",
@@ -37,6 +38,8 @@ data class ClientMedication(
     val frequency: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val isPaused: Boolean = false
+    val isPaused: Boolean = false,
+    val scheduledTimes: List<LocalTime>
+
 
 )

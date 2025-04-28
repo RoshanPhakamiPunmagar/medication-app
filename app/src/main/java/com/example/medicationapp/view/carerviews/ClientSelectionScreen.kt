@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.medicationapp.controller.ClientController
@@ -13,6 +14,42 @@ import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.MedicationLog
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+// Time Input Handler for TextField with validation
+@Composable
+fun ActualTimeInput(
+    actualTime: LocalDateTime?,
+    onTimeChange: (LocalDateTime?) -> Unit
+) {
+    var timeText by remember { mutableStateOf(TextFieldValue()) }
+
+    // Format for time input, you can change the pattern as needed
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    // This method ensures the input is formatted correctly
+    fun parseTimeInput(input: String): LocalDateTime? {
+        return try {
+            // Attempt to parse the input as LocalDateTime
+            LocalDateTime.now().withHour(input.substring(0..1).toInt()).withMinute(input.substring(3..4).toInt())
+        } catch (e: Exception) {
+            // If parsing fails, return null
+            null
+        }
+    }
+
+    TextField(
+        value = timeText,
+        onValueChange = {
+            timeText = it
+            val time = parseTimeInput(it.text)
+            onTimeChange(time) // Update actual time if parsing is successful
+        },
+        label = { Text("Enter Actual Time") },
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +58,7 @@ fun ClientSelectionScreen(
     clientController: ClientController,
     navController: NavController
 ) {
-    val coroutineScope = rememberCoroutineScope() // Used for launching coroutines
+    val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
     var selectedClient by remember { mutableStateOf<Client?>(null) }
     var medications by remember { mutableStateOf<List<Pair<ClientMedication, String>>>(emptyList()) }
@@ -118,33 +155,15 @@ fun ClientSelectionScreen(
                         Text("Mark medication: $medicationName")
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Scheduled Time Picker
-                        Text("Scheduled Time:")
-                        TextField(
-                            value = scheduledTime.toString(),
-                            onValueChange = { newTime ->
-                                // You can add proper validation or date-time pickers for better UI
-                                scheduledTime = LocalDateTime.parse(newTime)
-                            },
-                            label = { Text("Enter Scheduled Time") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        // Scheduled Time (Read-Only)
+                        Text("Scheduled Time: ${scheduledTime.toLocalTime()}")
 
-                        // Actual Time Picker (optional for the user to fill)
-                        Text("Actual Time:")
-                        TextField(
-                            value = actualTime?.toString() ?: "",
-                            onValueChange = { newTime ->
-                                if (newTime.isNotEmpty()) {
-                                    actualTime = LocalDateTime.parse(newTime)
-                                } else {
-                                    actualTime = null
-                                }
-                            },
-                            label = { Text("Enter Actual Time (Optional)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        Spacer(modifier = Modifier.height(8.dp))
 
+                        // Actual Time Input (where the user can enter actual time)
+                        ActualTimeInput(actualTime = actualTime, onTimeChange = {
+                            actualTime = it // Update the actual time whenever the user changes it
+                        })
                         // Notes field
                         Spacer(modifier = Modifier.height(8.dp))
                         TextField(
@@ -162,53 +181,32 @@ fun ClientSelectionScreen(
                             status = MedicationLog.Status.Given
                             actualTime = LocalDateTime.now() // Set actualTime to current time
 
-                            // Debug log to check if clientId is set correctly
-                            println("Logging medication with status: $status, actualTime: $actualTime")
-                            println("clientId before logging medication: ${selectedClient?.clientId}")
-
-
                             coroutineScope.launch {
-                                val currentClientId = selectedClient?.clientId
-                                if (currentClientId == null) {
-                                    println("Error: selectedClient or clientId is null. Cannot log medication.")
-                                    return@launch
-                                }
-
-                                try {
-                                    logMedication(
-                                        clientMedication = clientMedication,
-                                        status = status,
-                                        clientId = currentClientId, // Use selectedClient.clientId instead!
-                                        scheduledTime = scheduledTime,
-                                        actualTime = actualTime,
-                                        notes = notes,
-                                        clientController = clientController
-                                    )
-                                    println("Medication logged successfully!")
-                                } catch (e: Exception) {
-                                    println("Error while logging medication: ${e.message}")
-                                }
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = scheduledTime,
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
                             }
-
                         }
 
                         MedicationStatusButton("Skipped") {
                             status = MedicationLog.Status.Skipped
                             actualTime = null // No actual time for skipped
                             coroutineScope.launch {
-                                try {
-                                    logMedication(
-                                        clientMedication = clientMedication,
-                                        status = status,
-                                        clientId = clientId,
-                                        scheduledTime = scheduledTime,
-                                        actualTime = actualTime,
-                                        notes = notes,
-                                        clientController = clientController
-                                    )
-                                } catch (e: Exception) {
-                                    println("Error while logging medication: ${e.message}")
-                                }
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = scheduledTime,
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
                             }
                         }
 
@@ -216,19 +214,15 @@ fun ClientSelectionScreen(
                             status = MedicationLog.Status.Missed
                             actualTime = null // No actual time for missed
                             coroutineScope.launch {
-                                try {
-                                    logMedication(
-                                        clientMedication = clientMedication,
-                                        status = status,
-                                        clientId = clientId,
-                                        scheduledTime = scheduledTime,
-                                        actualTime = actualTime,
-                                        notes = notes,
-                                        clientController = clientController
-                                    )
-                                } catch (e: Exception) {
-                                    println("Error while logging medication: ${e.message}")
-                                }
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = scheduledTime,
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
                             }
                         }
 
@@ -236,19 +230,15 @@ fun ClientSelectionScreen(
                             status = MedicationLog.Status.Late
                             actualTime = LocalDateTime.now() // Set actualTime to current time
                             coroutineScope.launch {
-                                try {
-                                    logMedication(
-                                        clientMedication = clientMedication,
-                                        status = status,
-                                        clientId = clientId,
-                                        scheduledTime = scheduledTime,
-                                        actualTime = actualTime,
-                                        notes = notes,
-                                        clientController = clientController
-                                    )
-                                } catch (e: Exception) {
-                                    println("Error while logging medication: ${e.message}")
-                                }
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = scheduledTime,
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
                             }
                         }
                     }
@@ -260,6 +250,18 @@ fun ClientSelectionScreen(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun MedicationStatusButton(text: String, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        onClick = onClick
+    ) {
+        Text(text)
     }
 }
 
@@ -288,17 +290,4 @@ suspend fun logMedication(
     )
 
     clientController.logMedication(medicationLog)
-}
-
-// MedicationStatusButton Composable
-@Composable
-fun MedicationStatusButton(text: String, onClick: () -> Unit) {
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        onClick = onClick
-    ) {
-        Text(text)
-    }
 }

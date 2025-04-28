@@ -16,9 +16,8 @@ import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeParseException
-import kotlin.collections.isNotEmpty
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,18 +38,17 @@ fun AssignMedicationScreen(
     var frequency by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
+    var scheduledTimes by remember { mutableStateOf<List<LocalTime>>(emptyList()) }
 
     var successMessage by remember { mutableStateOf<String?>(null) }
     var schedules by remember { mutableStateOf<List<ClientMedication>>(emptyList()) }
 
+    var showTimePicker by remember { mutableStateOf(false) }
+    var timeInput by remember { mutableStateOf("") }
+
     LaunchedEffect(Unit) {
         clients = clientController.getAllClients()
         medications = medicationController.getAllMedications()
-    }
-
-    LaunchedEffect(selectedClient) {
-        selectedClient?.clientId?.let { id ->
-        }
     }
 
     Column(
@@ -61,7 +59,7 @@ fun AssignMedicationScreen(
     ) {
         Text("Assign Medication", style = MaterialTheme.typography.headlineMedium)
 
-        // Client Dropdown
+        // --- Client Dropdown ---
         var clientExpanded by remember { mutableStateOf(false) }
         TextField(
             value = selectedClient?.name ?: "",
@@ -90,7 +88,7 @@ fun AssignMedicationScreen(
             }
         }
 
-        // Medication Dropdown
+        // --- Medication Dropdown ---
         var medicationExpanded by remember { mutableStateOf(false) }
         TextField(
             value = selectedMedication?.name ?: "",
@@ -119,7 +117,7 @@ fun AssignMedicationScreen(
             }
         }
 
-        // Input Fields
+        // --- Inputs ---
         TextField(
             value = dosage,
             onValueChange = { dosage = it },
@@ -145,8 +143,24 @@ fun AssignMedicationScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // --- Scheduled Times ---
+        Text("Scheduled Times:", style = MaterialTheme.typography.titleMedium)
+        if (scheduledTimes.isEmpty()) {
+            Text("No times added yet.")
+        } else {
+            scheduledTimes.sorted().forEach { time ->
+                Text(time.toString(), style = MaterialTheme.typography.bodyLarge)
+            }
+        }
 
-        // Assign Button
+        Button(
+            onClick = { showTimePicker = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Add Scheduled Time")
+        }
+
+        // --- Save Button ---
         Button(
             onClick = {
                 coroutineScope.launch {
@@ -162,11 +176,10 @@ fun AssignMedicationScreen(
                                     dosage = dosage,
                                     frequency = frequency,
                                     startDate = parsedStart,
-                                    endDate = parsedEnd
+                                    endDate = parsedEnd,
+                                    scheduledTimes = scheduledTimes
                                 )
                                 successMessage = "Medication assigned successfully!"
-
-
                             }
                         }
                     } catch (e: DateTimeParseException) {
@@ -188,12 +201,11 @@ fun AssignMedicationScreen(
             Text(it, color = MaterialTheme.colorScheme.primary)
         }
 
-        // Show Existing Schedules
+        // --- Existing Schedules ---
         if (schedules.isNotEmpty()) {
             Text("Current Schedules", style = MaterialTheme.typography.titleMedium)
             schedules.forEach { schedule ->
                 Card(
-
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
@@ -207,5 +219,43 @@ fun AssignMedicationScreen(
                 }
             }
         }
+    }
+
+    // --- Simple Time Picker Dialog ---
+    if (showTimePicker) {
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            title = { Text("Add Scheduled Time") },
+            text = {
+                Column {
+                    TextField(
+                        value = timeInput,
+                        onValueChange = { timeInput = it },
+                        label = { Text("Enter Time (HH:MM)") }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        try {
+                            val time = LocalTime.parse(timeInput)
+                            scheduledTimes = scheduledTimes + time
+                            showTimePicker = false
+                            timeInput = ""
+                        } catch (e: Exception) {
+                            // Ignore invalid input
+                        }
+                    }
+                ) {
+                    Text("Add Time")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

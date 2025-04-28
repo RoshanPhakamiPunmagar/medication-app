@@ -6,6 +6,7 @@ import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.MedicationInteraction
 import java.time.LocalDate
+import java.time.LocalTime
 
 
 class MedicationController(context: Context) {
@@ -48,7 +49,8 @@ class MedicationController(context: Context) {
         dosage: String,
         frequency: String,
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        scheduledTimes: List<LocalTime>
     ) {
         val clientMedication = ClientMedication(
             clientId = clientId,
@@ -56,7 +58,8 @@ class MedicationController(context: Context) {
             dosage = dosage,
             frequency = frequency,
             startDate = startDate,
-            endDate = endDate
+            endDate = endDate,
+            scheduledTimes = scheduledTimes
         )
         clientMedicationDao.insertClientMedication(clientMedication)
     }

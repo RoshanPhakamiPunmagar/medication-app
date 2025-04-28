@@ -88,7 +88,10 @@ fun ClientSelectionScreen(
         ) {
             // Client selection UI
             if (selectedClient == null) {
-                Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Tap on a client to view medications",
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
                 if (clients.isEmpty()) {
                     Text("No clients available.")
@@ -100,21 +103,28 @@ fun ClientSelectionScreen(
                                 .clickable {
                                     coroutineScope.launch {
                                         selectedClient = client
-                                        medications = clientController.getMedicationsForClient(client.clientId)
+                                        medications =
+                                            clientController.getMedicationsForClient(client.clientId)
                                     }
                                 },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(client.name, style = MaterialTheme.typography.titleMedium)
-                                Text("Client ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    "Client ID: ${client.clientId}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }
                 }
             } else {
                 // Medication selection UI
-                Text("Medications for ${selectedClient?.name}:", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Medications for ${selectedClient?.name}:",
+                    style = MaterialTheme.typography.titleMedium
+                )
 
                 if (medications.isEmpty()) {
                     Text("No medications assigned.")
@@ -130,8 +140,14 @@ fun ClientSelectionScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(medicationName, style = MaterialTheme.typography.titleMedium)
-                                Text("Dosage: ${clientMedication.dosage}", style = MaterialTheme.typography.bodySmall)
-                                Text("Frequency: ${clientMedication.frequency}", style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    "Dosage: ${clientMedication.dosage}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                Text(
+                                    "Frequency: ${clientMedication.frequency}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }
@@ -145,7 +161,6 @@ fun ClientSelectionScreen(
             }
         }
 
-        // Medication Log Dialog
         selectedMedication?.let { (clientMedication, medicationName) ->
             AlertDialog(
                 onDismissRequest = { selectedMedication = null },
@@ -155,15 +170,17 @@ fun ClientSelectionScreen(
                         Text("Mark medication: $medicationName")
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Scheduled Time (Read-Only)
-                        Text("Scheduled Time: ${scheduledTime.toLocalTime()}")
+                        // Display Scheduled Time (from manager)
+                        Text("Scheduled Time: ${clientMedication.scheduledTimes.joinToString(", ") { it.toLocalTime().format(DateTimeFormatter.ofPattern("")) }}")
+
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Actual Time Input (where the user can enter actual time)
+                        // Actual Time Input (current time when carer administers the medication)
                         ActualTimeInput(actualTime = actualTime, onTimeChange = {
-                            actualTime = it // Update the actual time whenever the user changes it
+                            actualTime = it // Update actual time whenever the user changes it
                         })
+
                         // Notes field
                         Spacer(modifier = Modifier.height(8.dp))
                         TextField(
@@ -179,14 +196,15 @@ fun ClientSelectionScreen(
                         // Buttons to log medication status
                         MedicationStatusButton("Given") {
                             status = MedicationLog.Status.Given
-                            actualTime = LocalDateTime.now() // Set actualTime to current time
+                            actualTime =
+                                LocalDateTime.now() // Set actual time to current time when medication is given
 
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
                                     status = status,
                                     clientId = selectedClient?.clientId,
-                                    scheduledTime = scheduledTime,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
                                     actualTime = actualTime,
                                     notes = notes,
                                     clientController = clientController
@@ -196,13 +214,13 @@ fun ClientSelectionScreen(
 
                         MedicationStatusButton("Skipped") {
                             status = MedicationLog.Status.Skipped
-                            actualTime = null // No actual time for skipped
+                            actualTime = null // No actual time for skipped medication
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
                                     status = status,
                                     clientId = selectedClient?.clientId,
-                                    scheduledTime = scheduledTime,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
                                     actualTime = actualTime,
                                     notes = notes,
                                     clientController = clientController
@@ -212,13 +230,13 @@ fun ClientSelectionScreen(
 
                         MedicationStatusButton("Missed") {
                             status = MedicationLog.Status.Missed
-                            actualTime = null // No actual time for missed
+                            actualTime = null // No actual time for missed medication
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
                                     status = status,
                                     clientId = selectedClient?.clientId,
-                                    scheduledTime = scheduledTime,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
                                     actualTime = actualTime,
                                     notes = notes,
                                     clientController = clientController
@@ -228,13 +246,14 @@ fun ClientSelectionScreen(
 
                         MedicationStatusButton("Late") {
                             status = MedicationLog.Status.Late
-                            actualTime = LocalDateTime.now() // Set actualTime to current time
+                            actualTime =
+                                LocalDateTime.now() // Set actual time to current time when medication is given late
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
                                     status = status,
                                     clientId = selectedClient?.clientId,
-                                    scheduledTime = scheduledTime,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
                                     actualTime = actualTime,
                                     notes = notes,
                                     clientController = clientController
@@ -253,7 +272,7 @@ fun ClientSelectionScreen(
     }
 }
 
-@Composable
+        @Composable
 fun MedicationStatusButton(text: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier

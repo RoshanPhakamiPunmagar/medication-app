@@ -39,7 +39,7 @@ data class ClientMedication(
     val startDate: LocalDate,
     val endDate: LocalDate,
     val isPaused: Boolean = false,
-    val scheduledTimes: List<LocalTime>
+    val scheduledTimes: List<LocalDateTime>
 
 
 )

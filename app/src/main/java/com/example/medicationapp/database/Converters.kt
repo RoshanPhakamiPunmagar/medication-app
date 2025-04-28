@@ -1,5 +1,4 @@
-package com.example.medicationapp.database;
-
+package com.example.medicationapp.database
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -20,63 +19,59 @@ class Converters {
     // Formatter for LocalDateTime (ISO format)
     private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-    // Convert List<LocalTime> to String (for saving in the database)
+    // Convert LocalDateTime to String
+    @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun fromLocalTimeList(value: List<LocalTime>?): String? {
-        return value?.joinToString(",") { it.format(timeFormatter) }
+    fun fromLocalDateTimeToString(localDateTime: LocalDateTime?): String? {
+        return localDateTime?.format(dateTimeFormatter)
     }
 
-    // Convert String to List<LocalTime> (for reading from the database)
+    // Convert String to LocalDateTime
+    @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun toLocalTimeList(value: String?): List<LocalTime> {
-        return value?.split(",")?.map { LocalTime.parse(it, timeFormatter) } ?: emptyList()
+    fun fromStringToLocalDateTime(value: String?): LocalDateTime? {
+        return value?.let { LocalDateTime.parse(it, dateTimeFormatter) }
     }
 
     // Convert LocalTime to String
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun fromLocalTime(value: LocalTime?): String? {
+    fun fromLocalTimeToString(value: LocalTime?): String? {
         return value?.format(timeFormatter)
     }
 
     // Convert String to LocalTime
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun toLocalTime(value: String?): LocalTime? {
-        return value?.let {
-            LocalTime.parse(it, timeFormatter)
-        }
+    fun fromStringToLocalTime(value: String?): LocalTime? {
+        return value?.let { LocalTime.parse(it, timeFormatter) }
     }
 
     // Convert LocalDate to String
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun fromLocalDate(date: LocalDate?): String? {
+    fun fromLocalDateToString(date: LocalDate?): String? {
         return date?.format(dateFormatter)
     }
 
     // Convert String to LocalDate
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun toLocalDate(dateString: String?): LocalDate? {
-        return dateString?.let {
-            LocalDate.parse(it, dateFormatter)
-        }
+    fun fromStringToLocalDate(dateString: String?): LocalDate? {
+        return dateString?.let { LocalDate.parse(it, dateFormatter) }
     }
 
-    // Convert LocalDateTime to String
+    // Convert List<LocalDateTime> to String (for saving in the database)
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun fromLocalDateTime(dateTime: LocalDateTime?): String? {
-        return dateTime?.format(dateTimeFormatter)
+    fun fromListOfLocalDateTimes(value: List<LocalDateTime>?): String? {
+        return value?.joinToString(",") { it.format(dateTimeFormatter) }
     }
 
-    // Convert String to LocalDateTime
+    // Convert String to List<LocalDateTime> (for reading from the database)
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun toLocalDateTime(value: String?): LocalDateTime? {
-        return value?.let {
-            LocalDateTime.parse(it, dateTimeFormatter)
-        }
+    fun toListOfLocalDateTimes(value: String?): List<LocalDateTime> {
+        return value?.split(",")?.map { LocalDateTime.parse(it, dateTimeFormatter) } ?: emptyList()
     }
 }

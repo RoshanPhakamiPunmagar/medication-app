@@ -16,6 +16,7 @@ import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
 
@@ -38,7 +39,7 @@ fun AssignMedicationScreen(
     var frequency by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
-    var scheduledTimes by remember { mutableStateOf<List<LocalTime>>(emptyList()) }
+    var scheduledTimes by remember { mutableStateOf<List<LocalDateTime>>(emptyList()) }
 
     var successMessage by remember { mutableStateOf<String?>(null) }
     var schedules by remember { mutableStateOf<List<ClientMedication>>(emptyList()) }
@@ -231,7 +232,7 @@ fun AssignMedicationScreen(
                     TextField(
                         value = timeInput,
                         onValueChange = { timeInput = it },
-                        label = { Text("Enter Time (HH:MM)") }
+                        label = { Text("Enter Time") }
                     )
                 }
             },
@@ -239,12 +240,11 @@ fun AssignMedicationScreen(
                 TextButton(
                     onClick = {
                         try {
-                            val time = LocalTime.parse(timeInput)
+                            val time = LocalDateTime.parse(timeInput)
                             scheduledTimes = scheduledTimes + time
                             showTimePicker = false
                             timeInput = ""
                         } catch (e: Exception) {
-                            // Ignore invalid input
                         }
                     }
                 ) {

@@ -6,6 +6,7 @@ import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.MedicationInteraction
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 
@@ -50,7 +51,7 @@ class MedicationController(context: Context) {
         frequency: String,
         startDate: LocalDate,
         endDate: LocalDate,
-        scheduledTimes: List<LocalTime>
+        scheduledTimes: List<LocalDateTime>
     ) {
         val clientMedication = ClientMedication(
             clientId = clientId,

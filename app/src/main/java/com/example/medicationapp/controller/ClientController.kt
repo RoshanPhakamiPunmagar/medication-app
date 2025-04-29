@@ -2,6 +2,7 @@ package com.example.medicationapp.controller
 
 import android.content.Context
 import com.example.medicationapp.database.AppDatabase
+import com.example.medicationapp.model.AdherenceLog
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.MedicationLog
@@ -10,7 +11,8 @@ class ClientController(private val context: Context) {  // ← make 'context' a 
     private val clientDao = AppDatabase.getDatabase(context).clientDao()
     private val clientMedicationDao = AppDatabase.getDatabase(context).clientMedicationDao()
     private val medicationLogDao = AppDatabase.getDatabase(context).medicationLogDao()
-    private val medicationDao = AppDatabase.getDatabase(context).medicationDao() // Add this
+    private val medicationDao = AppDatabase.getDatabase(context).medicationDao()
+    private val adherenceLogDao = AppDatabase.getDatabase(context).adherenceLogDao()
 
     suspend fun getAllClients(): List<Client> {
         return clientDao.getAllClients()
@@ -19,6 +21,12 @@ class ClientController(private val context: Context) {  // ← make 'context' a 
     suspend fun assignMedication(clientMedication: ClientMedication) {
         clientMedicationDao.insertClientMedication(clientMedication)
     }
+
+    suspend fun insertAdherenceLog(log: AdherenceLog) {
+        adherenceLogDao.insertAdherenceLog(log)
+    }
+
+
 
     suspend fun logMedication(medicationLog: MedicationLog) {
         medicationLogDao.insertLog(medicationLog)

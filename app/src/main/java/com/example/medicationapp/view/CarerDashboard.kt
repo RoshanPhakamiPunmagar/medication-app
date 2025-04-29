@@ -26,7 +26,7 @@ import com.example.medicationapp.view.managerviews.ReportsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarrerMainScreen(clientId: Long?, clientController: ClientController, navController: NavController) {
+fun CarrerMainScreen(clientController: ClientController, navController: NavController) {
     val bottomNavController = rememberNavController()
 
     val bottomNavItems = listOf(
@@ -69,12 +69,18 @@ fun CarrerMainScreen(clientId: Long?, clientController: ClientController, navCon
             }
         }
     ) { innerPadding ->
+
         Box(Modifier.padding(innerPadding)) {
             NavHost(
                 navController = bottomNavController,
                 startDestination = BottomNavItemForCarer.SeeClient.route
             ) {
-                composable(BottomNavItemForCarer.SeeClient.route) { ClientSelectionScreen(clientId,clientController,navController) }
+                composable(BottomNavItemForCarer.SeeClient.route) {
+                    ClientSelectionScreen(
+                        clientController = clientController,
+                        navController = navController
+                    )
+                }
                 composable(BottomNavItemForCarer.IncidentReport.route) { IncidentNotesScreen() }
                 composable(BottomNavItemForManager.Settings.route) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -82,6 +88,8 @@ fun CarrerMainScreen(clientId: Long?, clientController: ClientController, navCon
                     }
                 }
             }
-        }
+
+
+    }
     }
 }

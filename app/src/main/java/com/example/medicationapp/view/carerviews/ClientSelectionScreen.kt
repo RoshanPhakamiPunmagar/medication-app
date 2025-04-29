@@ -48,7 +48,6 @@ fun ActualTimeInput(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientSelectionScreen(
-    clientId: Long?,
     clientController: ClientController,
     navController: NavController
 ) {
@@ -58,7 +57,6 @@ fun ClientSelectionScreen(
     var medications by remember { mutableStateOf<List<Pair<ClientMedication, String>>>(emptyList()) }
     var selectedMedication by remember { mutableStateOf<Pair<ClientMedication, String>?>(null) }
 
-    var scheduledTime by remember { mutableStateOf(LocalTime.now()) }
     var actualTime by remember { mutableStateOf<LocalTime?>(null) }
     var status by remember { mutableStateOf(MedicationLog.Status.Given) }
     var notes by remember { mutableStateOf("") }
@@ -80,7 +78,10 @@ fun ClientSelectionScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             if (selectedClient == null) {
-                Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Tap on a client to view medications",
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
                 if (clients.isEmpty()) {
                     Text("No clients available.")
@@ -92,20 +93,27 @@ fun ClientSelectionScreen(
                                 .clickable {
                                     coroutineScope.launch {
                                         selectedClient = client
-                                        medications = clientController.getMedicationsForClient(client.clientId)
+                                        medications =
+                                            clientController.getMedicationsForClient(client.clientId)
                                     }
                                 },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(client.name, style = MaterialTheme.typography.titleMedium)
-                                Text("Client ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    "Client ID: ${client.clientId}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }
                 }
             } else {
-                Text("Medications for ${selectedClient?.name}:", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Medications for ${selectedClient?.name}:",
+                    style = MaterialTheme.typography.titleMedium
+                )
 
                 if (medications.isEmpty()) {
                     Text("No medications assigned.")
@@ -121,8 +129,14 @@ fun ClientSelectionScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(medicationName, style = MaterialTheme.typography.titleMedium)
-                                Text("Dosage: ${clientMedication.dosage}", style = MaterialTheme.typography.bodySmall)
-                                Text("Frequency: ${clientMedication.frequency}", style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    "Dosage: ${clientMedication.dosage}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                Text(
+                                    "Frequency: ${clientMedication.frequency}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }
@@ -146,7 +160,11 @@ fun ClientSelectionScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            "Scheduled Time: ${clientMedication.scheduledTimes.joinToString(", ") { it.format(DateTimeFormatter.ofPattern("HH:mm")) }}"
+                            "Scheduled Time: ${
+                                clientMedication.scheduledTimes.joinToString(", ") {
+                                    it.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                }
+                            }"
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -156,6 +174,7 @@ fun ClientSelectionScreen(
                         })
 
                         Spacer(modifier = Modifier.height(8.dp))
+
                         TextField(
                             value = notes,
                             onValueChange = { notes = it },
@@ -180,6 +199,7 @@ fun ClientSelectionScreen(
                                     notes = notes,
                                     clientController = clientController
                                 )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
                             }
                         }
 
@@ -197,6 +217,7 @@ fun ClientSelectionScreen(
                                     notes = notes,
                                     clientController = clientController
                                 )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
                             }
                         }
 
@@ -214,6 +235,7 @@ fun ClientSelectionScreen(
                                     notes = notes,
                                     clientController = clientController
                                 )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
                             }
                         }
 
@@ -231,6 +253,7 @@ fun ClientSelectionScreen(
                                     notes = notes,
                                     clientController = clientController
                                 )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
                             }
                         }
                     }
@@ -242,10 +265,9 @@ fun ClientSelectionScreen(
                 }
             )
         }
-    }
-}
+    }}
 
-@Composable
+        @Composable
 fun MedicationStatusButton(text: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier

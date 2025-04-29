@@ -33,7 +33,7 @@ data class AdherenceLog(
     val adherenceId: Long = 0,
 
     val clientMedicationId: Long,
-    val userId: Int,
+    val userId: Long,
     val checkedTime: LocalDateTime,
     val adherenceRate: Double
 )

@@ -26,6 +26,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.medicationapp.view.carerviews.AdherenceScreen
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
@@ -84,17 +87,37 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             ManagerMainScreen(clientController, medicationController)
         }
 
-        // Carer Dashboard
-        composable("carer_dashboard") { backStackEntry ->
-            val clientId = backStackEntry.arguments?.getString("clientId")?.toLongOrNull()
-            CarrerMainScreen(clientId, clientController, navController)
+        composable("carer_dashboard") {
+            CarrerMainScreen(
+                clientController = clientController,
+                navController = navController
+            )
         }
+
 
 
         // Manager sub‐screens
         composable("manage_clients") {
             ClientListScreen(clientController = clientController)
         }
+
+        composable(
+            "adherence_screen/{medicationId}/{userId}",
+            arguments = listOf(
+                navArgument("medicationId") { type = NavType.LongType },
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val medicationId = backStackEntry.arguments?.getLong("medicationId") ?: 0L
+            val userId = backStackEntry.arguments?.getLong("userId") ?: 0L
+            AdherenceScreen(
+                clientMedicationId = medicationId,
+                userId = userId,
+                onAdherenceLogged = { navController.popBackStack() },
+                controller = clientController
+            )
+        }
+
 
         composable("assign_medication") {
             AssignMedicationScreen(
@@ -118,16 +141,12 @@ fun AppNavigation(modifier:Modifier = Modifier) {
         composable("live_compliance") {
             LiveComplianceScreen()
         }
-
-        // Optional clientId in path
         composable("client_selection") {
             ClientSelectionScreen(
-                clientId = null,
                 clientController = clientController,
                 navController = navController
             )
         }
-
 
         composable("reminders") {
             RemindersScreen(reminderController = reminderController)

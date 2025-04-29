@@ -13,27 +13,22 @@ import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.MedicationLog
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-// Time Input Handler for TextField with validation
 @Composable
 fun ActualTimeInput(
-    actualTime: LocalDateTime?,
-    onTimeChange: (LocalDateTime?) -> Unit
+    actualTime: LocalTime?,
+    onTimeChange: (LocalTime?) -> Unit
 ) {
-    var timeText by remember { mutableStateOf(TextFieldValue()) }
+    var timeText by remember { mutableStateOf(TextFieldValue(actualTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "")) }
 
-    // Format for time input, you can change the pattern as needed
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
-    // This method ensures the input is formatted correctly
-    fun parseTimeInput(input: String): LocalDateTime? {
+    fun parseTimeInput(input: String): LocalTime? {
         return try {
-            // Attempt to parse the input as LocalDateTime
-            LocalDateTime.now().withHour(input.substring(0..1).toInt()).withMinute(input.substring(3..4).toInt())
+            LocalTime.parse(input, formatter)
         } catch (e: Exception) {
-            // If parsing fails, return null
             null
         }
     }
@@ -42,14 +37,13 @@ fun ActualTimeInput(
         value = timeText,
         onValueChange = {
             timeText = it
-            val time = parseTimeInput(it.text)
-            onTimeChange(time) // Update actual time if parsing is successful
+            val parsedTime = parseTimeInput(it.text)
+            onTimeChange(parsedTime)
         },
-        label = { Text("Enter Actual Time") },
+        label = { Text("Enter Actual Time (HH:mm)") },
         modifier = Modifier.fillMaxWidth()
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,12 +58,11 @@ fun ClientSelectionScreen(
     var medications by remember { mutableStateOf<List<Pair<ClientMedication, String>>>(emptyList()) }
     var selectedMedication by remember { mutableStateOf<Pair<ClientMedication, String>?>(null) }
 
-    var scheduledTime by remember { mutableStateOf(LocalDateTime.now()) }
-    var actualTime by remember { mutableStateOf<LocalDateTime?>(null) }
+    var scheduledTime by remember { mutableStateOf(LocalTime.now()) }
+    var actualTime by remember { mutableStateOf<LocalTime?>(null) }
     var status by remember { mutableStateOf(MedicationLog.Status.Given) }
     var notes by remember { mutableStateOf("") }
 
-    // Load clients on launch
     LaunchedEffect(Unit) {
         clients = clientController.getAllClients()
     }
@@ -86,12 +79,8 @@ fun ClientSelectionScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Client selection UI
             if (selectedClient == null) {
-                Text(
-                    "Tap on a client to view medications",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
 
                 if (clients.isEmpty()) {
                     Text("No clients available.")
@@ -103,28 +92,20 @@ fun ClientSelectionScreen(
                                 .clickable {
                                     coroutineScope.launch {
                                         selectedClient = client
-                                        medications =
-                                            clientController.getMedicationsForClient(client.clientId)
+                                        medications = clientController.getMedicationsForClient(client.clientId)
                                     }
                                 },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(client.name, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    "Client ID: ${client.clientId}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Text("Client ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
                 }
             } else {
-                // Medication selection UI
-                Text(
-                    "Medications for ${selectedClient?.name}:",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Text("Medications for ${selectedClient?.name}:", style = MaterialTheme.typography.titleMedium)
 
                 if (medications.isEmpty()) {
                     Text("No medications assigned.")
@@ -140,14 +121,8 @@ fun ClientSelectionScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(medicationName, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    "Dosage: ${clientMedication.dosage}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                                Text(
-                                    "Frequency: ${clientMedication.frequency}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Text("Dosage: ${clientMedication.dosage}", style = MaterialTheme.typography.bodySmall)
+                                Text("Frequency: ${clientMedication.frequency}", style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
@@ -170,18 +145,16 @@ fun ClientSelectionScreen(
                         Text("Mark medication: $medicationName")
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Display Scheduled Time (from manager)
-                        Text("Scheduled Time: ${clientMedication.scheduledTimes.joinToString(", ") { it.toLocalTime().format(DateTimeFormatter.ofPattern("")) }}")
-
+                        Text(
+                            "Scheduled Time: ${clientMedication.scheduledTimes.joinToString(", ") { it.format(DateTimeFormatter.ofPattern("HH:mm")) }}"
+                        )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Actual Time Input (current time when carer administers the medication)
                         ActualTimeInput(actualTime = actualTime, onTimeChange = {
-                            actualTime = it // Update actual time whenever the user changes it
+                            actualTime = it
                         })
 
-                        // Notes field
                         Spacer(modifier = Modifier.height(8.dp))
                         TextField(
                             value = notes,
@@ -193,11 +166,9 @@ fun ClientSelectionScreen(
                 },
                 confirmButton = {
                     Column {
-                        // Buttons to log medication status
                         MedicationStatusButton("Given") {
                             status = MedicationLog.Status.Given
-                            actualTime =
-                                LocalDateTime.now() // Set actual time to current time when medication is given
+                            actualTime = LocalTime.now()
 
                             coroutineScope.launch {
                                 logMedication(
@@ -214,7 +185,8 @@ fun ClientSelectionScreen(
 
                         MedicationStatusButton("Skipped") {
                             status = MedicationLog.Status.Skipped
-                            actualTime = null // No actual time for skipped medication
+                            actualTime = null
+
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
@@ -230,7 +202,8 @@ fun ClientSelectionScreen(
 
                         MedicationStatusButton("Missed") {
                             status = MedicationLog.Status.Missed
-                            actualTime = null // No actual time for missed medication
+                            actualTime = null
+
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
@@ -246,8 +219,8 @@ fun ClientSelectionScreen(
 
                         MedicationStatusButton("Late") {
                             status = MedicationLog.Status.Late
-                            actualTime =
-                                LocalDateTime.now() // Set actual time to current time when medication is given late
+                            actualTime = LocalTime.now()
+
                             coroutineScope.launch {
                                 logMedication(
                                     clientMedication = clientMedication,
@@ -272,7 +245,7 @@ fun ClientSelectionScreen(
     }
 }
 
-        @Composable
+@Composable
 fun MedicationStatusButton(text: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier
@@ -284,13 +257,12 @@ fun MedicationStatusButton(text: String, onClick: () -> Unit) {
     }
 }
 
-// Function to log medication entry
 suspend fun logMedication(
     clientMedication: ClientMedication,
     status: MedicationLog.Status,
     clientId: Long?,
-    scheduledTime: LocalDateTime,
-    actualTime: LocalDateTime?,
+    scheduledTime: LocalTime,
+    actualTime: LocalTime?,
     notes: String,
     clientController: ClientController
 ) {
@@ -301,11 +273,11 @@ suspend fun logMedication(
 
     val medicationLog = MedicationLog(
         clientMedicationId = clientMedication.clientMedicationId,
-        carerId = clientId, // Use the passed clientId
-        scheduledTime = scheduledTime, // Use the user-provided scheduled time
-        actualTime = actualTime, // Use the user-provided actual time
-        status = status, // Use the selected status
-        notes = notes // Include notes from the form
+        carerId = clientId,
+        scheduledTime = listOf(scheduledTime),
+        actualTime = actualTime,
+        status = status,
+        notes = notes
     )
 
     clientController.logMedication(medicationLog)

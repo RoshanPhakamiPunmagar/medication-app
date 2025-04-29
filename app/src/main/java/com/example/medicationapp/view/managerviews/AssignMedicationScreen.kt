@@ -39,7 +39,7 @@ fun AssignMedicationScreen(
     var frequency by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
-    var scheduledTimes by remember { mutableStateOf<List<LocalDateTime>>(emptyList()) }
+    var scheduledTimes by remember { mutableStateOf<List<LocalTime>>(emptyList()) }
 
     var successMessage by remember { mutableStateOf<String?>(null) }
     var schedules by remember { mutableStateOf<List<ClientMedication>>(emptyList()) }
@@ -240,7 +240,7 @@ fun AssignMedicationScreen(
                 TextButton(
                     onClick = {
                         try {
-                            val time = LocalDateTime.parse(timeInput)
+                            val time = LocalTime.parse(timeInput)
                             scheduledTimes = scheduledTimes + time
                             showTimePicker = false
                             timeInput = ""

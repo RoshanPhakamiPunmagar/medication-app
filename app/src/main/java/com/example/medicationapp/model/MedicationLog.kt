@@ -2,6 +2,7 @@ package com.example.medicationapp.model
 
 import androidx.room.*
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Entity(
     tableName = "medication_logs",
@@ -33,8 +34,8 @@ data class MedicationLog(
     val clientMedicationId: Long,
     val carerId: Long,
 
-    val scheduledTime: LocalDateTime,
-    val actualTime: LocalDateTime? = null,
+    val scheduledTime: List<LocalTime>,
+    val actualTime: LocalTime? = null,
 
     val status: Status,
     val notes: String? = null

@@ -12,15 +12,10 @@ import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.controller.MedicationController
 import com.example.medicationapp.controller.ReminderController
 import com.example.medicationapp.view.carer.IncidentNotesScreen
-import com.example.medicationapp.view.carer.OfflineModeScreen
-import com.example.medicationapp.view.carer.RemindersScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 import com.example.medicationapp.view.managerviews.AssignCarerScreen
 import com.example.medicationapp.view.managerviews.AssignMedicationScreen
 import com.example.medicationapp.view.managerviews.ClientListScreen
-import com.example.medicationapp.view.managerviews.LiveComplianceScreen
-import com.example.medicationapp.view.managerviews.ReportsScreen
-import com.example.medicationapp.view.managerviews.ScanMedicationScreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -28,7 +23,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.example.medicationapp.view.carerviews.AdherenceScreen
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
@@ -101,23 +95,6 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             ClientListScreen(clientController = clientController)
         }
 
-        composable(
-            "adherence_screen/{medicationId}/{userId}",
-            arguments = listOf(
-                navArgument("medicationId") { type = NavType.LongType },
-                navArgument("userId") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
-            val medicationId = backStackEntry.arguments?.getLong("medicationId") ?: 0L
-            val userId = backStackEntry.arguments?.getLong("userId") ?: 0L
-            AdherenceScreen(
-                clientMedicationId = medicationId,
-                userId = userId,
-                onAdherenceLogged = { navController.popBackStack() },
-                controller = clientController
-            )
-        }
-
 
         composable("assign_medication") {
             AssignMedicationScreen(
@@ -130,17 +107,6 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             AssignCarerScreen()
         }
 
-        composable("scan_medication") {
-            ScanMedicationScreen()
-        }
-
-        composable("generate_reports") {
-            ReportsScreen()
-        }
-
-        composable("live_compliance") {
-            LiveComplianceScreen()
-        }
         composable("client_selection") {
             ClientSelectionScreen(
                 clientController = clientController,
@@ -148,18 +114,11 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             )
         }
 
-        composable("reminders") {
-            RemindersScreen(reminderController = reminderController)
-        }
-
 
         composable("incident_notes") {
             IncidentNotesScreen()
         }
 
-        composable("offline_mode") {
-            OfflineModeScreen()
-        }
     }
 }
 

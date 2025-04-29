@@ -19,9 +19,7 @@ import com.example.medicationapp.controller.MedicationController
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.view.carer.IncidentNotesScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
-import com.example.medicationapp.view.managerviews.AssignCarerScreen
-import com.example.medicationapp.view.managerviews.AssignMedicationScreen
-import com.example.medicationapp.view.managerviews.ReportsScreen
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)

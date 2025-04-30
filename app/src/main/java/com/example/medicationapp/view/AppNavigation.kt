@@ -46,7 +46,6 @@ fun AppNavigation(modifier:Modifier = Modifier) {
 
     val clientController = remember { ClientController(context) }
     val medicationController = remember { MedicationController(context) }
-    val reminderController = remember { ReminderController(context) }
 
     NavHost(navController = navController, startDestination = "login") {
 

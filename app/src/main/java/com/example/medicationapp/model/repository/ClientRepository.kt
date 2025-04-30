@@ -17,9 +17,9 @@ class ClientRepository(private val clientDao: ClientDao) {
     suspend fun getClientById(clientId: Long): Client? =
         clientDao.getClientById(clientId)
 
-    /** Returns all clients assigned to a given carer */
-    suspend fun getClientsByCarerId(carerId: Long): List<Client> =
-        clientDao.getClientsByCarerId(carerId)
+//    /** Returns all clients assigned to a given carer */
+//    suspend fun getClientsByCarerId(carerId: Long): List<Client> =
+//        clientDao.getClientsByCarerId(carerId)
 
     /** Deletes the given client */
     suspend fun deleteClient(client: Client) =

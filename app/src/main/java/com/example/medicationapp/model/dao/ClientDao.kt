@@ -12,11 +12,11 @@ interface ClientDao {
     @Query("SELECT * FROM clients")
     suspend fun getAllClients(): List<Client>
 
+    @Query("SELECT * FROM clients WHERE carerId = :carerId")
+    suspend fun getClientsForCarer(carerId: Long): List<Client>
+
     @Query("SELECT * FROM clients WHERE clientId = :clientId")
     suspend fun getClientById(clientId: Long): Client?
-
-    @Query("SELECT * FROM clients WHERE carerId = :carerId")
-    suspend fun getClientsByCarerId(carerId: Long): List<Client>
 
     @Delete
     suspend fun deleteClient(client: Client)

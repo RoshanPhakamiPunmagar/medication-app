@@ -10,21 +10,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.medicationapp.controller.UserController
 import kotlinx.coroutines.launch
+
 @Composable
 fun LoginScreen(
     context: Context,
-    onLoginSuccess: (String) -> Unit,
+    onLoginSuccess: (role: String, userId: Long) -> Unit,
     onNavigateToSignup: () -> Unit
 ) {
     val controller = remember { UserController(context) }
-    val scope      = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
-    var email    by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var error    by remember { mutableStateOf<String?>(null) }
+    var error by remember { mutableStateOf<String?>(null) }
 
     Column(
-        modifier            = Modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
@@ -33,18 +34,18 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value         = email,
+            value = email,
             onValueChange = { email = it },
-            label         = { Text("Email") },
-            modifier      = Modifier.fillMaxWidth()
+            label = { Text("Email") },
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(8.dp))
 
         OutlinedTextField(
-            value         = password,
+            value = password,
             onValueChange = { password = it },
-            label         = { Text("Password") },
-            modifier      = Modifier.fillMaxWidth()
+            label = { Text("Password") },
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
 
@@ -56,7 +57,8 @@ fun LoginScreen(
                     if (user != null) {
                         val roleName = controller.getRoleNameById(user.roleId)
                         if (roleName != null) {
-                            onLoginSuccess(roleName)
+                            onLoginSuccess(roleName, user.userId)
+                        // ✅ Pass user ID here
                         } else {
                             error = "User role not found"
                         }
@@ -71,7 +73,7 @@ fun LoginScreen(
         }
 
         TextButton(
-            onClick  = onNavigateToSignup,
+            onClick = onNavigateToSignup,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text("Don't have an account? Sign up")

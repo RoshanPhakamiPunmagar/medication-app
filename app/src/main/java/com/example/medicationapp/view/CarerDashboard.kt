@@ -24,7 +24,7 @@ import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarrerMainScreen(clientController: ClientController, navController: NavController) {
+fun CarrerMainScreen(clientController: ClientController, navController: NavController, carerId: Long) {
     val bottomNavController = rememberNavController()
 
     val bottomNavItems = listOf(
@@ -76,7 +76,8 @@ fun CarrerMainScreen(clientController: ClientController, navController: NavContr
                 composable(BottomNavItemForCarer.SeeClient.route) {
                     ClientSelectionScreen(
                         clientController = clientController,
-                        navController = navController
+                        navController = navController,
+                        carerId = carerId
                     )
                 }
                 composable(BottomNavItemForCarer.IncidentReport.route) { IncidentNotesScreen() }

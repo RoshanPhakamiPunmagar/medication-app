@@ -32,7 +32,7 @@ sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, v
 }
 
 sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val label: String) {
-    object SeeClient : BottomNavItemForCarer("client_selection", Icons.Default.Home, "See Client")
+    object SeeClient : BottomNavItemForCarer("client_selection/{carerId}", Icons.Default.Home, "See Client")
     object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
     object Settings : BottomNavItemForCarer("settings", Icons.Default.Settings, "Settings") // Create screen later
 }
@@ -54,10 +54,10 @@ fun AppNavigation(modifier:Modifier = Modifier) {
         composable("login") {
             LoginScreen(
                 context = context,
-                onLoginSuccess = { role ->
+                onLoginSuccess = { role, userId ->
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer" -> navController.navigate("carer_dashboard")  // Default clientId
+                        "Carer"   -> navController.navigate("carer_dashboard/$userId")
                     }
                 },
                 onNavigateToSignup = {
@@ -81,13 +81,12 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             ManagerMainScreen(clientController, medicationController)
         }
 
-        composable("carer_dashboard") {
-            CarrerMainScreen(
-                clientController = clientController,
-                navController = navController
-            )
+        composable("carer_dashboard/{carerId}", arguments = listOf(
+            navArgument("carerId") { type = NavType.LongType }
+        )) { backStackEntry ->
+            val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
+            CarrerMainScreen(clientController = clientController, navController = navController, carerId = carerId)
         }
-
 
 
         // Manager sub‐screens
@@ -107,10 +106,15 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             AssignCarerScreen()
         }
 
-        composable("client_selection") {
+        composable(
+            "client_selection/{carerId}",
+            arguments = listOf(navArgument("carerId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
             ClientSelectionScreen(
                 clientController = clientController,
-                navController = navController
+                navController = navController,
+                carerId = carerId
             )
         }
 

@@ -18,14 +18,9 @@ class ClientController(private val context: Context) {  // ← make 'context' a 
         return clientDao.getAllClients()
     }
 
-    suspend fun assignMedication(clientMedication: ClientMedication) {
-        clientMedicationDao.insertClientMedication(clientMedication)
+    suspend fun getClientsForCarer(carerId: Long): List<Client> {
+        return clientDao.getClientsForCarer(carerId)
     }
-
-    suspend fun insertAdherenceLog(log: AdherenceLog) {
-        adherenceLogDao.insertAdherenceLog(log)
-    }
-
 
 
     suspend fun logMedication(medicationLog: MedicationLog) {

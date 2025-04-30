@@ -49,7 +49,8 @@ fun ActualTimeInput(
 @Composable
 fun ClientSelectionScreen(
     clientController: ClientController,
-    navController: NavController
+    navController: NavController,
+    carerId : Long
 ) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
@@ -61,8 +62,8 @@ fun ClientSelectionScreen(
     var status by remember { mutableStateOf(MedicationLog.Status.Given) }
     var notes by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
-        clients = clientController.getAllClients()
+    LaunchedEffect(carerId) {
+        clients = clientController.getClientsForCarer(carerId)
     }
 
     Scaffold(

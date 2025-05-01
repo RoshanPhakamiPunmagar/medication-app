@@ -5,7 +5,7 @@ package com.example.medicationapp.model.repository
 
 class UserRepository(private val userDao: UserDao) {
     suspend fun register(user: User) {
-        userDao.insertUser(user) // ✅ call the correct method name
+        userDao.insertUser(user)
     }
 
     suspend fun login(email: String, password: String): User? = userDao.login(email, password)

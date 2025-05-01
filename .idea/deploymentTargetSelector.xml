@@ -3,7 +3,6 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="MedicationApp.app">
-      <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

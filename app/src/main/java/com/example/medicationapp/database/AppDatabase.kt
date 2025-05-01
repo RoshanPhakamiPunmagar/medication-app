@@ -130,6 +130,83 @@ abstract class AppDatabase : RoomDatabase() {
                         managerId = managerId
                     )
                 )
+
+                clientDao.insertClient(
+                    Client(
+                        name = "Lisa MoonLit",
+                        dob = "2001-11-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+
+                clientDao.insertClient(
+                    Client(
+                        name = "Lisa MooLit",
+                        dob = "1950-11-05",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+
+                clientDao.insertClient(
+                    Client(
+                        name = "Lisa Mot",
+                        dob = "1950-11-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+
+                clientDao.insertClient(
+                    Client(
+                        name = "Lisa MoonLit",
+                        dob = "1250-11-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+
+                clientDao.insertClient(
+                    Client(
+                        name = "La MoonLit",
+                        dob = "1950-11-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+                clientDao.insertClient(
+                    Client(
+                        name = "Lisa MoonLit",
+                        dob = "1950-01-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+                clientDao.insertClient(
+                    Client(
+                        name = "Lisa MoLit",
+                        dob = "1950-11-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
+                clientDao.insertClient(
+                    Client(
+                        name = "Lsa MoonLit",
+                        dob = "1950-11-30",
+                        contactInfo = "555‑0303",
+                        carerId = null,
+                        managerId = managerId
+                    )
+                )
             }
 
             // Seed medications

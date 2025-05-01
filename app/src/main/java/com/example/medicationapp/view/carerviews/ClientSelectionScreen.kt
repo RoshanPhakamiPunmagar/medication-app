@@ -2,6 +2,8 @@ package com.example.medicationapp.view.carerviews
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -71,9 +73,12 @@ fun ClientSelectionScreen(
             CenterAlignedTopAppBar(title = { Text("Select Client") })
         }
     ) { innerPadding ->
+
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(innerPadding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -132,10 +137,6 @@ fun ClientSelectionScreen(
                                 Text(medicationName, style = MaterialTheme.typography.titleMedium)
                                 Text(
                                     "Dosage: ${clientMedication.dosage}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                                Text(
-                                    "Frequency: ${clientMedication.frequency}",
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }

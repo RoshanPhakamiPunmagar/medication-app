@@ -38,7 +38,6 @@ data class ClientMedication(
     val clientId: Long,
     val medicationId: Long,
     val dosage: String,
-    val frequency: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val isPaused: Boolean = false,

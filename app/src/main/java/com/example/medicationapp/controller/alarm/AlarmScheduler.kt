@@ -12,7 +12,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
-const val REMINDER = "REMINDER"
 class AlarmScheduler(private val context: Context) {
     private val today = LocalDate.now()
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
@@ -78,10 +77,6 @@ class AlarmScheduler(private val context: Context) {
         )
     }
 
-    fun returnContext():Context {
-        return context
-    }
-
 
 }
 
@@ -96,49 +91,3 @@ fun setClientMedication(clientMedication: ClientMedication) {
 }
 
 
-
-
-//    fun cancelAlarm(reminder: ClientMedication) {
-//        // Convert first scheduled time to milliseconds
-//        val firstTimeInMillis: Long = reminder.scheduledTimes
-//            .firstOrNull()
-//            ?.atDate(LocalDate.now())
-//            ?.atZone(ZoneId.systemDefault())
-//            ?.toInstant()
-//            ?.toEpochMilli() ?: 0L
-//
-//        val intent = Intent(context, AlarmReceiver::class.java).apply {
-//            putExtra(REMINDER, Gson().toJson(reminder))
-//        }
-//
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            context, firstTimeInMillis.toInt(),
-//            intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-//        )
-//
-//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        try {
-//            alarmManager.cancel(pendingIntent)
-//        } catch (e: SecurityException) {
-//            e.printStackTrace()
-//        }
-//    }
-
-
-
-//
-//    fun cancel(clientMedication: ClientMedication) {
-//        clientMedication.scheduledTimes.forEach { localTime ->
-//            val triggerAtMillis = localTime
-//                .atDate(today)
-//                .atZone(ZoneId.systemDefault())
-//                .toInstant()
-//                .toEpochMilli()
-//
-//            val requestCode = (clientMedication.clientMedicationId.toString() + triggerAtMillis).hashCode()
-//
-//            val pendingIntent = alarmIntent(clientMedication, requestCode)
-//            alarmManager.cancel(pendingIntent)
-//            Log.d("AlarmDebug", "Cancelled alarm with requestCode $requestCode")
-//        }
-//    }

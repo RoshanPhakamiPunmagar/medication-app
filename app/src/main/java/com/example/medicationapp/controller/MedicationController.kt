@@ -51,7 +51,6 @@ class MedicationController(context: Context) {
         clientId: Long,
         medicationId: Long,
         dosage: String,
-        frequency: String,
         startDate: LocalDate,
         endDate: LocalDate,
         scheduledTimes: List<LocalTime>
@@ -60,7 +59,6 @@ class MedicationController(context: Context) {
             clientId = clientId,
             medicationId = medicationId,
             dosage = dosage,
-            frequency = frequency,
             startDate = startDate,
             endDate = endDate,
             scheduledTimes = scheduledTimes

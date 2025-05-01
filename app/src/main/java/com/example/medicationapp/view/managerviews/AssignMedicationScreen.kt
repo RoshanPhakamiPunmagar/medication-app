@@ -6,6 +6,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
@@ -20,6 +23,7 @@ import com.example.medicationapp.controller.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
+import com.example.medicationapp.model.TimeWheelPickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -45,7 +49,6 @@ fun AssignMedicationScreen(
     var selectedMedication by remember { mutableStateOf<Medication?>(null) }
 
     var dosage by remember { mutableStateOf("") }
-    var frequency by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
     var scheduledTimes by remember { mutableStateOf<List<LocalTime>>(emptyList()) }
@@ -68,12 +71,16 @@ fun AssignMedicationScreen(
         medications = medicationController.getAllMedications()
     }
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    )
+    {
         Text("Assign Medication", style = MaterialTheme.typography.headlineMedium)
 
         // --- Client Dropdown ---
@@ -92,7 +99,8 @@ fun AssignMedicationScreen(
         )
         DropdownMenu(
             expanded = clientExpanded,
-            onDismissRequest = { clientExpanded = false }
+            onDismissRequest = { clientExpanded = false },
+            modifier = Modifier.heightIn(max = 300.dp)
         ) {
             clients.forEach { client ->
                 DropdownMenuItem(
@@ -105,7 +113,8 @@ fun AssignMedicationScreen(
             }
         }
 
-        // --- Medication Dropdown ---
+
+        // Medication Dropdown
         var medicationExpanded by remember { mutableStateOf(false) }
         TextField(
             value = selectedMedication?.name ?: "",
@@ -121,7 +130,8 @@ fun AssignMedicationScreen(
         )
         DropdownMenu(
             expanded = medicationExpanded,
-            onDismissRequest = { medicationExpanded = false }
+            onDismissRequest = { medicationExpanded = false },
+            modifier = Modifier.heightIn(max = 300.dp)
         ) {
             medications.forEach { med ->
                 DropdownMenuItem(
@@ -134,19 +144,15 @@ fun AssignMedicationScreen(
             }
         }
 
-        // --- Inputs ---
+
+        //Inputs
         TextField(
             value = dosage,
             onValueChange = { dosage = it },
             label = { Text("Dosage") },
             modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = frequency,
-            onValueChange = { frequency = it },
-            label = { Text("Frequency") },
-            modifier = Modifier.fillMaxWidth()
-        )
+
         TextField(
             value = startDate,
             onValueChange = { startDate = it },
@@ -160,7 +166,7 @@ fun AssignMedicationScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // --- Scheduled Times ---
+        //Scheduled Times
         Text("Scheduled Times:", style = MaterialTheme.typography.titleMedium)
         if (scheduledTimes.isEmpty()) {
             Text("No times added yet.")
@@ -207,7 +213,6 @@ fun AssignMedicationScreen(
                                     clientId = clientId,
                                     medicationId = medicationId.toLong(),
                                     dosage = dosage,
-                                    frequency = frequency,
                                     startDate = parsedStart,
                                     endDate = parsedEnd,
                                     scheduledTimes = timeFormated
@@ -227,7 +232,7 @@ fun AssignMedicationScreen(
                 }
             },
             enabled = selectedClient != null && selectedMedication != null &&
-                    dosage.isNotBlank() && frequency.isNotBlank() &&
+                    dosage.isNotBlank() &&
                     startDate.isNotBlank() && endDate.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -249,7 +254,6 @@ fun AssignMedicationScreen(
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text("Medication: ${schedule.medicationId}")
                         Text("Dosage: ${schedule.dosage}")
-                        Text("Frequency: ${schedule.frequency}")
                         Text("Start Date: ${schedule.startDate}")
                         Text("End Date: ${schedule.endDate}")
                     }
@@ -258,40 +262,16 @@ fun AssignMedicationScreen(
         }
     }
 
-    // --- Simple Time Picker Dialog ---
+    // --- Use TimeWheelPickerDialog instead of text input ---
     if (showTimePicker) {
-        AlertDialog(
-            onDismissRequest = { showTimePicker = false },
-            title = { Text("Add Scheduled Time") },
-            text = {
-                Column {
-                    TextField(
-                        value = timeInput,
-                        onValueChange = { timeInput = it },
-                        label = { Text("Enter Time") }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        try {
-                            val time = LocalTime.parse(timeInput)
-                            scheduledTimes = scheduledTimes + time
-                            showTimePicker = false
-                            timeInput = ""
-                        } catch (e: Exception) {
-                        }
-                    }
-                ) {
-                    Text("Add Time")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showTimePicker = false }) {
-                    Text("Cancel")
-                }
+        TimeWheelPickerDialog(
+            onDismiss = { showTimePicker = false },
+            onTimeSelected = { hour, minute ->
+                val time = LocalTime.of(hour, minute)
+                scheduledTimes = scheduledTimes + time
+                showTimePicker = false
             }
         )
     }
+
 }

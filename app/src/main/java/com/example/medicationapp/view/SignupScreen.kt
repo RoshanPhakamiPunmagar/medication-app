@@ -2,12 +2,8 @@ package com.example.medicationapp.view
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -26,16 +22,10 @@ fun SignupScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var roles by remember { mutableStateOf(listOf<String>()) }
-    var selectedRole by remember { mutableStateOf("") }
-    var dropdownOpen by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    // Load roles once
-    LaunchedEffect(Unit) {
-        controller.preloadRoles()
-        roles = controller.getRoles()
-    }
+    // Fixed role as "Carer"
+    val selectedRole = "Carer"
 
     Column(
         modifier = Modifier
@@ -78,40 +68,14 @@ fun SignupScreen(
         )
         Spacer(Modifier.height(16.dp))
 
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(
-                value = selectedRole,
-                onValueChange = {},
-                label = { Text("Select Role") },
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-            IconButton(
-                onClick = { dropdownOpen = !dropdownOpen },
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Dropdown"
-                )
-            }
-
-            DropdownMenu(
-                expanded = dropdownOpen,
-                onDismissRequest = { dropdownOpen = false },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                roles.forEach { role ->
-                    DropdownMenuItem(
-                        text = { Text(role) },
-                        onClick = {
-                            selectedRole = role
-                            dropdownOpen = false
-                        }
-                    )
-                }
-            }
-        }
+        // Display the fixed role "Carer"
+        OutlinedTextField(
+            value = selectedRole,
+            onValueChange = {},
+            label = { Text("Role") },
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(Modifier.height(24.dp))
 
@@ -121,7 +85,6 @@ fun SignupScreen(
 
                 when {
                     password != confirmPassword -> error = "Passwords do not match."
-                    selectedRole.isBlank() -> error = "Please select a role."
                     else -> {
                         scope.launch {
                             val result = controller.registerUser(

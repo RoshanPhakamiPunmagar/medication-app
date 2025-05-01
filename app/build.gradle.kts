@@ -41,10 +41,14 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 }
 
 dependencies {
+
+    implementation ("androidx.compose.ui:ui-viewbinding:1.6.1")
+
 
     dependencies {
         implementation ("androidx.compose.material:material-icons-extended:1.5.4")

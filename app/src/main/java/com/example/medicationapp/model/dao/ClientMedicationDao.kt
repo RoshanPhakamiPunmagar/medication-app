@@ -20,6 +20,7 @@ interface ClientMedicationDao {
 
     @Query("SELECT * FROM client_medications WHERE medicationId = :id")
     suspend fun getClientMedicationById(id: Int): ClientMedication
+    suspend fun getClientMedicationById(id: Long): ClientMedication
 
     @Query("SELECT * FROM client_medications")
     suspend fun getAllClientMedications(): List<ClientMedication>
@@ -27,5 +28,7 @@ interface ClientMedicationDao {
     @Query("SELECT * FROM client_medications WHERE medicationId = :medicationId")
     suspend fun getClientsForMedication(medicationId: Int): List<ClientMedication>
 
+    @Query("SELECT * FROM client_medications WHERE clientMedicationId = :clientMedicationId")
+    suspend fun getClientsMedicationById(clientMedicationId: Int): ClientMedication
 
 }

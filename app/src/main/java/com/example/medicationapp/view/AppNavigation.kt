@@ -1,5 +1,6 @@
 package com.example.medicationapp.view
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
@@ -42,6 +44,8 @@ sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val
 @Composable
 fun AppNavigation(modifier:Modifier = Modifier) {
     val navController = rememberNavController()
+fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier) {
+
     val context = LocalContext.current
 
     val clientController = remember { ClientController(context) }
@@ -54,6 +58,9 @@ fun AppNavigation(modifier:Modifier = Modifier) {
             LoginScreen(
                 context = context,
                 onLoginSuccess = { role, userId ->
+                    val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                    sharedPref.edit().putString("user_role", role).apply()
+
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
                         "Carer"   -> navController.navigate("carer_dashboard/$userId")
@@ -78,6 +85,7 @@ fun AppNavigation(modifier:Modifier = Modifier) {
         // Manager Dashboard
         composable("manager_dashboard") {
             ManagerMainScreen(clientController, medicationController)
+            ManagerMainScreen(clientController, medicationController, context, navController)
         }
 
         composable("carer_dashboard/{carerId}", arguments = listOf(
@@ -85,6 +93,7 @@ fun AppNavigation(modifier:Modifier = Modifier) {
         )) { backStackEntry ->
             val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
             CarrerMainScreen(clientController = clientController, navController = navController, carerId = carerId)
+            CarrerMainScreen(clientController = clientController, navController = navController, carerId = carerId, context)
         }
 
 
@@ -120,6 +129,10 @@ fun AppNavigation(modifier:Modifier = Modifier) {
 
         composable("incident_notes") {
             IncidentNotesScreen()
+        }
+
+        composable("settings") {
+            SettingScreen(context,navController)
         }
 
     }

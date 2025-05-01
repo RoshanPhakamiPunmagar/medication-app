@@ -20,6 +20,9 @@ class MedicationController(context: Context) {
         return medicationDao.getAllMedications()
     }
 
+    suspend fun getMedications(id:Long): Medication? {
+        return medicationDao.getMedicationById(id)
+    }
 
     suspend fun updateSchedule(
         clientMedication: ClientMedication
@@ -53,6 +56,7 @@ class MedicationController(context: Context) {
         endDate: LocalDate,
         scheduledTimes: List<LocalTime>
     ) {
+    ) : ClientMedication{
         val clientMedication = ClientMedication(
             clientId = clientId,
             medicationId = medicationId,
@@ -63,6 +67,7 @@ class MedicationController(context: Context) {
             scheduledTimes = scheduledTimes
         )
         clientMedicationDao.insertClientMedication(clientMedication)
+        return clientMedication
     }
 
     // Update an existing client medication schedule

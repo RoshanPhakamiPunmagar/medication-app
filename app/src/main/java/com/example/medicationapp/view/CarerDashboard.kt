@@ -1,5 +1,6 @@
 package com.example.medicationapp.view
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,6 +27,7 @@ import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarrerMainScreen(clientController: ClientController, navController: NavController, carerId: Long) {
+fun CarrerMainScreen(clientController: ClientController, navController: NavHostController, carerId: Long, context: Context) {
     val bottomNavController = rememberNavController()
 
     val bottomNavItems = listOf(
@@ -85,6 +88,8 @@ fun CarrerMainScreen(clientController: ClientController, navController: NavContr
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("Settings coming soon!")
                     }
+                composable(BottomNavItemForCarer.Settings.route) {
+                    SettingScreen(context,navController)
                 }
             }
 

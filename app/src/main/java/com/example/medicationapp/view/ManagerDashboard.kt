@@ -1,5 +1,6 @@
 package com.example.medicationapp.view
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -16,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,6 +32,7 @@ import com.example.medicationapp.view.managerviews.AssignMedicationScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManagerMainScreen(clientController:ClientController, medicationController:MedicationController) {
+fun ManagerMainScreen(clientController:ClientController, medicationController:MedicationController, context:Context, navHostController: NavHostController) {
     val bottomNavController = rememberNavController()
 
     val bottomNavItems = listOf(
@@ -85,6 +88,8 @@ fun ManagerMainScreen(clientController:ClientController, medicationController:Me
                         Text("Settings coming soon!")
                     }
                 }
+                    SettingScreen(context,navHostController) }
+
             }
         }
     }

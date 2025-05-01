@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlinx.parcelize.Parcelize
+import android.os.Parcelable
 
 @Entity(
     tableName = "client_medications",
@@ -29,6 +31,7 @@ import java.time.LocalTime
         Index("medicationId")
     ]
 )
+@Parcelize
 data class ClientMedication(
     @PrimaryKey(autoGenerate = true)
     val clientMedicationId: Long = 0,
@@ -43,3 +46,4 @@ data class ClientMedication(
 
 
 )
+):Parcelable

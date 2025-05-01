@@ -22,6 +22,11 @@ class ClientController(private val context: Context) {  // ← make 'context' a 
         return clientDao.getClientsForCarer(carerId)
     }
 
+    suspend fun getClientById(carerId: Long): Client {
+        return clientDao.getClientById(carerId)
+    }
+
+
 
     suspend fun logMedication(medicationLog: MedicationLog) {
         medicationLogDao.insertLog(medicationLog)

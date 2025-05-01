@@ -17,6 +17,7 @@ interface ClientDao {
 
     @Query("SELECT * FROM clients WHERE clientId = :clientId")
     suspend fun getClientById(clientId: Long): Client?
+    suspend fun getClientById(clientId: Long): Client
 
     @Delete
     suspend fun deleteClient(client: Client)

@@ -1,6 +1,9 @@
 package com.example.medicationapp.view.managerviews
 
+import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -8,9 +11,12 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.controller.MedicationController
+import com.example.medicationapp.controller.alarm.AlarmReceiver
+import com.example.medicationapp.controller.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
@@ -18,15 +24,19 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 @RequiresApi(Build.VERSION_CODES.O)
+
+@SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssignMedicationScreen(
     clientController: ClientController,
     medicationController: MedicationController
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
@@ -46,6 +56,13 @@ fun AssignMedicationScreen(
 
     var showTimePicker by remember { mutableStateOf(false) }
     var timeInput by remember { mutableStateOf("") }
+
+
+
+    var clientMedication by remember { mutableStateOf<ClientMedication?>(null) }
+
+    val scheduler = AlarmScheduler(context)
+
 
     LaunchedEffect(Unit) {
         clients = clientController.getAllClients()
@@ -169,9 +186,26 @@ fun AssignMedicationScreen(
                         val parsedStart = LocalDate.parse(startDate)
                         val parsedEnd = LocalDate.parse(endDate)
 
+                        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                        val timeFormated: List<LocalTime> = scheduledTimes.mapNotNull { timeStr ->
+                            try {
+                                Log.e("TimeParse", "Sucess to parse $timeStr")
+                                LocalTime.parse(timeStr.toString(), formatter)
+                            } catch (e: Exception) {
+                                Log.e("TimeParse", "Failed to parse $timeStr", e)
+                                null // Skip invalid times
+                            }
+                        }.filterNotNull() // Remove any nulls from failed parses
+
+                        if (timeFormated.isEmpty()) {
+                            // Show error to user
+                            Toast.makeText(context, "Please enter valid times", Toast.LENGTH_SHORT).show()
+
+                        }
                         selectedClient?.clientId?.let { clientId ->
                             selectedMedication?.medicationId?.let { medicationId ->
                                 medicationController.assignMedicationToClient(
+                                clientMedication    = medicationController.assignMedicationToClient(
                                     clientId = clientId,
                                     medicationId = medicationId.toLong(),
                                     dosage = dosage,
@@ -179,7 +213,12 @@ fun AssignMedicationScreen(
                                     startDate = parsedStart,
                                     endDate = parsedEnd,
                                     scheduledTimes = scheduledTimes
+                                    scheduledTimes = timeFormated
                                 )
+                                Log.d("AlarmCheck", "clientMedication is ${clientMedication?.clientMedicationId}")
+                                clientMedication?.let(scheduler::setUpAlarm)
+
+
                                 successMessage = "Medication assigned successfully!"
                             }
                         }

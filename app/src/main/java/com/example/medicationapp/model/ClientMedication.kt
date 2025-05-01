@@ -45,5 +45,4 @@ data class ClientMedication(
     val scheduledTimes: List<LocalTime>
 
 
-)
 ):Parcelable

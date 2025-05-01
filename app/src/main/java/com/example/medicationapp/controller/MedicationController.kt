@@ -55,7 +55,6 @@ class MedicationController(context: Context) {
         startDate: LocalDate,
         endDate: LocalDate,
         scheduledTimes: List<LocalTime>
-    ) {
     ) : ClientMedication{
         val clientMedication = ClientMedication(
             clientId = clientId,

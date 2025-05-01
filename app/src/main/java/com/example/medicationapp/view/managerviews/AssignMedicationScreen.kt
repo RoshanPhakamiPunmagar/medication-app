@@ -27,7 +27,6 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-@RequiresApi(Build.VERSION_CODES.O)
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,7 +203,6 @@ fun AssignMedicationScreen(
                         }
                         selectedClient?.clientId?.let { clientId ->
                             selectedMedication?.medicationId?.let { medicationId ->
-                                medicationController.assignMedicationToClient(
                                 clientMedication    = medicationController.assignMedicationToClient(
                                     clientId = clientId,
                                     medicationId = medicationId.toLong(),
@@ -212,7 +210,6 @@ fun AssignMedicationScreen(
                                     frequency = frequency,
                                     startDate = parsedStart,
                                     endDate = parsedEnd,
-                                    scheduledTimes = scheduledTimes
                                     scheduledTimes = timeFormated
                                 )
                                 Log.d("AlarmCheck", "clientMedication is ${clientMedication?.clientMedicationId}")

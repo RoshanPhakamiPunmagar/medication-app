@@ -26,7 +26,6 @@ import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarrerMainScreen(clientController: ClientController, navController: NavController, carerId: Long) {
 fun CarrerMainScreen(clientController: ClientController, navController: NavHostController, carerId: Long, context: Context) {
     val bottomNavController = rememberNavController()
 
@@ -84,10 +83,6 @@ fun CarrerMainScreen(clientController: ClientController, navController: NavHostC
                     )
                 }
                 composable(BottomNavItemForCarer.IncidentReport.route) { IncidentNotesScreen() }
-                composable(BottomNavItemForManager.Settings.route) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Settings coming soon!")
-                    }
                 composable(BottomNavItemForCarer.Settings.route) {
                     SettingScreen(context,navController)
                 }

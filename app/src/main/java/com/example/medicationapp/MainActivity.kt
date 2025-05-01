@@ -16,11 +16,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppDatabase.getDatabase(this) // triggers the onCreate callback if DB didn’t exist
-        setContent { Surface (modifier = Modifier.fillMaxSize())
         setContent {   val navController = rememberNavController()
             Surface (modifier = Modifier.fillMaxSize())
         {
-            AppNavigation()
             AppNavigation(navController)
         }
         }

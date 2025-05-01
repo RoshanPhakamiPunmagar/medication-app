@@ -42,8 +42,6 @@ sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(modifier:Modifier = Modifier) {
-    val navController = rememberNavController()
 fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier) {
 
     val context = LocalContext.current
@@ -84,7 +82,6 @@ fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier
 
         // Manager Dashboard
         composable("manager_dashboard") {
-            ManagerMainScreen(clientController, medicationController)
             ManagerMainScreen(clientController, medicationController, context, navController)
         }
 
@@ -92,7 +89,6 @@ fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier
             navArgument("carerId") { type = NavType.LongType }
         )) { backStackEntry ->
             val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
-            CarrerMainScreen(clientController = clientController, navController = navController, carerId = carerId)
             CarrerMainScreen(clientController = clientController, navController = navController, carerId = carerId, context)
         }
 

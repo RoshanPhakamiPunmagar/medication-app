@@ -31,7 +31,6 @@ import com.example.medicationapp.view.managerviews.AssignMedicationScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManagerMainScreen(clientController:ClientController, medicationController:MedicationController) {
 fun ManagerMainScreen(clientController:ClientController, medicationController:MedicationController, context:Context, navHostController: NavHostController) {
     val bottomNavController = rememberNavController()
 
@@ -84,10 +83,6 @@ fun ManagerMainScreen(clientController:ClientController, medicationController:Me
                 composable(BottomNavItemForManager.AssignCarer.route) { AssignCarerScreen() }
                 composable(BottomNavItemForManager.AssignMedication.route) { AssignMedicationScreen(clientController, medicationController) }
                 composable(BottomNavItemForManager.Settings.route) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Settings coming soon!")
-                    }
-                }
                     SettingScreen(context,navHostController) }
 
             }

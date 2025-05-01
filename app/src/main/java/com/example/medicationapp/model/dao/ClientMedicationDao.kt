@@ -19,7 +19,6 @@ interface ClientMedicationDao {
     suspend fun getMedicationsForClient(clientId: Long): List<ClientMedication>
 
     @Query("SELECT * FROM client_medications WHERE medicationId = :id")
-    suspend fun getClientMedicationById(id: Int): ClientMedication
     suspend fun getClientMedicationById(id: Long): ClientMedication
 
     @Query("SELECT * FROM client_medications")

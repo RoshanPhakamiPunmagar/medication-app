@@ -23,7 +23,7 @@ fun SettingScreen(context:Context, navHostController: NavHostController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Upload Incident Notes") }
+                title = { Text("Settings") }
             )
         }
     ) { innerPadding ->

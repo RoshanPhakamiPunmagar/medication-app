@@ -16,7 +16,6 @@ interface ClientDao {
     suspend fun getClientsForCarer(carerId: Long): List<Client>
 
     @Query("SELECT * FROM clients WHERE clientId = :clientId")
-    suspend fun getClientById(clientId: Long): Client?
     suspend fun getClientById(clientId: Long): Client
 
     @Delete

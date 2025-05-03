@@ -27,6 +27,7 @@ import com.example.medicationapp.navbar.ContentScreen
 import com.example.medicationapp.navbar.NavItem
 import com.example.medicationapp.view.managerviews.AssignCarerScreen
 import com.example.medicationapp.view.managerviews.AssignMedicationScreen
+import com.example.medicationapp.view.managerviews.ReportScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,6 +83,8 @@ fun ManagerMainScreen(clientController:ClientController, medicationController:Me
             ) {
                 composable(BottomNavItemForManager.AssignCarer.route) { AssignCarerScreen() }
                 composable(BottomNavItemForManager.AssignMedication.route) { AssignMedicationScreen(clientController, medicationController) }
+                composable(BottomNavItemForManager.Reports.route) {
+                    ReportScreen() }
                 composable(BottomNavItemForManager.Settings.route) {
                     SettingScreen(context,navHostController) }
 

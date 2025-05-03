@@ -64,7 +64,7 @@ public class UserRestController {
         try {
             Optional<User> user = userRepository.findByEmail(email);
 
-
+            System.out.println(passwordEncoder.encode("a"));
             boolean x = authenticate(password, user.get().getPassword());
 
             if (x) {

@@ -1,12 +1,9 @@
 package com.example.medicationapp.view.managerviews
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,15 +15,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.controller.MedicationController
-import com.example.medicationapp.controller.alarm.AlarmReceiver
-import com.example.medicationapp.controller.alarm.AlarmScheduler
+import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.TimeWheelPickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -218,7 +213,7 @@ fun AssignMedicationScreen(
                                     scheduledTimes = timeFormated
                                 )
                                 Log.d("AlarmCheck", "clientMedication is ${clientMedication?.clientMedicationId}")
-                                clientMedication?.let(scheduler::setUpAlarm)
+                                clientMedication?.let(scheduler::setUpAlarmDateRange)
 
 
                                 successMessage = "Medication assigned successfully!"

@@ -1,4 +1,4 @@
-package com.example.medicationapp.controller.popup
+package com.example.medicationapp.view.popup
 
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +13,8 @@ class AlarmDialogActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Retrieve the clientMedication object from the Intent
-        val clientMedication: ClientMedication? = intent.getParcelableExtra("medication", ClientMedication::class.java)
-
         // Use the clientMedication object in your UI logic
-        Log.d("AlarmDialogActivity", "Received medication: ${clientMedication?.medicationId}")
+        Log.d("AlarmDialogActivity", "Received medication: Call")
 
         // Optionally stop the ringtone when the dialog is displayed
         setContent {

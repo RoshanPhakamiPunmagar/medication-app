@@ -1,4 +1,4 @@
-package com.example.medicationapp.controller.alarm
+package com.example.medicationapp.view.alarm
 
 import android.content.Context
 import android.media.Ringtone

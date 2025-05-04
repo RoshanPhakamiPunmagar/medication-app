@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.controller.UserController
 import com.example.medicationapp.controller.rest.UserViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -21,28 +20,35 @@ fun LoginScreen(
     viewModel: UserViewModel = viewModel()
 ) {
     val controller = remember { UserController(context) }
-    val scope = rememberCoroutineScope()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
+    var isLoggingIn by remember { mutableStateOf(false) }
 
-    val status by viewModel.status.collectAsState()
-
-    LaunchedEffect(status) {
-        status?.let {
-            val user = controller.loginUser(email, password)
-            if (it.getStatus() == "login" && user != null) {
-
-                val roleName = controller.getRoleNameById(user.roleId)
-
-                if (roleName != null) {
-                    onLoginSuccess(roleName, user.userId)
-                } else {
-                    error = "User role not found"
+    LaunchedEffect(isLoggingIn) {
+        if (isLoggingIn) {
+            viewModel.login(email, password)
+            viewModel.status.collect { response ->
+                if (response != null) {
+                    if (response.getStatus() == "login") {
+                        val user = controller.loginUser(email, password)
+                        if (user != null) {
+                            val roleName = controller.getRoleNameById(user.roleId)
+                            if (roleName != null) {
+                                onLoginSuccess(roleName, user.userId)
+                            } else {
+                                error = "User role not found"
+                            }
+                        } else {
+                            error = "Invalid email or password"
+                        }
+                    } else {
+                        error = "Invalid email or password"
+                    }
+                    isLoggingIn = false
+                    return@collect
                 }
-            } else {
-                error = "Invalid email or password"
             }
         }
     }
@@ -75,11 +81,10 @@ fun LoginScreen(
         Button(
             onClick = {
                 error = null
-                scope.launch {
-                    viewModel.login(email,password)
-                }
+                isLoggingIn = true
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoggingIn
         ) {
             Text("Log In")
         }

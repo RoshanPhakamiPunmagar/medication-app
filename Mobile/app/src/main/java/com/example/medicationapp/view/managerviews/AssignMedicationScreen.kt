@@ -241,9 +241,28 @@ fun AssignMedicationScreen(
                     dosage.isNotBlank() &&
                     startDate.isNotBlank() && endDate.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
-        ) {
+        )
+
+        {
             Text("Assign Medication")
         }
+
+        Button(
+            onClick = {
+                selectedClient = null
+                selectedMedication = null
+                dosage = ""
+                startDate = ""
+                endDate = ""
+                scheduledTimes = emptyList()
+                successMessage = null
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
+            Text("Clear All", color = MaterialTheme.colorScheme.onError)
+        }
+
 
         successMessage?.let {
             Text(it, color = MaterialTheme.colorScheme.primary)

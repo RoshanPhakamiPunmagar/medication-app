@@ -8,17 +8,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.controller.UserController
-import com.example.medicationapp.controller.rest.UserViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     context: Context,
     onLoginSuccess: (role: String, userId: Long) -> Unit,
-    onNavigateToSignup: () -> Unit,
-    viewModel: UserViewModel = viewModel()
+    onNavigateToSignup: () -> Unit
 ) {
     val controller = remember { UserController(context) }
     val scope = rememberCoroutineScope()
@@ -26,26 +23,6 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
-
-    val status by viewModel.status.collectAsState()
-
-    LaunchedEffect(status) {
-        status?.let {
-            val user = controller.loginUser(email, password)
-            if (it.getStatus() == "login" && user != null) {
-
-                val roleName = controller.getRoleNameById(user.roleId)
-
-                if (roleName != null) {
-                    onLoginSuccess(roleName, user.userId)
-                } else {
-                    error = "User role not found"
-                }
-            } else {
-                error = "Invalid email or password"
-            }
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -76,7 +53,18 @@ fun LoginScreen(
             onClick = {
                 error = null
                 scope.launch {
-                    viewModel.login(email,password)
+                    val user = controller.loginUser(email, password)
+                    if (user != null) {
+                        val roleName = controller.getRoleNameById(user.roleId)
+                        if (roleName != null) {
+                            onLoginSuccess(roleName, user.userId)
+                        // ✅ Pass user ID here
+                        } else {
+                            error = "User role not found"
+                        }
+                    } else {
+                        error = "Invalid email or password"
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()

@@ -18,35 +18,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-@Composable
-fun ActualTimeInput(
-    actualTime: LocalTime?,
-    onTimeChange: (LocalTime?) -> Unit
-) {
-    var timeText by remember { mutableStateOf(TextFieldValue(actualTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "")) }
-
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-
-    fun parseTimeInput(input: String): LocalTime? {
-        return try {
-            LocalTime.parse(input, formatter)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    TextField(
-        value = timeText,
-        onValueChange = {
-            timeText = it
-            val parsedTime = parseTimeInput(it.text)
-            onTimeChange(parsedTime)
-        },
-        label = { Text("Enter Actual Time (HH:mm)") },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientSelectionScreen(
@@ -170,10 +141,6 @@ fun ClientSelectionScreen(
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
-
-                        ActualTimeInput(actualTime = actualTime, onTimeChange = {
-                            actualTime = it
-                        })
 
                         Spacer(modifier = Modifier.height(8.dp))
 

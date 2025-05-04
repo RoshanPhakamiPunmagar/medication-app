@@ -57,27 +57,27 @@ public class UserRestController {
     }
 
 
-
     @PostMapping("/check")
     public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {
         Map<String, String> response = new HashMap<>();
         try {
             Optional<User> user = userRepository.findByEmail(email);
 
-            System.out.println(passwordEncoder.encode("a"));
+            // Log encoded password
+            System.out.println("Encoded password: " + passwordEncoder.encode("password123"));
+
             boolean x = authenticate(password, user.get().getPassword());
 
             if (x) {
                 response.put("status", LOGIN);
-                System.out.println(email + " password" + x);
                 return ResponseEntity.ok(response);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             response.put("status", INVALID);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
+
 
 
     public boolean authenticate(String rawPassword, String encodedPassword) {

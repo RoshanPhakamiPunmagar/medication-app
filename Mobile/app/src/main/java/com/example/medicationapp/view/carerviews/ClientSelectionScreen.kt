@@ -150,6 +150,25 @@ fun ClientSelectionScreen(
                             label = { Text("Notes") },
                             modifier = Modifier.fillMaxWidth()
                         )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = {
+                                notes = ""
+                                actualTime = null
+                                status = MedicationLog.Status.Given
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), // Light blue effect
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Text("Clear")
+                        }
+
+
                     }
                 },
                 confirmButton = {
@@ -232,6 +251,8 @@ fun ClientSelectionScreen(
                         Text("Cancel")
                     }
                 }
+
+
             )
         }
     }}

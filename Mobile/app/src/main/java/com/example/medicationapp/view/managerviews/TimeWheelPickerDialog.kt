@@ -1,5 +1,6 @@
-package com.example.medicationapp.model
+package com.example.medicationapp.view.managerviews
 
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.NumberPicker
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ fun TimeWheelPickerDialog(
     val context = LocalContext.current
 
     // Show Android View AlertDialog from within Compose
-    android.app.AlertDialog.Builder(context).apply {
+    AlertDialog.Builder(context).apply {
         setTitle("Select Time")
 
         val inflater = LayoutInflater.from(context)

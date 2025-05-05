@@ -123,7 +123,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                 clientDao.insertClient(
                     Client(
-                        name = "Lisa MoonLit",
+                        name = "Anmol Saru",
                         dob = "1950-11-30",
                         contactInfo = "555‑0303",
                         carerId = null,
@@ -133,7 +133,7 @@ abstract class AppDatabase : RoomDatabase() {
 
                 clientDao.insertClient(
                     Client(
-                        name = "Lisa MoonLit",
+                        name = "Amy Wix",
                         dob = "2001-11-30",
                         contactInfo = "555‑0303",
                         carerId = null,
@@ -143,7 +143,7 @@ abstract class AppDatabase : RoomDatabase() {
 
                 clientDao.insertClient(
                     Client(
-                        name = "Lisa MooLit",
+                        name = "Jhonny Doey",
                         dob = "1950-11-05",
                         contactInfo = "555‑0303",
                         carerId = null,
@@ -153,7 +153,7 @@ abstract class AppDatabase : RoomDatabase() {
 
                 clientDao.insertClient(
                     Client(
-                        name = "Lisa Mot",
+                        name = "Lisa Motiwala",
                         dob = "1950-11-30",
                         contactInfo = "555‑0303",
                         carerId = null,
@@ -161,52 +161,6 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 )
 
-                clientDao.insertClient(
-                    Client(
-                        name = "Lisa MoonLit",
-                        dob = "1250-11-30",
-                        contactInfo = "555‑0303",
-                        carerId = null,
-                        managerId = managerId
-                    )
-                )
-
-                clientDao.insertClient(
-                    Client(
-                        name = "La MoonLit",
-                        dob = "1950-11-30",
-                        contactInfo = "555‑0303",
-                        carerId = null,
-                        managerId = managerId
-                    )
-                )
-                clientDao.insertClient(
-                    Client(
-                        name = "Lisa MoonLit",
-                        dob = "1950-01-30",
-                        contactInfo = "555‑0303",
-                        carerId = null,
-                        managerId = managerId
-                    )
-                )
-                clientDao.insertClient(
-                    Client(
-                        name = "Lisa MoLit",
-                        dob = "1950-11-30",
-                        contactInfo = "555‑0303",
-                        carerId = null,
-                        managerId = managerId
-                    )
-                )
-                clientDao.insertClient(
-                    Client(
-                        name = "Lsa MoonLit",
-                        dob = "1950-11-30",
-                        contactInfo = "555‑0303",
-                        carerId = null,
-                        managerId = managerId
-                    )
-                )
             }
 
             // Seed medications

@@ -1,5 +1,6 @@
 package com.example.medicationapp.view.carerviews
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -9,10 +10,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.medicationapp.controller.ClientController
+import com.example.medicationapp.controller.ViewModel.MedicationDetailsViewModel
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
+import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.MedicationLog
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -21,7 +25,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ActualTimeInput(
     actualTime: LocalTime?,
-    onTimeChange: (LocalTime?) -> Unit
+    onTimeChange: (LocalTime?) -> Unit,
+
 ) {
     var timeText by remember { mutableStateOf(TextFieldValue(actualTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "")) }
 
@@ -51,7 +56,8 @@ fun ActualTimeInput(
 fun ClientSelectionScreen(
     clientController: ClientController,
     navController: NavController,
-    carerId : Long
+    carerId : Long,
+    clientMedsDetailsViewModel: MedicationDetailsViewModel = viewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
@@ -59,17 +65,29 @@ fun ClientSelectionScreen(
     var medications by remember { mutableStateOf<List<Pair<ClientMedication, String>>>(emptyList()) }
     var selectedMedication by remember { mutableStateOf<Pair<ClientMedication, String>?>(null) }
 
+
+    var allMedications by remember { mutableStateOf<List<String>>(emptyList()) }
+
+    var meds  by remember { mutableStateOf<List<String>>(emptyList()) }
     var actualTime by remember { mutableStateOf<LocalTime?>(null) }
     var status by remember { mutableStateOf(MedicationLog.Status.Given) }
     var notes by remember { mutableStateOf("") }
 
-    LaunchedEffect(carerId) {
+    var medsDetails by remember { mutableStateOf<ClientMedsDescriptions?>(null) }
+    var showDetails by remember { mutableStateOf(false) }
+
+    LaunchedEffect(carerId, selectedClient) {
         clients = clientController.getClientsForCarer(carerId)
+
+            meds = clientController.getMedicationsOfClient(selectedClient?.clientId)
+
     }
+
+
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(title = { Text("Select Client") })
+            CenterAlignedTopAppBar(title = { Text("Client List") })
         }
     ) { innerPadding ->
 
@@ -124,6 +142,7 @@ fun ClientSelectionScreen(
                     Text("No medications assigned.")
                 } else {
                     medications.forEach { (clientMedication, medicationName) ->
+
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -145,8 +164,30 @@ fun ClientSelectionScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Button(onClick = { selectedClient = null }) {
+                Button(onClick = {    showDetails = false
+                    selectedClient = null }) {
                     Text("Back to Client List")
+                }
+
+                Button(onClick = {
+
+                        meds.forEach {
+                        Log.d("All medication", it)
+                    }
+                    if(showDetails == true) {
+
+                        showDetails = false
+                    }
+                    else {
+                        showDetails = true
+                        clientMedsDetailsViewModel.fetchMedicationDetails(meds)
+
+                    }
+                }) {
+                    Text("More AI Details")
+                }
+                if (showDetails) {
+                    MoreDetails(viewModel = clientMedsDetailsViewModel)
                 }
             }
         }

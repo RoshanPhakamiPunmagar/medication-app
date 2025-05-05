@@ -43,5 +43,21 @@ class ClientController(private val context: Context) {  // ← make 'context' a 
         }
     }
 
-}
+    suspend fun getMedicationsOfClient(clientId: Long?): List<String> {
+        if(clientId != null) {
+            val medications = clientMedicationDao.getMedicationsForClient(clientId)
+
+
+            return medications.mapNotNull { clientMedication ->
+                val medication = medicationDao.getMedicationById(clientMedication.medicationId)
+                medication?.let {
+                    it.name
+                }
+            }
+        }
+        return emptyList()
+        }
+    }
+
+
 

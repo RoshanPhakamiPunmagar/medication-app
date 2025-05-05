@@ -1,11 +1,14 @@
 package com.example.medicationapp.view.managerviews
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
@@ -15,16 +18,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.controller.MedicationController
-import com.example.medicationapp.controller.alarm.AlarmScheduler
+import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.TimeWheelPickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +56,9 @@ fun AssignMedicationScreen(
     var schedules by remember { mutableStateOf<List<ClientMedication>>(emptyList()) }
 
     var showTimePicker by remember { mutableStateOf(false) }
+    var timeInput by remember { mutableStateOf("") }
+
+
 
     var clientMedication by remember { mutableStateOf<ClientMedication?>(null) }
 
@@ -75,7 +83,8 @@ fun AssignMedicationScreen(
             .verticalScroll(scrollState)
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    )
+    {
         Text("Assign Medication", style = MaterialTheme.typography.headlineMedium)
 
         // --- Client Dropdown ---
@@ -107,6 +116,7 @@ fun AssignMedicationScreen(
                 )
             }
         }
+
 
         // Medication Dropdown
         var medicationExpanded by remember { mutableStateOf(false) }
@@ -179,7 +189,7 @@ fun AssignMedicationScreen(
             Text("Add Scheduled Time")
         }
 
-        // Save Button
+        // --- Save Button ---
         Button(
             onClick = {
                 coroutineScope.launch {
@@ -187,29 +197,41 @@ fun AssignMedicationScreen(
                         val parsedStart = LocalDate.parse(startDate)
                         val parsedEnd = LocalDate.parse(endDate)
 
-                        if (scheduledTimes.isEmpty()) {
-                            Toast.makeText(context, "Please add at least one scheduled time", Toast.LENGTH_SHORT).show()
-                            return@launch
-                        }
+                        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                        val timeFormated: List<LocalTime> = scheduledTimes.mapNotNull { timeStr ->
+                            try {
+                                Log.e("TimeParse", "Sucess to parse $timeStr")
+                                LocalTime.parse(timeStr.toString(), formatter)
+                            } catch (e: Exception) {
+                                Log.e("TimeParse", "Failed to parse $timeStr", e)
+                                null // Skip invalid times
+                            }
+                        }.filterNotNull() // Remove any nulls from failed parses
 
+                        if (timeFormated.isEmpty()) {
+                            // Show error to user
+                            Toast.makeText(context, "Please enter valid times", Toast.LENGTH_SHORT).show()
+
+                        }
                         selectedClient?.clientId?.let { clientId ->
                             selectedMedication?.medicationId?.let { medicationId ->
-                                clientMedication = medicationController.assignMedicationToClient(
+                                clientMedication    = medicationController.assignMedicationToClient(
                                     clientId = clientId,
                                     medicationId = medicationId.toLong(),
                                     dosage = dosage,
                                     startDate = parsedStart,
                                     endDate = parsedEnd,
-                                    scheduledTimes = scheduledTimes
+                                    scheduledTimes = timeFormated
                                 )
                                 Log.d("AlarmCheck", "clientMedication is ${clientMedication?.clientMedicationId}")
                                 clientMedication?.let(scheduler::setUpAlarm)
+
 
                                 successMessage = "Medication assigned successfully!"
                             }
                         }
                     } catch (e: DateTimeParseException) {
-                        successMessage = "Invalid date format."
+                        successMessage = "Invalid date format. Use yyyy-MM-dd."
                     } catch (e: Exception) {
                         successMessage = "Error: ${e.message}"
                     }
@@ -227,7 +249,7 @@ fun AssignMedicationScreen(
             Text(it, color = MaterialTheme.colorScheme.primary)
         }
 
-        // Existing Schedules
+        // --- Existing Schedules ---
         if (schedules.isNotEmpty()) {
             Text("Current Schedules", style = MaterialTheme.typography.titleMedium)
             schedules.forEach { schedule ->
@@ -246,7 +268,7 @@ fun AssignMedicationScreen(
         }
     }
 
-    // Time Picker Dialog
+    // --- Use TimeWheelPickerDialog instead of text input ---
     if (showTimePicker) {
         TimeWheelPickerDialog(
             onDismiss = { showTimePicker = false },

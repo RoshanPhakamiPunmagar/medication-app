@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.medicationapp.view.managerviews.ReportScreen
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
@@ -57,7 +58,11 @@ fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier
                 context = context,
                 onLoginSuccess = { role, userId ->
                     val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
-                    sharedPref.edit().putString("user_role", role).apply()
+                    with(sharedPref.edit()) {
+                        putString("user_role", role)
+                        putLong("user_id", userId)
+                        apply()
+                    }
 
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
@@ -108,6 +113,10 @@ fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier
 
         composable("assign_carer") {
             AssignCarerScreen()
+        }
+
+        composable("reports") {
+            ReportScreen()
         }
 
         composable(

@@ -47,7 +47,8 @@ fun ActualTimeInput(
             val parsedTime = parseTimeInput(it.text)
             onTimeChange(parsedTime)
         },
-                modifier = Modifier.fillMaxWidth()
+        label = { Text("Enter Actual Time (HH:mm)") },
+        modifier = Modifier.fillMaxWidth()
     )
 }
 

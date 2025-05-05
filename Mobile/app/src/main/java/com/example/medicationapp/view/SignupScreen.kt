@@ -7,9 +7,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.controller.UserController
-
-
 import com.example.medicationapp.controller.ViewModel.UserViewModel
 import com.example.medicationapp.model.User
 import kotlinx.coroutines.launch
@@ -17,7 +16,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignupScreen(
     context: Context,
-    onSignupSuccess: () -> Unit
+    onSignupSuccess: () -> Unit,
+    viewModel: UserViewModel = viewModel()
 ) {
     val controller = remember { UserController(context) }
     val scope = rememberCoroutineScope()
@@ -28,9 +28,22 @@ fun SignupScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
 
+    val status by viewModel.status.collectAsState()
+
     // Fixed role as "Carer"
     val selectedRole = "Carer"
+    LaunchedEffect(status) {
+        status.let{
+            val result = controller.registerUser(name, email, password, selectedRole)
 
+            if(it?.getStatus() == "register" && result.isSuccess){
+                onSignupSuccess()
+            }
+            else{
+                error = result.exceptionOrNull()?.message ?: "Signup failed. Try again."
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,14 +104,13 @@ fun SignupScreen(
                     password != confirmPassword -> error = "Passwords do not match."
                     else -> {
                         scope.launch {
-                            val result = controller.registerUser(
-                                name, email, password, selectedRole
+                            val user = User(
+                                name = name,
+                                email = email,
+                                password = password,
+                                roleId = 2
                             )
-                            if (result.isSuccess) {
-                                onSignupSuccess()
-                            } else {
-                                error = result.exceptionOrNull()?.message ?: "Signup failed. Try again."
-                            }
+                            viewModel.register(user)
                         }
                     }
                 }

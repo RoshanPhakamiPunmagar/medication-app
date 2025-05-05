@@ -1,12 +1,9 @@
 package com.example.medicationapp.view.managerviews
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,10 +19,8 @@ import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
-import com.example.medicationapp.model.TimeWheelPickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -64,11 +59,6 @@ fun AssignMedicationScreen(
 
     val scheduler = AlarmScheduler(context)
 
-    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val datePickerStateStart = rememberDatePickerState()
-    val datePickerStateEnd = rememberDatePickerState()
-    var showStartDatePicker by remember { mutableStateOf(false) }
-    var showEndDatePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         clients = clientController.getAllClients()
@@ -148,7 +138,8 @@ fun AssignMedicationScreen(
             }
         }
 
-        // Dosage input
+
+        //Inputs
         TextField(
             value = dosage,
             onValueChange = { dosage = it },
@@ -156,23 +147,20 @@ fun AssignMedicationScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Start Date Picker Trigger
-        Button(
-            onClick = { showStartDatePicker = true },
+        TextField(
+            value = startDate,
+            onValueChange = { startDate = it },
+            label = { Text("Start Date (yyyy-MM-dd)") },
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (startDate.isBlank()) "Select Start Date" else "Start Date: $startDate")
-        }
-
-        // End Date Picker Trigger
-        Button(
-            onClick = { showEndDatePicker = true },
+        )
+        TextField(
+            value = endDate,
+            onValueChange = { endDate = it },
+            label = { Text("End Date (yyyy-MM-dd)") },
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (endDate.isBlank()) "Select End Date" else "End Date: $endDate")
-        }
+        )
 
-        // Scheduled Times
+        //Scheduled Times
         Text("Scheduled Times:", style = MaterialTheme.typography.titleMedium)
         if (scheduledTimes.isEmpty()) {
             Text("No times added yet.")
@@ -224,7 +212,7 @@ fun AssignMedicationScreen(
                                     scheduledTimes = timeFormated
                                 )
                                 Log.d("AlarmCheck", "clientMedication is ${clientMedication?.clientMedicationId}")
-                                clientMedication?.let(scheduler::setUpAlarm)
+                                clientMedication?.let(scheduler::setUpAlarmDateRange)
 
 
                                 successMessage = "Medication assigned successfully!"
@@ -280,55 +268,4 @@ fun AssignMedicationScreen(
         )
     }
 
-    // Start DatePicker Dialog
-    if (showStartDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showStartDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    val millis = datePickerStateStart.selectedDateMillis
-                    if (millis != null) {
-                        val date = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
-                        startDate = date.format(dateFormatter)
-                    }
-                    showStartDatePicker = false
-                }) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showStartDatePicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerStateStart)
-        }
-    }
-
-    // End DatePicker Dialog
-    if (showEndDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showEndDatePicker = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    val millis = datePickerStateEnd.selectedDateMillis
-                    if (millis != null) {
-                        val date = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
-                        endDate = date.format(dateFormatter)
-                    }
-                    showEndDatePicker = false
-                }) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEndDatePicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerStateEnd)
-        }
-    }
 }

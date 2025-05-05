@@ -60,10 +60,10 @@ import java.util.Scanner;
 public class MediTimeApplication {
 
     public static void main(String[] args) {
-        // Initialize Spring Boot application 
+        // Initialize Spring Boot application
         ApplicationContext context = SpringApplication.run(MediTimeApplication.class, args);
 
-        // Service instances 
+        // Service instances
         ClientService clientService = context.getBean(ClientService.class);
         ClientMedicationService clientMedicationService = context.getBean(ClientMedicationService.class);
         UserService userService = context.getBean(UserService.class);
@@ -91,7 +91,7 @@ RoleRepository roleRepository = context.getBean(RoleRepository.class);
                 scanner.nextLine();
                 continue;
             }
-            scanner.nextLine();  
+            scanner.nextLine();
 
             //  select role
             switch (roleChoice) {
@@ -150,7 +150,7 @@ RoleRepository roleRepository = context.getBean(RoleRepository.class);
                 scanner.nextLine();
                 continue;
             }
-            scanner.nextLine();  
+            scanner.nextLine();
 
             switch (choice) {
                 case 1 -> {
@@ -275,7 +275,7 @@ RoleRepository roleRepository = context.getBean(RoleRepository.class);
                 scanner.nextLine();
                 continue;
             }
-            scanner.nextLine();  
+            scanner.nextLine();
 
             switch (choice) {
               //view client medication scheudle
@@ -293,7 +293,7 @@ RoleRepository roleRepository = context.getBean(RoleRepository.class);
                                         med.getStartDate(), med.getEndDate()));
                     }
                 }
-                // mark meidcation as given or skipped 
+                // mark meidcation as given or skipped
                 case 2 -> {
                     System.out.print("Enter client ID: ");
                     Long clientId = scanner.nextLong(); scanner.nextLine();

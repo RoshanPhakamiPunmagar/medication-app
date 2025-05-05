@@ -20,4 +20,6 @@ class ClientMedicationRepository(private val clientMedicationDao: ClientMedicati
     suspend fun getMedicationsForClient(clientId: Long): List<ClientMedication> {
         return clientMedicationDao.getMedicationsForClient(clientId)
     }
+
+
 }

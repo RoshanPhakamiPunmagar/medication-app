@@ -57,53 +57,32 @@ public class UserRestController {
     }
 
 
-//    @PostMapping("/check")
-//    public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {
-//        Map<String, String> response = new HashMap<>();
-//        try {
-//            Optional<User> user = userRepository.findByEmail(email);
-//
-//            // Log encoded password
-//            System.out.println("Encoded password: " + passwordEncoder.encode("password123"));
-//
-//            boolean x = authenticate(password, user.get().getPassword());
-//
-//            if (x) {
-//                response.put("status", LOGIN);
-//                return ResponseEntity.ok(response);
-//            }
-//        } catch (Exception e) {
-//            response.put("status", INVALID);
-//        }
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-//    }
 
     @PostMapping("/check")
-    public ResponseEntity<Map<String, Object>> checkUser(@RequestParam String email, @RequestParam String password) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {
+        Map<String, String> response = new HashMap<>();
         try {
-            Optional<User> userOptional = userRepository.findByEmail(email);
 
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                boolean isAuthenticated = authenticate(password, user.getPassword());
-
-                if (isAuthenticated) {
-                    response.put("status", LOGIN);
-                    response.put("role", user.getRole().getRoleName());
-                    response.put("userId", user.getUserId());
-                    return ResponseEntity.ok(response);
-                }
+            Optional<User> user = userRepository.findByEmail(email);
+            if (userService.emailExists(email)) {
+                response.put("status", EXISTS);
+                return ResponseEntity.ok(response);
             }
-            response.put("status", INVALID);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } catch (Exception e) {
-            response.put("status", INVALID);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+
+            System.out.println(passwordEncoder.encode("password123"));
+            boolean x = authenticate(password, user.get().getPassword());
+
+            if (x) {
+                response.put("status", LOGIN);
+                System.out.println(email + " password" + x);
+                return ResponseEntity.ok(response);
+            }
         }
+        catch (Exception e) {
+            response.put("status", INVALID);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
-
-
 
 
     public boolean authenticate(String rawPassword, String encodedPassword) {

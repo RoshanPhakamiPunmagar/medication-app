@@ -1,6 +1,5 @@
 package com.example.medicationapp.view.carerviews
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,6 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.ClientMedsDescriptions
@@ -22,35 +22,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 import com.example.medicationapp.viewmodel.MedicationDetailsViewModel
 
-//@Composable
-//fun ActualTimeInput(
-//    actualTime: LocalTime?,
-//    onTimeChange: (LocalTime?) -> Unit,
-//
-//    ) {
-//    var timeText by remember { mutableStateOf(TextFieldValue(actualTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "")) }
-//
-//    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-//
-//    fun parseTimeInput(input: String): LocalTime? {
-//        return try {
-//            LocalTime.parse(input, formatter)
-//        } catch (e: Exception) {
-//            null
-//        }
-//    }
-//
-//    TextField(
-//        value = timeText,
-//        onValueChange = {
-//            timeText = it
-//            val parsedTime = parseTimeInput(it.text)
-//            onTimeChange(parsedTime)
-//        },
-//        label = { Text("Enter Actual Time (HH:mm)") },
-//        modifier = Modifier.fillMaxWidth()
-//    )
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,8 +53,6 @@ fun ClientSelectionScreen(
         clients = clientRepository.getClientsForCarer(carerId)
         meds = clientRepository.getMedicationsOfClient(selectedClient?.clientId)
     }
-
-
 
     Scaffold(
         topBar = {
@@ -142,7 +111,6 @@ fun ClientSelectionScreen(
                     Text("No medications assigned.")
                 } else {
                     medications.forEach { (clientMedication, medicationName) ->
-
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -170,7 +138,6 @@ fun ClientSelectionScreen(
                 }) {
                     Text("Back to Client List")
                 }
-
                 Button(onClick = {
 
                     meds.forEach {
@@ -193,6 +160,161 @@ fun ClientSelectionScreen(
                 }
             }
 
+        }
             }
         }
+
+        selectedMedication?.let { (clientMedication, medicationName) ->
+            AlertDialog(
+                onDismissRequest = { selectedMedication = null },
+                title = { Text("Log Medication") },
+                text = {
+                    Column {
+                        Text("Mark medication: $medicationName")
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            "Scheduled Time: ${
+                                clientMedication.scheduledTimes.joinToString(", ") {
+                                    it.format(DateTimeFormatter.ofPattern("HH:mm"))
+                                }
+                            }"
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        ActualTimeInput(actualTime = actualTime, onTimeChange = {
+                            actualTime = it
+                        })
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        TextField(
+                            value = notes,
+                            onValueChange = { notes = it },
+                            label = { Text("Notes") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                },
+                confirmButton = {
+                    Column {
+                        MedicationStatusButton("Given") {
+                            status = MedicationLog.Status.Given
+                            actualTime = LocalTime.now()
+
+                            coroutineScope.launch {
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
+                            }
+                        }
+
+                        MedicationStatusButton("Skipped") {
+                            status = MedicationLog.Status.Skipped
+                            actualTime = null
+
+                            coroutineScope.launch {
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
+                            }
+                        }
+
+                        MedicationStatusButton("Missed") {
+                            status = MedicationLog.Status.Missed
+                            actualTime = null
+
+                            coroutineScope.launch {
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
+                            }
+                        }
+
+                        MedicationStatusButton("Late") {
+                            status = MedicationLog.Status.Late
+                            actualTime = LocalTime.now()
+
+                            coroutineScope.launch {
+                                logMedication(
+                                    clientMedication = clientMedication,
+                                    status = status,
+                                    clientId = selectedClient?.clientId,
+                                    scheduledTime = clientMedication.scheduledTimes.first(),
+                                    actualTime = actualTime,
+                                    notes = notes,
+                                    clientController = clientController
+                                )
+                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
+                            }
+                        }
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { selectedMedication = null }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+    }}
+
+        @Composable
+fun MedicationStatusButton(text: String, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        onClick = onClick
+    ) {
+        Text(text)
     }
+}
+
+suspend fun logMedication(
+    clientMedication: ClientMedication,
+    status: MedicationLog.Status,
+    clientId: Long?,
+    scheduledTime: LocalTime,
+    actualTime: LocalTime?,
+    notes: String,
+    clientController: ClientController
+) {
+    if (clientId == null) {
+        println("Error: clientId is null.")
+        return
+    }
+
+    val medicationLog = MedicationLog(
+        clientMedicationId = clientMedication.clientMedicationId,
+        carerId = clientId,
+        scheduledTime = listOf(scheduledTime),
+        actualTime = actualTime,
+        status = status,
+        notes = notes
+    )
+
+    clientController.logMedication(medicationLog)
+}

@@ -125,19 +125,36 @@ import kotlinx.coroutines.launch
 //    }
 //}
 
-
 @Composable
 fun SignupScreen(
     context: Context,
-    userViewModel: UserViewModel, // Pass UserViewModel
-    onSignupSuccess: () -> Unit
+    onSignupSuccess: () -> Unit,
+    viewModel: UserViewModel = viewModel()
 ) {
+    val controller = remember { UserRepository(context) }
+    val scope = rememberCoroutineScope()
+
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
 
+    val status by viewModel.status.collectAsState()
+
+    // Fixed role as "Carer"
+    val selectedRole = "Carer"
+    LaunchedEffect(status) {
+        status.let {
+            val result = controller.registerUser(name, email, password, selectedRole)
+
+            if (it?.getStatus() == "register" && result.isSuccess) {
+                onSignupSuccess()
+            } else {
+                error = result.exceptionOrNull()?.message ?: "Signup failed. Try again."
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -179,7 +196,7 @@ fun SignupScreen(
         )
         Spacer(Modifier.height(16.dp))
 
-        val selectedRole = "Carer"
+        // Display the fixed role "Carer"
         OutlinedTextField(
             value = selectedRole,
             onValueChange = {},
@@ -197,10 +214,15 @@ fun SignupScreen(
                 when {
                     password != confirmPassword -> error = "Passwords do not match."
                     else -> {
-                        // Create a User object and pass it to register
-                        val user = User(name = name, email = email, password = password, roleId = 2)
-                        userViewModel.register(user) // Pass the User object
-                        onSignupSuccess()
+                        scope.launch {
+                            val user = User(
+                                name = name,
+                                email = email,
+                                password = password,
+                                roleId = 2
+                            )
+                            viewModel.register(user)
+                        }
                     }
                 }
             },

@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.medicationapp.model.Status
 import com.example.medicationapp.model.User
 import com.example.medicationapp.retrofit.RetrofitService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,9 +19,9 @@ class UserViewModel : ViewModel() {
     private val retrofitService = RetrofitService()
     private val apiService = retrofitService.getRetrofit().create(ApiService::class.java)
 
+
     private val _status = MutableStateFlow<Status?>(null)
     val status: StateFlow<Status?> = _status
-
 
 
     var isLoading by mutableStateOf(false)

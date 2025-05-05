@@ -2,6 +2,7 @@ package com.example.medicationapp.view
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -73,22 +74,21 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         // Login Screen
         composable("login") {
             LoginScreen(
-                //context = context,
-
-                onLoginSuccess = { role: String, userId: Long ->
+                context = context,
+                onLoginSuccess = { role, userId ->
                     val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
                         putString("user_role", role)
                         putLong("user_id", userId)
                         apply()
                     }
+
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer" -> navController.navigate("carer_dashboard/$userId")
+                        "Carer"   -> navController.navigate("carer_dashboard/$userId")
                     }
                 },
                 onNavigateToSignup = {
-
                     navController.navigate("signup")
                 }
             )
@@ -97,13 +97,11 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         composable("signup") {
             SignupScreen(
                 context = context,
-                userViewModel = viewModel(),
                 onSignupSuccess = {
                     navController.popBackStack()
                 }
             )
         }
-
 
         // Manager Dashboard
         composable("manager_dashboard") {
@@ -121,19 +119,11 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
                 arguments = listOf(navArgument("carerId") { type = NavType.LongType })
             ) { backStackEntry ->
                 val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
-                // Get the DAOs from the AppDatabase instance
-                val clientMedicationDao = db.clientMedicationDao()
-                val medicationDao = db.medicationDao()
-                val medicationLogDao = db.medicationLogDao()
                 CarrerMainScreen(
                     clientRepository = clientRepository,
                     navController = navController,
                     carerId = carerId,
                     context = context,
-                    clientMedicationDao = clientMedicationDao,
-                    medicationDao = medicationDao,
-                    medicationLogDao = medicationLogDao
-
                 )
             }
 
@@ -163,7 +153,6 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
             val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
             ClientSelectionScreen(
                 clientRepository = clientRepository,
-                medicationRepository = medicationRepository,
                 navController = navController,
                 carerId = carerId
             )

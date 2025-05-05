@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
+    context: Context,
     onLoginSuccess: (role: String, userId: Long) -> Unit,
     onNavigateToSignup: () -> Unit,
     userViewModel: UserViewModel = viewModel()
@@ -23,18 +24,34 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+
     val isLoading by userViewModel::isLoading
-    val error by userViewModel::error
+
+    val userRepo = remember { UserRepository(context) }
+    val scope = rememberCoroutineScope()
+
+    var error by remember { mutableStateOf<String?>(null) }
+
     val status by userViewModel.status.collectAsState()
 
     LaunchedEffect(status) {
         status?.let {
-            if (it.status == "login") {
-                onLoginSuccess(it.role, it.userId)
-            }
+            val user = userRepo.loginUser(email, password)
+            if (it.getStatus() == "login" && user != null) {
 
+                val roleName = userRepo.getRoleNameById(user.roleId)
+
+                if (roleName != null) {
+                    onLoginSuccess(roleName, user.userId)
+                } else {
+                    error = "User role not found"
+                }
+            } else {
+                error = "Invalid email or password"
+            }
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -61,10 +78,15 @@ fun LoginScreen(
         )
         Spacer(Modifier.height(16.dp))
 
+
         Button(
-            onClick = { userViewModel.login(email, password) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
+            onClick = {
+                error = null
+                scope.launch {
+                    userViewModel.login(email,password)
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Log In")
         }
@@ -76,14 +98,9 @@ fun LoginScreen(
             Text("Don't have an account? Sign up")
         }
 
-        if (error.isNotEmpty()) {
+        error?.let {
             Spacer(Modifier.height(8.dp))
-            Text(error, color = Color.Red)
-        }
-
-        if (isLoading) {
-            Spacer(Modifier.height(8.dp))
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            Text(it, color = Color.Red)
         }
     }
 }

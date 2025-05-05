@@ -29,5 +29,30 @@ class ClientRepository(
     suspend fun logMedication(medicationLog: MedicationLog) {
         medicationLogDao.insertLog(medicationLog)
     }
+    suspend fun getMedicationsForClient(clientId: Long): List<Pair<ClientMedication, String>> {
+        val medications = clientMedicationDao.getMedicationsForClient(clientId)
+
+        return medications.mapNotNull { clientMedication ->
+            val medication = medicationDao.getMedicationById(clientMedication.medicationId)
+            medication?.let {
+                Pair(clientMedication, it.name)
+            }
+        }
+    }
+
+    suspend fun getMedicationsOfClient(clientId: Long?): List<String> {
+        if(clientId != null) {
+            val medications = clientMedicationDao.getMedicationsForClient(clientId)
+
+
+            return medications.mapNotNull { clientMedication ->
+                val medication = medicationDao.getMedicationById(clientMedication.medicationId)
+                medication?.let {
+                    it.name
+                }
+            }
+        }
+        return emptyList()
+    }
 
 }

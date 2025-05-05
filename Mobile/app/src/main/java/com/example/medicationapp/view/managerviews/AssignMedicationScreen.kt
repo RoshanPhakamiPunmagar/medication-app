@@ -17,13 +17,12 @@ import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
-import com.example.medicationapp.model.TimeWheelPickerDialog
+import com.example.medicationapp.view.TimeWheelPickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import androidx.compose.foundation.rememberScrollState
 import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.repository.MedicationRepository
 

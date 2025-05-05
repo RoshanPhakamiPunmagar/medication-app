@@ -3,25 +3,21 @@ package com.example.medicationapp.model.repository
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.dao.ClientMedicationDao
 
-class ClientMedicationRepository(private val dao: ClientMedicationDao) {
+class ClientMedicationRepository(private val clientMedicationDao: ClientMedicationDao) {
 
-    suspend fun assignMedication(clientMedication: ClientMedication): Long {
-        return dao.insertClientMedication(clientMedication)
+    suspend fun insertClientMedication(clientMedication: ClientMedication) {
+        clientMedicationDao.insertClientMedication(clientMedication)
     }
 
-    suspend fun getAllAssignments(): List<ClientMedication> {
-        return dao.getAllClientMedications()
+    suspend fun updateClientMedication(clientMedication: ClientMedication) {
+        clientMedicationDao.updateClientMedication(clientMedication)
     }
 
-    suspend fun getClientsForMedication(medicationId: Int): List<ClientMedication> {
-        return dao.getClientsForMedication(medicationId)
+    suspend fun deleteClientMedication(clientMedication: ClientMedication) {
+        clientMedicationDao.deleteClientMedication(clientMedication)
     }
 
-    suspend fun updateAssignment(clientMedication: ClientMedication) {
-        dao.updateClientMedication(clientMedication)
-    }
-
-    suspend fun deleteAssignment(clientMedication: ClientMedication) {
-        dao.deleteClientMedication(clientMedication)
+    suspend fun getMedicationsForClient(clientId: Long): List<ClientMedication> {
+        return clientMedicationDao.getMedicationsForClient(clientId)
     }
 }

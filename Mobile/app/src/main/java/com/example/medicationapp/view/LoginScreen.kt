@@ -9,46 +9,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.medicationapp.controller.UserController
 import com.example.medicationapp.controller.rest.UserViewModel
+import com.example.medicationapp.model.repository.UserRepository
+import com.example.medicationapp.repository.RoleRepository
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    context: Context,
     onLoginSuccess: (role: String, userId: Long) -> Unit,
     onNavigateToSignup: () -> Unit,
-    viewModel: UserViewModel = viewModel()
+    userViewModel: UserViewModel = viewModel()
 ) {
-    val controller = remember { UserController(context) }
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf<String?>(null) }
-    var isLoggingIn by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isLoggingIn) {
-        if (isLoggingIn) {
-            viewModel.login(email, password)
-            viewModel.status.collect { response ->
-                if (response != null) {
-                    if (response.getStatus() == "login") {
-                        val user = controller.loginUser(email, password)
-                        if (user != null) {
-                            val roleName = controller.getRoleNameById(user.roleId)
-                            if (roleName != null) {
-                                onLoginSuccess(roleName, user.userId)
-                            } else {
-                                error = "User role not found"
-                            }
-                        } else {
-                            error = "Invalid email or password"
-                        }
-                    } else {
-                        error = "Invalid email or password"
-                    }
-                    isLoggingIn = false
-                    return@collect
-                }
+    val isLoading by userViewModel::isLoading
+    val error by userViewModel::error
+    val status by userViewModel.status.collectAsState()
+
+    LaunchedEffect(status) {
+        status?.let {
+            if (it.getStatus() == "SUCCESS") {
+                // Replace with actual backend values when available
+                onLoginSuccess("Carer", 123L)
             }
         }
     }
@@ -79,12 +62,9 @@ fun LoginScreen(
         Spacer(Modifier.height(16.dp))
 
         Button(
-            onClick = {
-                error = null
-                isLoggingIn = true
-            },
+            onClick = { userViewModel.login(email, password) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoggingIn
+            enabled = !isLoading
         ) {
             Text("Log In")
         }
@@ -96,9 +76,14 @@ fun LoginScreen(
             Text("Don't have an account? Sign up")
         }
 
-        error?.let {
+        if (error.isNotEmpty()) {
             Spacer(Modifier.height(8.dp))
-            Text(it, color = Color.Red)
+            Text(error, color = Color.Red)
+        }
+
+        if (isLoading) {
+            Spacer(Modifier.height(8.dp))
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
     }
 }

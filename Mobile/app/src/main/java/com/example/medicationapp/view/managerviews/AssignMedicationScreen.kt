@@ -13,8 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.MedicationController
 import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
@@ -26,15 +24,18 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import androidx.compose.foundation.rememberScrollState
+import com.example.medicationapp.model.repository.ClientRepository
+import com.example.medicationapp.repository.MedicationRepository
 
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssignMedicationScreen(
-    clientController: ClientController,
-    medicationController: MedicationController
-) {
+    clientRepository: ClientRepository,
+    medicationRepository: MedicationRepository
+)
+ {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -69,8 +70,9 @@ fun AssignMedicationScreen(
 
 
     LaunchedEffect(Unit) {
-        clients = clientController.getAllClients()
-        medications = medicationController.getAllMedications()
+        clients = clientRepository.getAllClients()
+        medications = medicationRepository.getAllMedications()
+
     }
 
     val scrollState = rememberScrollState()
@@ -215,7 +217,7 @@ fun AssignMedicationScreen(
                         }
                         selectedClient?.clientId?.let { clientId ->
                             selectedMedication?.medicationId?.let { medicationId ->
-                                clientMedication    = medicationController.assignMedicationToClient(
+                                clientMedication    = medicationRepository.assignMedicationToClient(
                                     clientId = clientId,
                                     medicationId = medicationId.toLong(),
                                     dosage = dosage,

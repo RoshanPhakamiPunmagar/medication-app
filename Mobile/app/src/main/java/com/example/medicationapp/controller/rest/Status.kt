@@ -2,7 +2,8 @@ package com.example.medicationapp.controller.rest
 
 class  Status{
 
-    private var status: String = null.toString()
+     var status: String = null.toString()
+
 
     fun getStatus(): String{
 

@@ -31,8 +31,15 @@ class AlarmReceiver() : BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onReceive(context: Context, intent: Intent?) {
 
-         val db = AppDatabase.getDatabase(context)
-        clientRepository = ClientRepository(db.clientDao())
+        val db = AppDatabase.getDatabase(context)
+        clientRepository = ClientRepository(
+            clientDao = db.clientDao(),
+            adherenceLogDao = db.adherenceLogDao(),
+            clientMedicationDao = db.clientMedicationDao(),
+            medicationDao = db.medicationDao(),
+            medicationLogDao = db.medicationLogDao()
+        )
+
 
 
         val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
@@ -41,7 +48,7 @@ class AlarmReceiver() : BroadcastReceiver() {
 
         Log.d("Client Check", "$userId")
         GlobalScope.launch(Dispatchers.IO) {
-            val clientList = clientRepository.getClientByCarerId(userId)
+            val clientList = clientRepository.getClientsForCarer(userId)
 
             for(client in clientList){
 

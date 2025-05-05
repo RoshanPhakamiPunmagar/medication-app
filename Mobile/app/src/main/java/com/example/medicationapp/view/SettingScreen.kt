@@ -17,7 +17,7 @@ import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(context:Context, navHostController: NavHostController) {
+fun SettingScreen(context:Context, navController: NavHostController) {
 
 
     Scaffold(
@@ -41,7 +41,7 @@ fun SettingScreen(context:Context, navHostController: NavHostController) {
 
 
 
-                    navHostController.navigate("login") {
+                    navController.navigate("login") {
                         popUpTo(0) { inclusive = true } // clears backstack
                     }
                 }

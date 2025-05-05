@@ -8,47 +8,69 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.compose.*
-import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.MedicationController
-import com.example.medicationapp.controller.ReminderController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.medicationapp.database.AppDatabase
+import com.example.medicationapp.model.repository.ClientRepository
+import com.example.medicationapp.repository.MedicationRepository
 import com.example.medicationapp.view.carer.IncidentNotesScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 import com.example.medicationapp.view.managerviews.AssignCarerScreen
 import com.example.medicationapp.view.managerviews.AssignMedicationScreen
 import com.example.medicationapp.view.managerviews.ClientListScreen
+import com.example.medicationapp.view.managerviews.ReportScreen
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import com.example.medicationapp.view.managerviews.ReportScreen
+import com.example.medicationapp.model.repository.UserRepository
+import com.example.medicationapp.repository.RoleRepository
+import com.example.medicationapp.view.SignupScreen
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
     object AssignMedication : BottomNavItemForManager("assign_medication", Icons.Default.Add, "Reminders")
     object Reports : BottomNavItemForManager("generate_reports", Icons.Default.DateRange, "Reports")
-    object Settings : BottomNavItemForManager("settings", Icons.Default.Settings, "Settings") // Create screen later
+    object Settings : BottomNavItemForManager("settings", Icons.Default.Settings, "Settings")
 }
 
 sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val label: String) {
     object SeeClient : BottomNavItemForCarer("client_selection/{carerId}", Icons.Default.Home, "See Client")
     object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
-    object Settings : BottomNavItemForCarer("settings", Icons.Default.Settings, "Settings") // Create screen later
+    object Settings : BottomNavItemForCarer("settings", Icons.Default.Settings, "Settings")
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier) {
-
+fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val db = remember { AppDatabase.getDatabase(context) }
 
-    val clientController = remember { ClientController(context) }
-    val medicationController = remember { MedicationController(context) }
+    val clientRepository = remember {
+        ClientRepository(
+            clientDao = db.clientDao(),
+            clientMedicationDao = db.clientMedicationDao(),
+            medicationDao = db.medicationDao(),
+            medicationLogDao = db.medicationLogDao(),
+            adherenceLogDao = db.adherenceLogDao()
+        )
+    }
+
+    val medicationRepository = remember {
+        MedicationRepository(
+            medicationDao = db.medicationDao(),
+            medicationLogDao = db.medicationLogDao(),
+            clientMedicationDao = db.clientMedicationDao()
+        )
+    }
+
+    val userRepository = remember { UserRepository(db.userDao()) }
+    val roleRepository = remember { RoleRepository(db.roleDao()) }
 
     NavHost(navController = navController, startDestination = "login") {
 
@@ -56,63 +78,84 @@ fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier
         composable("login") {
             LoginScreen(
                 context = context,
-                onLoginSuccess = { role, userId ->
+                userRepository = userRepository,
+                roleRepository = roleRepository,
+                onLoginSuccess = { role: String, userId: Long ->
                     val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
                         putString("user_role", role)
                         putLong("user_id", userId)
                         apply()
                     }
-
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer"   -> navController.navigate("carer_dashboard/$userId")
+                        "Carer" -> navController.navigate("carer_dashboard/$userId")
                     }
                 },
                 onNavigateToSignup = {
+
                     navController.navigate("signup")
                 }
             )
         }
 
-        // Signup Screen
         composable("signup") {
             SignupScreen(
                 context = context,
+                userRepository = userRepository,
+                roleRepository = roleRepository,
                 onSignupSuccess = {
-                    navController.popBackStack()  // back to login
+                    navController.popBackStack()
                 }
             )
         }
 
+
         // Manager Dashboard
         composable("manager_dashboard") {
-            ManagerMainScreen(clientController, medicationController, context, navController)
+            ManagerMainScreen(
+                clientRepository = clientRepository,
+                medicationRepository = medicationRepository,
+                context = context,
+                navController = navController
+            )
         }
 
-        composable("carer_dashboard/{carerId}", arguments = listOf(
-            navArgument("carerId") { type = NavType.LongType }
-        )) { backStackEntry ->
-            val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
-            CarrerMainScreen(clientController = clientController, navController = navController, carerId = carerId, context)
-        }
+            // Carer Dashboard
+            composable(
+                "carer_dashboard/{carerId}",
+                arguments = listOf(navArgument("carerId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
+                // Get the DAOs from the AppDatabase instance
+                val clientMedicationDao = db.clientMedicationDao()
+                val medicationDao = db.medicationDao()
+                val medicationLogDao = db.medicationLogDao()
+                CarrerMainScreen(
+                    clientRepository = clientRepository,
+                    navController = navController,
+                    carerId = carerId,
+                    context = context,
+                    clientMedicationDao = clientMedicationDao,
+                    medicationDao = medicationDao,
+                    medicationLogDao = medicationLogDao
 
+                )
+            }
 
-        // Manager sub‐screens
         composable("manage_clients") {
-            ClientListScreen(clientController = clientController)
+            ClientListScreen(clientRepository = clientRepository)
         }
-
 
         composable("assign_medication") {
             AssignMedicationScreen(
-                clientController = clientController,
-                medicationController = medicationController
+                clientRepository = clientRepository,
+                medicationRepository = medicationRepository
             )
         }
 
         composable("assign_carer") {
-            AssignCarerScreen()
+            AssignCarerScreen(clientRepository = clientRepository)
         }
 
         composable("reports") {
@@ -125,23 +168,19 @@ fun AppNavigation(navController: NavHostController, modifier:Modifier = Modifier
         ) { backStackEntry ->
             val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
             ClientSelectionScreen(
-                clientController = clientController,
+                clientRepository = clientRepository,
+                medicationRepository = medicationRepository,
                 navController = navController,
                 carerId = carerId
             )
         }
-
 
         composable("incident_notes") {
             IncidentNotesScreen()
         }
 
         composable("settings") {
-            SettingScreen(context,navController)
+            SettingScreen(context = context, navController = navController)
         }
-
     }
 }
-
-
-

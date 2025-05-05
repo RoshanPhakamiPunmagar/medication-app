@@ -11,6 +11,9 @@ interface MedicationLogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: MedicationLog)
 
+    @Insert
+    suspend fun insertMedicationLog(log: MedicationLog)
+
     @Query("SELECT * FROM medication_logs WHERE client_medication_id = :cmId")
     suspend fun getLogsForClientMedication(cmId: Int): List<MedicationLog>
 }

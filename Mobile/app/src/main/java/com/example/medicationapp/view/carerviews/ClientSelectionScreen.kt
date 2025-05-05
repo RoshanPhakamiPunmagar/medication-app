@@ -10,10 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.MedicationLog
+import com.example.medicationapp.model.repository.ClientRepository
+import com.example.medicationapp.repository.MedicationRepository
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -21,9 +22,10 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientSelectionScreen(
-    clientController: ClientController,
+    clientRepository: ClientRepository,
+    medicationRepository: MedicationRepository,
     navController: NavController,
-    carerId : Long
+    carerId: Long
 ) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
@@ -36,14 +38,12 @@ fun ClientSelectionScreen(
     var notes by remember { mutableStateOf("") }
 
     LaunchedEffect(carerId) {
-        clients = clientController.getClientsForCarer(carerId)
+        clients = clientRepository.getClientsForCarer(carerId)
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(title = { Text("Select Client") })
-        }
-    ) { innerPadding ->
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(title = { Text("Select Client") })
+    }) { innerPadding ->
 
         val scrollState = rememberScrollState()
         Column(
@@ -55,10 +55,7 @@ fun ClientSelectionScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             if (selectedClient == null) {
-                Text(
-                    "Tap on a client to view medications",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
 
                 if (clients.isEmpty()) {
                     Text("No clients available.")
@@ -70,27 +67,20 @@ fun ClientSelectionScreen(
                                 .clickable {
                                     coroutineScope.launch {
                                         selectedClient = client
-                                        medications =
-                                            clientController.getMedicationsForClient(client.clientId)
+                                        medications = medicationRepository.getMedicationsForClient(client.clientId)
                                     }
                                 },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(client.name, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    "Client ID: ${client.clientId}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Text("Client ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
                 }
             } else {
-                Text(
-                    "Medications for ${selectedClient?.name}:",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Text("Medications for ${selectedClient?.name}:", style = MaterialTheme.typography.titleMedium)
 
                 if (medications.isEmpty()) {
                     Text("No medications assigned.")
@@ -99,17 +89,12 @@ fun ClientSelectionScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    selectedMedication = Pair(clientMedication, medicationName)
-                                },
+                                .clickable { selectedMedication = Pair(clientMedication, medicationName) },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(medicationName, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    "Dosage: ${clientMedication.dosage}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Text("Dosage: ${clientMedication.dosage}", style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
@@ -132,15 +117,11 @@ fun ClientSelectionScreen(
                         Text("Mark medication: $medicationName")
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text(
-                            "Scheduled Time: ${
-                                clientMedication.scheduledTimes.joinToString(", ") {
-                                    it.format(DateTimeFormatter.ofPattern("HH:mm"))
-                                }
-                            }"
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Scheduled Time: ${
+                            clientMedication.scheduledTimes.joinToString(", ") {
+                                it.format(DateTimeFormatter.ofPattern("HH:mm"))
+                            }
+                        }")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -161,87 +142,32 @@ fun ClientSelectionScreen(
                             },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), // Light blue effect
+                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                                 contentColor = MaterialTheme.colorScheme.primary
                             )
                         ) {
                             Text("Clear")
                         }
-
-
                     }
                 },
                 confirmButton = {
                     Column {
-                        MedicationStatusButton("Given") {
-                            status = MedicationLog.Status.Given
-                            actualTime = LocalTime.now()
-
-                            coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = selectedClient?.clientId,
-                                    scheduledTime = clientMedication.scheduledTimes.first(),
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
-                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
-                            }
-                        }
-
-                        MedicationStatusButton("Skipped") {
-                            status = MedicationLog.Status.Skipped
-                            actualTime = null
-
-                            coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = selectedClient?.clientId,
-                                    scheduledTime = clientMedication.scheduledTimes.first(),
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
-                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
-                            }
-                        }
-
-                        MedicationStatusButton("Missed") {
-                            status = MedicationLog.Status.Missed
-                            actualTime = null
-
-                            coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = selectedClient?.clientId,
-                                    scheduledTime = clientMedication.scheduledTimes.first(),
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
-                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
-                            }
-                        }
-
-                        MedicationStatusButton("Late") {
-                            status = MedicationLog.Status.Late
-                            actualTime = LocalTime.now()
-
-                            coroutineScope.launch {
-                                logMedication(
-                                    clientMedication = clientMedication,
-                                    status = status,
-                                    clientId = selectedClient?.clientId,
-                                    scheduledTime = clientMedication.scheduledTimes.first(),
-                                    actualTime = actualTime,
-                                    notes = notes,
-                                    clientController = clientController
-                                )
-                                //navController.navigate("adherence_screen/${clientMedication.clientMedicationId}/${userId}")
+                        listOf("Given", "Skipped", "Missed", "Late").forEach { statusText ->
+                            MedicationStatusButton(statusText) {
+                                val newStatus = MedicationLog.Status.valueOf(statusText)
+                                actualTime = if (newStatus == MedicationLog.Status.Given || newStatus == MedicationLog.Status.Late) LocalTime.now() else null
+                                coroutineScope.launch {
+                                    logMedication(
+                                        clientMedication = clientMedication,
+                                        status = newStatus,
+                                        clientId = selectedClient?.clientId,
+                                        scheduledTime = clientMedication.scheduledTimes.first(),
+                                        actualTime = actualTime,
+                                        notes = notes,
+                                        medicationRepository = medicationRepository
+                                    )
+                                    selectedMedication = null
+                                }
                             }
                         }
                     }
@@ -251,13 +177,12 @@ fun ClientSelectionScreen(
                         Text("Cancel")
                     }
                 }
-
-
             )
         }
-    }}
+    }
+}
 
-        @Composable
+@Composable
 fun MedicationStatusButton(text: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier
@@ -276,7 +201,7 @@ suspend fun logMedication(
     scheduledTime: LocalTime,
     actualTime: LocalTime?,
     notes: String,
-    clientController: ClientController
+    medicationRepository: MedicationRepository
 ) {
     if (clientId == null) {
         println("Error: clientId is null.")
@@ -292,5 +217,5 @@ suspend fun logMedication(
         notes = notes
     )
 
-    clientController.logMedication(medicationLog)
+    medicationRepository.logMedication(medicationLog)
 }

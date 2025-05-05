@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -22,13 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.MedicationController
 import com.example.medicationapp.view.alarm.AlarmConfig
 import com.example.medicationapp.view.alarm.getClientMedication
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
+import com.example.medicationapp.model.repository.ClientRepository
+import com.example.medicationapp.repository.MedicationRepository
 
 @Composable
 fun AlarmAlertPopUp (
@@ -77,8 +78,25 @@ fun AlarmAlertPopUp (
 @Composable
 fun AlarmDialogScreen(onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val clientController = ClientController(context)
-    val medicationController = MedicationController(context)
+    val db = remember { com.example.medicationapp.database.AppDatabase.getDatabase(context) }
+
+    val clientRepository = remember {
+        ClientRepository(
+            clientDao = db.clientDao(),
+            adherenceLogDao = db.adherenceLogDao(),
+            clientMedicationDao = db.clientMedicationDao(),
+            medicationDao = db.medicationDao(),
+            medicationLogDao = db.medicationLogDao()
+        )
+    }
+
+    val medicationRepository = remember {
+        MedicationRepository(
+            medicationDao = db.medicationDao(),
+            medicationLogDao = db.medicationLogDao(),
+            clientMedicationDao = db.clientMedicationDao()
+        )
+    }
 
     val clientMedication: ClientMedication? = getClientMedication()
 
@@ -88,14 +106,13 @@ fun AlarmDialogScreen(onDismiss: () -> Unit) {
 
     LaunchedEffect(Unit) {
         clientMedication?.let {
-            meds = medicationController.getMedications(it.medicationId)
-            client = clientController.getClientById(it.clientId)
-            // Use the medication data here
+            meds = medicationRepository.getMedicationById(it.medicationId)
+            client = clientRepository.getClientById(it.clientId)
         } ?: run {
-            // Handle the case when clientMedication is null, e.g., show an error or default behavior
             Log.d("Alarm", "Client medication is null.")
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

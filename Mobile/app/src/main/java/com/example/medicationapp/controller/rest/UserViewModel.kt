@@ -30,7 +30,6 @@ class UserViewModel : ViewModel() {
         private set
 
 
-
     fun login(email: String, password: String) {
         isLoading = true
         error = ""
@@ -38,10 +37,10 @@ class UserViewModel : ViewModel() {
         apiService.login(email, password).enqueue(object : Callback<Status> {
             override fun onResponse(call: Call<Status>, response: Response<Status>) {
                 isLoading = false
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
                     _status.value = response.body()
                 } else {
-                    error = "Error: ${response.code()}"
+                    error = "Login failed: ${response.code()}"
                 }
             }
 
@@ -51,6 +50,8 @@ class UserViewModel : ViewModel() {
             }
         })
     }
+
+
 
 
     fun register(user: User) {
@@ -63,7 +64,7 @@ class UserViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     _status.value = response.body()
-                    Log.e("APIs",  _status.value ?.getStatus().toString())
+                   // Log.e("APIs",  _status.value ?.fetchStatus().toString())
                 } else {
                     error = when (response.code()) {
                         401 -> "Invalid credentials"

@@ -29,10 +29,10 @@ fun LoginScreen(
 
     LaunchedEffect(status) {
         status?.let {
-            if (it.getStatus() == "SUCCESS") {
-                // Replace with actual backend values when available
-                onLoginSuccess("Carer", 123L)
+            if (it.status == "login") {
+                onLoginSuccess(it.role, it.userId)
             }
+
         }
     }
 

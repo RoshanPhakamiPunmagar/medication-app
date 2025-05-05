@@ -13,13 +13,11 @@ import retrofit2.http.Query
 
 
 interface ApiService {
-
-        @POST("mobile/check")
-        @FormUrlEncoded
-        fun login(
-            @Field("email") email: String,
-            @Field("password") password: String
-        ): Call<Status>
+    @POST("mobile/check")
+    fun login(
+        @Query("email") email: String,
+        @Query("password") password: String
+    ): Call<Status>
 
     @POST("mobile/user")
     fun register(

@@ -1,12 +1,19 @@
 package com.example.medicationapp.controller.rest
 
-class  Status{
+//class Status {
+//    var status: String = ""
+//    var role: String = ""
+//    var userId: Long = 0L
+//
+//    fun fetchStatus(): String {
+//        return status
+//    }
+//}
 
-     var status: String = null.toString()
 
+data class Status(
+    val status: String,
+    val role: String,
+    val userId: Long
+)
 
-    fun getStatus(): String{
-
-    return status
-    }
-    }

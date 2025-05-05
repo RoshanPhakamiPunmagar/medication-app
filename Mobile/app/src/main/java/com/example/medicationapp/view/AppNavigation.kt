@@ -28,9 +28,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import com.example.medicationapp.model.repository.UserRepository
-import com.example.medicationapp.repository.RoleRepository
-import com.example.medicationapp.view.SignupScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
@@ -69,17 +68,13 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         )
     }
 
-    val userRepository = remember { UserRepository(db.userDao()) }
-    val roleRepository = remember { RoleRepository(db.roleDao()) }
-
     NavHost(navController = navController, startDestination = "login") {
 
         // Login Screen
         composable("login") {
             LoginScreen(
-                context = context,
-                userRepository = userRepository,
-                roleRepository = roleRepository,
+                //context = context,
+
                 onLoginSuccess = { role: String, userId: Long ->
                     val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
@@ -102,8 +97,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         composable("signup") {
             SignupScreen(
                 context = context,
-                userRepository = userRepository,
-                roleRepository = roleRepository,
+                userViewModel = viewModel(),
                 onSignupSuccess = {
                     navController.popBackStack()
                 }

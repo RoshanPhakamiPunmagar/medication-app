@@ -1,4 +1,4 @@
-package com.example.medicationapp.controller.rest
+package com.example.medicationapp.controller.ViewModel
 
 import android.util.Log
 import androidx.compose.runtime.getValue

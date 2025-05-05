@@ -1,8 +1,8 @@
-package com.example.medicationapp.controller.rest
+package com.example.medicationapp.controller.ViewModel
 
+import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.User
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -26,8 +26,8 @@ interface ApiService {
         @Body user: User,
     ): Call<Status>
 
-    @GET("meds/{name}")
-    fun getMedicationWithName(@Path("name") name: String): Call<User>
+    @GET("meds/details")
+    fun getMedicationWithName(@Query("medicationList") list: List<String>): Call<ClientMedsDescriptions>
 
 
 }

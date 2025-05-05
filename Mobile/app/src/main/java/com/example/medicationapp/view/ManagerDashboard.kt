@@ -21,10 +21,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.MedicationController
+import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.navbar.ContentScreen
 import com.example.medicationapp.navbar.NavItem
+import com.example.medicationapp.repository.MedicationRepository
 import com.example.medicationapp.view.managerviews.AssignCarerScreen
 import com.example.medicationapp.view.managerviews.AssignMedicationScreen
 import com.example.medicationapp.view.managerviews.ReportScreen
@@ -32,8 +32,14 @@ import com.example.medicationapp.view.managerviews.ReportScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManagerMainScreen(clientController:ClientController, medicationController:MedicationController, context:Context, navHostController: NavHostController) {
+fun ManagerMainScreen(
+    clientRepository: ClientRepository,
+    medicationRepository: MedicationRepository,
+    context: Context,
+    navController: NavHostController
+) {
     val bottomNavController = rememberNavController()
+
 
     val bottomNavItems = listOf(
         BottomNavItemForManager.AssignCarer,
@@ -81,15 +87,22 @@ fun ManagerMainScreen(clientController:ClientController, medicationController:Me
                 navController = bottomNavController,
                 startDestination = BottomNavItemForManager.AssignCarer.route
             ) {
-                composable(BottomNavItemForManager.AssignCarer.route) { AssignCarerScreen() }
-                composable(BottomNavItemForManager.AssignMedication.route) { AssignMedicationScreen(clientController, medicationController) }
+                composable(BottomNavItemForManager.AssignCarer.route) {
+                    AssignCarerScreen(clientRepository = clientRepository)
+                }
+                composable(BottomNavItemForManager.AssignMedication.route) {
+                    AssignMedicationScreen(
+                        clientRepository = clientRepository,
+                        medicationRepository = medicationRepository
+                    )
+                }
                 composable(BottomNavItemForManager.Reports.route) {
-                    ReportScreen() }
+                    ReportScreen()
+                }
                 composable(BottomNavItemForManager.Settings.route) {
-                    SettingScreen(context,navHostController) }
-
+                    SettingScreen(context, navController)
+                }
             }
         }
     }
 }
-

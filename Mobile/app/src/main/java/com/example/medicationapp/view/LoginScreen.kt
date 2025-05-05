@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.medicationapp.controller.UserController
-import com.example.medicationapp.controller.ViewModel.UserViewModel
+import com.example.medicationapp.viewmodel.UserViewModel
+import com.example.medicationapp.model.repository.UserRepository
 import kotlinx.coroutines.launch
 
 @Composable
@@ -18,23 +18,27 @@ fun LoginScreen(
     context: Context,
     onLoginSuccess: (role: String, userId: Long) -> Unit,
     onNavigateToSignup: () -> Unit,
-    viewModel: UserViewModel = viewModel()
+    userViewModel: UserViewModel = viewModel()
 ) {
-    val controller = remember { UserController(context) }
-    val scope = rememberCoroutineScope()
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+
+    val isLoading by userViewModel::isLoading
+
+    val userRepo = remember { UserRepository(context) }
+    val scope = rememberCoroutineScope()
+
     var error by remember { mutableStateOf<String?>(null) }
 
-    val status by viewModel.status.collectAsState()
+    val status by userViewModel.status.collectAsState()
 
     LaunchedEffect(status) {
         status?.let {
-            val user = controller.loginUser(email, password)
+            val user = userRepo.loginUser(email, password)
             if (it.getStatus() == "login" && user != null) {
 
-                val roleName = controller.getRoleNameById(user.roleId)
+                val roleName = userRepo.getRoleNameById(user.roleId)
 
                 if (roleName != null) {
                     onLoginSuccess(roleName, user.userId)
@@ -46,6 +50,7 @@ fun LoginScreen(
             }
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -72,11 +77,12 @@ fun LoginScreen(
         )
         Spacer(Modifier.height(16.dp))
 
+
         Button(
             onClick = {
                 error = null
                 scope.launch {
-                    viewModel.login(email,password)
+                    userViewModel.login(email,password)
                 }
             },
             modifier = Modifier.fillMaxWidth()

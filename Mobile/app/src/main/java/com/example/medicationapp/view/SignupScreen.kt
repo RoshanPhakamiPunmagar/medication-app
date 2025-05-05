@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.medicationapp.controller.UserController
-import com.example.medicationapp.controller.ViewModel.UserViewModel
+import com.example.medicationapp.viewmodel.UserViewModel
 import com.example.medicationapp.model.User
+import com.example.medicationapp.model.repository.UserRepository
 import kotlinx.coroutines.launch
 
 @Composable
@@ -19,7 +19,7 @@ fun SignupScreen(
     onSignupSuccess: () -> Unit,
     viewModel: UserViewModel = viewModel()
 ) {
-    val controller = remember { UserController(context) }
+    val controller = remember { UserRepository(context) }
     val scope = rememberCoroutineScope()
 
     var name by remember { mutableStateOf("") }
@@ -33,13 +33,12 @@ fun SignupScreen(
     // Fixed role as "Carer"
     val selectedRole = "Carer"
     LaunchedEffect(status) {
-        status.let{
+        status.let {
             val result = controller.registerUser(name, email, password, selectedRole)
 
-            if(it?.getStatus() == "register" && result.isSuccess){
+            if (it?.getStatus() == "register" && result.isSuccess) {
                 onSignupSuccess()
-            }
-            else{
+            } else {
                 error = result.exceptionOrNull()?.message ?: "Signup failed. Try again."
             }
         }

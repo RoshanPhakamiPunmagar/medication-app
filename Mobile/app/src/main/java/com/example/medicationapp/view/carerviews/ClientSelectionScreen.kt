@@ -1,64 +1,35 @@
 package com.example.medicationapp.view.carerviews
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.ViewModel.MedicationDetailsViewModel
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.MedicationLog
+import com.example.medicationapp.model.repository.ClientRepository
 import kotlinx.coroutines.launch
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import com.example.medicationapp.viewmodel.MedicationDetailsViewModel
 
-@Composable
-fun ActualTimeInput(
-    actualTime: LocalTime?,
-    onTimeChange: (LocalTime?) -> Unit,
-
-) {
-    var timeText by remember { mutableStateOf(TextFieldValue(actualTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "")) }
-
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-
-    fun parseTimeInput(input: String): LocalTime? {
-        return try {
-            LocalTime.parse(input, formatter)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    TextField(
-        value = timeText,
-        onValueChange = {
-            timeText = it
-            val parsedTime = parseTimeInput(it.text)
-            onTimeChange(parsedTime)
-        },
-        label = { Text("Enter Actual Time (HH:mm)") },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientSelectionScreen(
-    clientController: ClientController,
+    clientRepository: ClientRepository,
     navController: NavController,
     carerId : Long,
-    clientMedsDetailsViewModel: MedicationDetailsViewModel = viewModel()
+    clientMedsDetailsViewModel: MedicationDetailsViewModel = viewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
@@ -69,22 +40,19 @@ fun ClientSelectionScreen(
 
     var allMedications by remember { mutableStateOf<List<String>>(emptyList()) }
 
-    var meds  by remember { mutableStateOf<List<String>>(emptyList()) }
+    var meds by remember { mutableStateOf<List<String>>(emptyList()) }
     var actualTime by remember { mutableStateOf<LocalTime?>(null) }
     var status by remember { mutableStateOf(MedicationLog.Status.Given) }
     var notes by remember { mutableStateOf("") }
 
-    var medsDetails by remember { mutableStateOf<ClientMedsDescriptions?>(null) }
     var showDetails by remember { mutableStateOf(false) }
 
-    LaunchedEffect(carerId, selectedClient) {
-        clients = clientController.getClientsForCarer(carerId)
+    var medsDetails by remember { mutableStateOf<ClientMedsDescriptions?>(null) }
 
-            meds = clientController.getMedicationsOfClient(selectedClient?.clientId)
-
+    LaunchedEffect(carerId) {
+        clients = clientRepository.getClientsForCarer(carerId)
+        meds = clientRepository.getMedicationsOfClient(selectedClient?.clientId)
     }
-
-
 
     Scaffold(
         topBar = {
@@ -118,7 +86,7 @@ fun ClientSelectionScreen(
                                     coroutineScope.launch {
                                         selectedClient = client
                                         medications =
-                                            clientController.getMedicationsForClient(client.clientId)
+                                            clientRepository.getMedicationsForClient(client.clientId)
                                     }
                                 },
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
@@ -143,7 +111,6 @@ fun ClientSelectionScreen(
                     Text("No medications assigned.")
                 } else {
                     medications.forEach { (clientMedication, medicationName) ->
-
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -165,14 +132,15 @@ fun ClientSelectionScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Button(onClick = {    showDetails = false
-                    selectedClient = null }) {
+                Button(onClick = {
+                    showDetails = false
+                    selectedClient = null
+                }) {
                     Text("Back to Client List")
                 }
-
                 Button(onClick = {
 
-                        meds.forEach {
+                    meds.forEach {
                         Log.d("All medication", it)
                     }
                     if(showDetails == true) {
@@ -190,6 +158,9 @@ fun ClientSelectionScreen(
                 if (showDetails) {
                     MoreDetails(viewModel = clientMedsDetailsViewModel)
                 }
+            }
+
+        }
             }
         }
 

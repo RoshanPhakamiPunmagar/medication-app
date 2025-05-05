@@ -13,26 +13,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.MedicationController
 import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
+import com.example.medicationapp.view.TimeWheelPickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import com.example.medicationapp.model.repository.ClientRepository
+import com.example.medicationapp.repository.MedicationRepository
 
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssignMedicationScreen(
-    clientController: ClientController,
-    medicationController: MedicationController
-) {
+    clientRepository: ClientRepository,
+    medicationRepository: MedicationRepository
+)
+ {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -59,10 +61,17 @@ fun AssignMedicationScreen(
 
     val scheduler = AlarmScheduler(context)
 
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val datePickerStateStart = rememberDatePickerState()
+    val datePickerStateEnd = rememberDatePickerState()
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
-        clients = clientController.getAllClients()
-        medications = medicationController.getAllMedications()
+        clients = clientRepository.getAllClients()
+        medications = medicationRepository.getAllMedications()
+
     }
 
     val scrollState = rememberScrollState()
@@ -147,18 +156,22 @@ fun AssignMedicationScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        TextField(
-            value = startDate,
-            onValueChange = { startDate = it },
-            label = { Text("Start Date (yyyy-MM-dd)") },
+        // Start Date Picker Trigger
+        Button(
+            onClick = { showStartDatePicker = true },
             modifier = Modifier.fillMaxWidth()
-        )
-        TextField(
-            value = endDate,
-            onValueChange = { endDate = it },
-            label = { Text("End Date (yyyy-MM-dd)") },
+        ) {
+            Text(if (startDate.isBlank()) "Select Start Date" else "Start Date: $startDate")
+        }
+
+        // End Date Picker Trigger
+        Button(
+            onClick = { showEndDatePicker = true },
             modifier = Modifier.fillMaxWidth()
-        )
+
+        ) {
+            Text(if (endDate.isBlank()) "Select End Date" else "End Date: $endDate")
+        }
 
         //Scheduled Times
         Text("Scheduled Times:", style = MaterialTheme.typography.titleMedium)
@@ -203,7 +216,7 @@ fun AssignMedicationScreen(
                         }
                         selectedClient?.clientId?.let { clientId ->
                             selectedMedication?.medicationId?.let { medicationId ->
-                                clientMedication    = medicationController.assignMedicationToClient(
+                                clientMedication    = medicationRepository.assignMedicationToClient(
                                     clientId = clientId,
                                     medicationId = medicationId.toLong(),
                                     dosage = dosage,
@@ -229,9 +242,28 @@ fun AssignMedicationScreen(
                     dosage.isNotBlank() &&
                     startDate.isNotBlank() && endDate.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
-        ) {
+        )
+
+        {
             Text("Assign Medication")
         }
+
+        Button(
+            onClick = {
+                selectedClient = null
+                selectedMedication = null
+                dosage = ""
+                startDate = ""
+                endDate = ""
+                scheduledTimes = emptyList()
+                successMessage = null
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+        ) {
+            Text("Clear All", color = MaterialTheme.colorScheme.onError)
+        }
+
 
         successMessage?.let {
             Text(it, color = MaterialTheme.colorScheme.primary)
@@ -266,6 +298,58 @@ fun AssignMedicationScreen(
                 showTimePicker = false
             }
         )
+    }
+
+    // Start DatePicker Dialog
+    if (showStartDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val millis = datePickerStateStart.selectedDateMillis
+                    if (millis != null) {
+                        val date = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
+                        startDate = date.format(dateFormatter)
+                    }
+                    showStartDatePicker = false
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showStartDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerStateStart)
+        }
+    }
+
+    // End DatePicker Dialog
+    if (showEndDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val millis = datePickerStateEnd.selectedDateMillis
+                    if (millis != null) {
+                        val date = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
+                        endDate = date.format(dateFormatter)
+                    }
+                    showEndDatePicker = false
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEndDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerStateEnd)
+        }
     }
 
 }

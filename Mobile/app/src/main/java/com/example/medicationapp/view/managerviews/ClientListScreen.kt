@@ -9,20 +9,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.medicationapp.controller.ClientController
 import com.example.medicationapp.model.Client
+import com.example.medicationapp.model.repository.ClientRepository
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClientListScreen(clientController: ClientController) {
+fun ClientListScreen(clientRepository: ClientRepository) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
 
     // Fetch clients from the database when the screen is launched
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            clients = clientController.getAllClients()  // Call the controller to get all clients
+            clients = clientRepository.getAllClients()  // Call the controller to get all clients
         }
     }
 

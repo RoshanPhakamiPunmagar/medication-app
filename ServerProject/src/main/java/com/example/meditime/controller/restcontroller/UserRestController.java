@@ -62,7 +62,12 @@ public class UserRestController {
     public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {
         Map<String, String> response = new HashMap<>();
         try {
+
             Optional<User> user = userRepository.findByEmail(email);
+            if (userService.emailExists(email)) {
+                response.put("status", EXISTS);
+                return ResponseEntity.ok(response);
+            }
 
             System.out.println(passwordEncoder.encode("password123"));
             boolean x = authenticate(password, user.get().getPassword());

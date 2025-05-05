@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.medicationapp.database.AppDatabase
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.User
+import com.example.medicationapp.model.repository.ClientRepository
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,7 +52,7 @@ fun ConfirmDialog(title: String, text: String, onConfirm: () -> Unit, onDismiss:
 
 
 @Composable
-fun AssignCarerScreen() {
+fun AssignCarerScreen(clientRepository: ClientRepository) {
     val context = LocalContext.current
     val db = AppDatabase.getDatabase(context)
     val clientDao = db.clientDao()

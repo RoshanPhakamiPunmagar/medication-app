@@ -16,9 +16,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.medicationapp.controller.ClientController
-import com.example.medicationapp.controller.MedicationController
 import com.example.medicationapp.model.Client
+import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.view.carer.IncidentNotesScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
@@ -26,7 +25,7 @@ import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarrerMainScreen(clientController: ClientController, navController: NavHostController, carerId: Long, context: Context) {
+fun CarrerMainScreen(clientRepository: ClientRepository, navController: NavHostController, carerId: Long, context: Context) {
     val bottomNavController = rememberNavController()
 
     val bottomNavItems = listOf(
@@ -77,7 +76,7 @@ fun CarrerMainScreen(clientController: ClientController, navController: NavHostC
             ) {
                 composable(BottomNavItemForCarer.SeeClient.route) {
                     ClientSelectionScreen(
-                        clientController = clientController,
+                        clientRepository = clientRepository,
                         navController = navController,
                         carerId = carerId
                     )
@@ -89,6 +88,6 @@ fun CarrerMainScreen(clientController: ClientController, navController: NavHostC
             }
 
 
-    }
+        }
     }
 }

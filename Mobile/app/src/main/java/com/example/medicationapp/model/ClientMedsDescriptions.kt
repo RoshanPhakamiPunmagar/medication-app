@@ -1,5 +1,6 @@
 package com.example.medicationapp.model
 
+
 class ClientMedsDescriptions {
     private var medication: List<String> = emptyList()
 

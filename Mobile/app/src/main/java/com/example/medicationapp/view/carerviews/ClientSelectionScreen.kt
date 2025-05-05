@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -14,11 +15,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
+import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.MedicationLog
 import com.example.medicationapp.model.repository.ClientRepository
 import kotlinx.coroutines.launch
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import com.example.medicationapp.viewmodel.MedicationDetailsViewModel
 
 //@Composable
 //fun ActualTimeInput(
@@ -56,6 +58,7 @@ fun ClientSelectionScreen(
     clientRepository: ClientRepository,
     navController: NavController,
     carerId : Long,
+    clientMedsDetailsViewModel: MedicationDetailsViewModel = viewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
@@ -73,11 +76,11 @@ fun ClientSelectionScreen(
 
     var showDetails by remember { mutableStateOf(false) }
 
+    var medsDetails by remember { mutableStateOf<ClientMedsDescriptions?>(null) }
+
     LaunchedEffect(carerId) {
         clients = clientRepository.getClientsForCarer(carerId)
-        println(clients.size)
-        println(carerId)
-        Log.d("here", "herer")
+        meds = clientRepository.getMedicationsOfClient(selectedClient?.clientId)
     }
 
 
@@ -168,7 +171,28 @@ fun ClientSelectionScreen(
                     Text("Back to Client List")
                 }
 
+                Button(onClick = {
+
+                    meds.forEach {
+                        Log.d("All medication", it)
+                    }
+                    if(showDetails == true) {
+
+                        showDetails = false
+                    }
+                    else {
+                        showDetails = true
+                        clientMedsDetailsViewModel.fetchMedicationDetails(meds)
+
+                    }
+                }) {
+                    Text("More AI Details")
+                }
+                if (showDetails) {
+                    MoreDetails(viewModel = clientMedsDetailsViewModel)
+                }
+            }
+
             }
         }
     }
-}

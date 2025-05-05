@@ -9,9 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.medicationapp.controller.rest.UserViewModel
+import com.example.medicationapp.viewmodel.UserViewModel
 import com.example.medicationapp.model.repository.UserRepository
-import com.example.medicationapp.repository.RoleRepository
 import kotlinx.coroutines.launch
 
 @Composable

@@ -1,10 +1,11 @@
-package com.example.medicationapp.controller.rest
+package com.example.medicationapp.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.medicationapp.ViewModel.ApiService
 import com.example.medicationapp.model.Status
 import com.example.medicationapp.model.User
 import com.example.medicationapp.retrofit.RetrofitService
@@ -19,9 +20,9 @@ class UserViewModel : ViewModel() {
     private val retrofitService = RetrofitService()
     private val apiService = retrofitService.getRetrofit().create(ApiService::class.java)
 
-
     private val _status = MutableStateFlow<Status?>(null)
     val status: StateFlow<Status?> = _status
+
 
 
     var isLoading by mutableStateOf(false)
@@ -31,6 +32,7 @@ class UserViewModel : ViewModel() {
         private set
 
 
+
     fun login(email: String, password: String) {
         isLoading = true
         error = ""
@@ -38,10 +40,10 @@ class UserViewModel : ViewModel() {
         apiService.login(email, password).enqueue(object : Callback<Status> {
             override fun onResponse(call: Call<Status>, response: Response<Status>) {
                 isLoading = false
-                if (response.isSuccessful && response.body() != null) {
+                if (response.isSuccessful) {
                     _status.value = response.body()
                 } else {
-                    error = "Login failed: ${response.code()}"
+                    error = "Error: ${response.code()}"
                 }
             }
 
@@ -51,8 +53,6 @@ class UserViewModel : ViewModel() {
             }
         })
     }
-
-
 
 
     fun register(user: User) {
@@ -65,7 +65,7 @@ class UserViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     _status.value = response.body()
-                   // Log.e("APIs",  _status.value ?.fetchStatus().toString())
+                    Log.e("APIs",  _status.value ?.getStatus().toString())
                 } else {
                     error = when (response.code()) {
                         401 -> "Invalid credentials"

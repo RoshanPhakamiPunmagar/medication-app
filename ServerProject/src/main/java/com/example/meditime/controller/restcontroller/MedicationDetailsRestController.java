@@ -37,9 +37,8 @@ public class MedicationDetailsRestController {
 
 
         var msg = ("""
-        You are a clinical pharmacology expert specializing in drug interactions and medication safety. 
-        Your task is to analyze possible combinations of medications and provide evidence-based guidance. It always must not be correct
-        If no known interactions or usage guidelines exist for the given medications, strictly respond with "No result found" for both sections.
+        You are a medicine knowledge assistant. If you do not know just say "No result found. Please try again later." for both interactions and recommendations.
+        Below is a list of medications assigned to a patient:
         
         {medsDetails}
         
@@ -65,7 +64,8 @@ public class MedicationDetailsRestController {
 
         // Convert AI response to a structured Java object
         ClientMedsDescriptions medsDetails = converter.convert(aiResponse);
-
+        System.out.println(medsDetails.getInteractions());
+        System.out.println(medsDetails.getRecommendations());
         return medsDetails;
     }
 }

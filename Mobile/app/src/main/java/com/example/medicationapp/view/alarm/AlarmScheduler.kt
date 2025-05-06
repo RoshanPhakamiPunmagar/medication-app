@@ -23,7 +23,6 @@ class AlarmScheduler(private val context: Context) {
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun setUpAlarm(clientMedication: ClientMedication) {
         try {
-
             //setting Client Medication
             setClientMedication(clientMedication)
 
@@ -124,7 +123,7 @@ class AlarmScheduler(private val context: Context) {
             requestCode,
             Intent(context, AlarmReceiver::class.java).apply {
                 action = "com.example.medicationapp.ALARM_ACTION"
-                putExtra("medication", clientMedication)
+                putExtra("carer_id", clientMedication.clientId)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or
                     (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

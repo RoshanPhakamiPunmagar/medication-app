@@ -37,17 +37,22 @@ fun SignupScreen(
     LaunchedEffect(status) {
         status.let {
             if (name.isNotBlank() && password.isNotBlank() && email.isNotBlank() && selectedRole.isNotBlank()) {
-                val result = controller.registerUser(name, email, password, selectedRole)
                 println(it?.getStatus())
-                if (it?.getStatus() == "register" && result.isSuccess) {
-                    Log.d("SignUpStatus", it.getStatus())
-                    onSignupSuccess()
+                if (it?.getStatus() == "register") {
+                    val result = controller.registerUser(name, email, password, selectedRole)
+                    if (result.isSuccess) {
+                        Log.d("SignUpStatus", it.getStatus())
+                        onSignupSuccess()
+                    } else {
+                        val message = ("SignUpError " + " Registration failed")
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
                 } else if (it?.getStatus() == "exists") {
                     val message =
-                        result.exceptionOrNull()?.message ?: "Email Taken. Try another email"
+                   "Email Taken. Try another email"
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 } else {
-                    val message = result.exceptionOrNull()?.message ?: "Please try again later"
+                    val message =  "Please try again later"
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -108,19 +113,18 @@ fun SignupScreen(
         Button(
             onClick = {
                 error = null
-                //For validating inputs
                 val isFormValid = name.isNotBlank() &&
                         email.isNotBlank() &&
                         password.isNotBlank() &&
                         confirmPassword.isNotBlank()
 
-                        Log.d("error status", isFormValid.toString())
+                Log.d("error status", isFormValid.toString())
 
-                        if (isFormValid == false) {
-                            error = "Please fill in all fields."
-                        } else if (password != confirmPassword) {
-                            error = "Passwords do not match."
-                        }
+                if (isFormValid == false) {
+                    error = "Please fill in all fields."
+                } else if (password != confirmPassword) {
+                    error = "Passwords do not match."
+                }
                         else {
                             scope.launch {
 

@@ -57,7 +57,7 @@ fun AssignMedicationScreen(
 
     var clientMedication by remember { mutableStateOf<ClientMedication?>(null) }
 
-    val scheduler = AlarmScheduler(context)
+
 
     val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val datePickerStateStart = rememberDatePickerState()
@@ -269,7 +269,7 @@ fun AssignMedicationScreen(
                                 )
 
                                 // If medication assignment is successful, set up alarms for the medication schedule
-                                clientMedication?.let(scheduler::setUpAlarmDateRange)
+
 
                                 // Show success message after assigning medication
                                 successMessage = "Medication assigned successfully!"

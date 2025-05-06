@@ -76,7 +76,7 @@ fun AlarmAlertPopUp (
 }
 
 @Composable
-fun AlarmDialogScreen(onDismiss: () -> Unit) {
+fun AlarmDialogScreen( onDismiss: () -> Unit) {
     val context = LocalContext.current
     val db = remember { com.example.medicationapp.database.AppDatabase.getDatabase(context) }
 

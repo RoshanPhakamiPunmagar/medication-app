@@ -36,6 +36,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.medicationapp.view.alarm.AlarmScheduler
+import com.example.medicationapp.viewmodel.AlarmViewModel
 
 // --- Define bottom navigation items for Manager ---
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
@@ -56,6 +59,9 @@ sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val
 @Composable
 fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+
+
+    val viewModel: AlarmViewModel = viewModel()
 
     // Get a reference to the singleton Room database
     val db = remember { AppDatabase.getDatabase(context) }
@@ -99,6 +105,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
                     val storedUserId = sharedPref.getLong("user_id", -1L)
                     Log.d("Sign in", "Stored user ID: $storedUserId")
 
+                    viewModel.scheduleAlarmsForCarer(userId = storedUserId)
                     // Navigate based on user role
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")

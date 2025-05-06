@@ -15,7 +15,7 @@ class ClientRepository(
     private val medicationDao: MedicationDao,
     private val medicationLogDao: MedicationLogDao,
     private val adherenceLogDao: AdherenceLogDao,
-    private val userDao: UserDao // ✅ Add this!
+    private val userDao: UserDao
 ) {
 
     suspend fun getAllClients(): List<Client> = clientDao.getAllClients()
@@ -27,6 +27,9 @@ class ClientRepository(
     suspend fun logMedication(medicationLog: MedicationLog) {
         medicationLogDao.insertLog(medicationLog)
     }
+
+    suspend fun getClientByCarerId(carerId: Long): List<Client> =
+        clientDao.getClientsForCarer(carerId)
 
     suspend fun getMedicationsForClient(clientId: Long): List<Pair<ClientMedication, String>> {
         val medications = clientMedicationDao.getMedicationsForClient(clientId)
@@ -43,12 +46,12 @@ class ClientRepository(
         }
     }
 
-    // ✅ NEW: Get all users with role ID 2 (carers)
+    // Get all users with role ID 2 (carers)
     suspend fun getAllCarers(): List<User> {
         return userDao.getUsersByRole(roleId = 2)
     }
 
-    // ✅ NEW: Update client (used to assign/remove carer)
+    // Update client (used to assign/remove carer)
     suspend fun updateClient(client: Client) {
         clientDao.updateClient(client)
     }

@@ -27,63 +27,23 @@ class AlarmReceiver() : BroadcastReceiver() {
     var ringtone: Ringtone? = null
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onReceive(context: Context, intent: Intent?) {
+        // Play alarm sound
+        AlarmConfig.play(context)
 
-        val db = AppDatabase.getDatabase(context)
-        clientRepository = ClientRepository(
-            clientDao = db.clientDao(),
-            adherenceLogDao = db.adherenceLogDao(),
-            clientMedicationDao = db.clientMedicationDao(),
-            medicationDao = db.medicationDao(),
-            medicationLogDao = db.medicationLogDao(),
-            userDao = db.userDao()
-        )
+        // Retrieve medication from intent
+        Log.d("AlarmReceiver", "Client Medication: 1")
+        val test = intent?.getStringExtra("test")
+        Log.d("AlarmReceiver", "Test extra: $test")
 
-
-
-        val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
-        val userRole = sharedPref.getString("user_role", null)
-        val userId = sharedPref.getLong("user_id", 0)
-
-        Log.d("Client Check", "$userId")
-        GlobalScope.launch(Dispatchers.IO) {
-            val clientList = clientRepository.getClientsForCarer(userId)
-
-            for(client in clientList){
-
-                Log.d("Client assigneed", "${client.carerId}")
-            }
-            val isCarerClient = clientList.any { it.carerId == userId
-            }
-
-            Log.d("Client", "$isCarerClient")
-            Log.d("Client2", "$userId")
-
-
-            if (userRole != "Carer" || !isCarerClient) {
-                Log.d("AlarmReceiver", "Alarm ignored: not a Carer or not a client match.")
-                return@launch
-            }
-
-            Log.d("AlarmReceiver", "Alarm triggered!")
-            AlarmConfig.play(context)
-
-            // Retrieve medication from intent
-            val clientMedication: ClientMedication? = intent?.getParcelableExtra("medication", ClientMedication::class.java)
-
-            clientMedication?.let {
-                Log.d("AlarmReceiver", "Client Medication: ${it.medicationId}")
-
-                val alarmIntent = Intent(context, AlarmDialogActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    putExtra("medication", it)
-                }
-
-                context.startActivity(alarmIntent)
-            }
+        val alarmIntent = Intent(context, AlarmDialogActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("test", "hello")
         }
+
+        context.startActivity(alarmIntent)
+
     }
 
 

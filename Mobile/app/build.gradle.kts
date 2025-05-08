@@ -47,6 +47,10 @@ android {
 
 dependencies {
 
+    implementation ("androidx.compose.runtime:runtime-livedata:<version>")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:<version>")
+
+
     implementation ("androidx.compose.ui:ui-viewbinding:1.6.1")
 
 

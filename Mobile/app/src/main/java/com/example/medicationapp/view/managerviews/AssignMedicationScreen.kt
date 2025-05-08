@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
@@ -25,12 +26,15 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.repository.MedicationRepository
+import com.example.medicationapp.viewmodel.MedicationViewModel
+import androidx.compose.runtime.livedata.observeAsState
+
 
 
 @SuppressLint("ScheduleExactAlarm")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssignMedicationScreen(
+fun AssignMedicationScreen( viewModel: MedicationViewModel = viewModel(), // Get the ViewModel
     clientRepository: ClientRepository,
     medicationRepository: MedicationRepository
 )
@@ -38,8 +42,11 @@ fun AssignMedicationScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+     val medications by viewModel.medications.observeAsState() // Observe medications list
+     val error by viewModel.error.observeAsState() // Observe error if any
+
     var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
-    var medications by remember { mutableStateOf<List<Medication>>(emptyList()) }
+    //var medications by remember { mutableStateOf<List<Medication>>(emptyList()) }
 
     var selectedClient by remember { mutableStateOf<Client?>(null) }
     var selectedMedication by remember { mutableStateOf<Medication?>(null) }
@@ -66,9 +73,11 @@ fun AssignMedicationScreen(
     var showEndDatePicker by remember { mutableStateOf(false) }
 
 
+
     LaunchedEffect(Unit) {
         clients = clientRepository.getAllClients()
-        medications = medicationRepository.getAllMedications()
+        //medications = medicationRepository.getAllMedications()
+        viewModel.fetchMedications() // Call to fetch medications
 
     }
 
@@ -159,15 +168,16 @@ fun AssignMedicationScreen(
             modifier = Modifier.heightIn(max = 300.dp) // Set a maximum height for the dropdown menu
         ) {
             // Iterate over the list of medications and display each one in a menu item
-            medications.forEach { med ->
+            (medications ?: emptyList()).forEach { med ->
                 DropdownMenuItem(
-                    text = { Text(med.name) }, // Display the medication's name
+                    text = { Text(med.name) },
                     onClick = {
-                        selectedMedication = med // Set the selected medication when clicked
-                        medicationExpanded = false // Close the dropdown after selecting
+                        selectedMedication = med
+                        medicationExpanded = false
                     }
                 )
             }
+
         }
 
 

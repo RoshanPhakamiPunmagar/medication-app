@@ -30,44 +30,8 @@ public class MedicationDetailsRestController {
 
     @GetMapping("/details")
     public ClientMedsDescriptions getMedicationDetails(@RequestParam List<String> medicationList) {
-
         String joinedMeds = String.join(", ", medicationList);
 
-        var converter = new BeanOutputConverter<>(ClientMedsDescriptions.class);
-        String format = converter.getFormat();
-
-
-        var msg = ("""
-        You are a medicine knowledge assistant. If you do not know just say "No result found. Please try again later." for both interactions and recommendations.
-        Below is a list of medications assigned to a patient:
-        
-        {medsDetails}
-        
-        Please provide:
-        - Interactions between these medications (if any).
-        - Recommendations for safe usage.
-        
-        Use the following response format:
-        {format}
-        """);
-
-        PromptTemplate promptTemplate = new PromptTemplate(
-                msg,
-                Map.of(
-                        "medsDetails", joinedMeds,
-                        "format", format
-                )
-        );
-
-
-        Prompt prompt = promptTemplate.create();
-        String aiResponse = chatClient.prompt(prompt).call().content();
-
-        // Convert AI response to a structured Java object
-        ClientMedsDescriptions medsDetails = converter.convert(aiResponse);
-        System.out.println(medsDetails.getInteractions());
-        System.out.println(medsDetails.getRecommendations());
-        return medsDetails;
         // Simplified prompt - local LLMs respond better to clear examples
         String prompt = """
         You are a medical expert. For these medications: %s

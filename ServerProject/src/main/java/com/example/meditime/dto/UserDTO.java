@@ -1,20 +1,18 @@
-//Amy Wickham 121785021
 // Amy Wickham 12178502
 // File: UserDTO.java
-// Description: See MediTime documentation. This file is part of the medication management system.
+// Description: DTO for transferring User data with flat roleId
 
 package com.example.meditime.dto;
 
-import com.example.meditime.model.Role;
-import lombok.Data;
 import com.example.meditime.model.User;
+import lombok.Data;
 
 @Data
 public class UserDTO {
     private Long userId;
     private String name;
     private String email;
-    private Role role;
+    private Long roleId;
 
     public static UserDTO fromEntity(User user) {
         if (user == null) return null;
@@ -22,7 +20,7 @@ public class UserDTO {
         dto.setUserId(user.getUserId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
-        dto.setRole(user.getRole());
+        dto.setRoleId(user.getRoleId());
         return dto;
     }
 
@@ -31,7 +29,7 @@ public class UserDTO {
         user.setUserId(this.userId);
         user.setName(this.name);
         user.setEmail(this.email);
-        user.setRole(this.role);
+        user.setRoleId(this.roleId);
         return user;
     }
 }

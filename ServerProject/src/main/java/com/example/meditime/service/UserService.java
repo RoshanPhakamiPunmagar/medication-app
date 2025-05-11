@@ -33,9 +33,10 @@ public class UserService implements org.springframework.security.core.userdetail
         return userRepository.findById(id);  // Fetch user by ID from UserRepository
     }
 
-    public List<User> findByRole_Id(Long roleId) {
-        return userRepository.findByRole_RoleId(roleId);
+    public List<User> findByRoleId(Long roleId) {
+        return userRepository.findByRoleId(roleId);
     }
+
 
     public void assignCarerToClient(Long clientId, Long carerUserId) {
         Optional<Client> clientOpt = clientRepository.findById(clientId);
@@ -58,31 +59,28 @@ private PasswordEncoder passwordEncoder;
 
 
 
-public void addUser(String name, String email, String password, String roleName) {
-    User user = new User();
-    user.setName(name);
-    user.setEmail(email);
-    user.setPassword(passwordEncoder.encode(password));
+    public void addUser(String name, String email, String password, String roleName) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
 
-    Role role = roleRepository.findByRoleName(roleName)
-            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
-    user.setRole(role);
+        Role role = roleRepository.findByRoleName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+        user.setRoleId(role.getRoleId());
+        userRepository.save(user);
+    }
 
-    userRepository.save(user);
-}
 
     public void addUserById(String name, String email, String password, Long roleId) {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-
-        Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + roleId));
-        user.setRole(role);
-
+        user.setRoleId(roleId);
         userRepository.save(user);
     }
+
 
 
     // Delete a user by ID
@@ -101,16 +99,20 @@ public void addUser(String name, String email, String password, String roleName)
 
 
     @Override
-public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-    return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getEmail())
-            .password(user.getPassword())
-            .roles(user.getRole().getRoleName()) // Role must be a single string like "Carer"
-            .build();
-}
+        Role role = roleRepository.findById(user.getRoleId())
+                .orElseThrow(() -> new RuntimeException("Role not found for user"));
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .roles(role.getRoleName())  // ✅ role must be string
+                .build();
+    }
+
 
 public User validateUser(String email, String password) {
     Optional<User> optionalUser = userRepository.findByEmail(email);

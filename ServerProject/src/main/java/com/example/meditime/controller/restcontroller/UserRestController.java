@@ -58,7 +58,7 @@ public class UserRestController {
     @GetMapping("/userCarer")
     public ResponseEntity<List<User>> getAllCarers() {
         try {
-            List<User> carers = userService.findByRole_Id(2L);
+            List<User> carers = userService.findByRoleId(2L);
             return ResponseEntity.ok(carers);
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,7 +71,7 @@ public class UserRestController {
         Map<String, String> response = new HashMap<>();
         try {
             Optional<User> carer = userService.findById(carerUserId);
-            if (carer.isPresent() && carer.get().getRole().getRoleId() == 2) {
+            if (carer.isPresent() && carer.get().getRoleId() == 2) {
                 // Assign the carer to the client
                 userService.assignCarerToClient(clientId, carerUserId);
                 response.put("status", "carerAssigned");

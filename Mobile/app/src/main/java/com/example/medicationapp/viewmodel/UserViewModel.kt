@@ -36,24 +36,24 @@ class UserViewModel : ViewModel() {
         apiService.getAllCarers().enqueue(object : Callback<List<User>> {
 
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                // Check if the HTTP response was successful
                 if (response.isSuccessful) {
-                    // Safely extract the list of users from the response body
-                    val users = response.body() ?: emptyList()
-                    println("Fetched users: ${users.size}")
-
-                    // Log each user's name and role ID for debugging
-                    users.forEach {
+                   // val allUsers = response.body() ?: emptyList()
+                    val allUsers = response.body() ?: emptyList()
+                    allUsers.forEach {
                         println("User: ${it.name}, Role ID: ${it.roleId}")
                     }
 
-                    // Update LiveData with the fetched list of users to notify observers
-                    carersLiveData.postValue(users)
+                    val carers = allUsers.filter { it.roleId == 2L } // Filter carers
+                    println("Fetched carers: ${carers.size}")
+                    carers.forEach {
+                        println("User: ${it.name}, Role ID: ${it.roleId}")
+                    }
+                    carersLiveData.postValue(carers)
                 } else {
-                    // Log error details if the response was not successful
                     println("Response failed: ${response.code()} - ${response.message()}")
                 }
             }
+
 
 
             override fun onFailure(call: Call<List<User>>, t: Throwable) {

@@ -60,7 +60,7 @@ public Map<String, String> login(@RequestBody Map<String, String> request) {
     }
 
     String token = jwtUtil.generateToken(email);
-    return Map.of("token", token, "name", user.get().getName(), "role", user.get().getRole().toString());
+    return Map.of("token", token, "name", user.get().getName(), "role", user.get().getRoleId().toString());
 }
 
     @GetMapping("/download")

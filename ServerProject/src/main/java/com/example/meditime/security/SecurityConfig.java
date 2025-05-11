@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/mobile/**","/mobile/assignCarerToClient","mobile/check","api/clients","api/medications","api/medication/assign","/api/medications/import-openfda","/meds/**", "/login/**","/meds/details",
+                .requestMatchers("/mobile/**","/mobile/userCarer","/mobile/assignCarerToClient","mobile/check","api/clients","api/medications","api/medication/assign","/api/medications/import-openfda","/meds/**", "/login/**","/meds/details",
                         "/api/auth/**","/mobile/user, ", "/signup", "/download", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )

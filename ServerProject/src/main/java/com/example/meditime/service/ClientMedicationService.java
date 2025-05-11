@@ -39,9 +39,10 @@ public class ClientMedicationService {
             cm.setClient(clientOpt.get());
             cm.setMedication(medicationOpt.get());
             cm.setDosage(dto.getDosage());
-            cm.setFrequency(dto.getFrequency());
             cm.setStartDate(dto.getStartDate());
             cm.setEndDate(dto.getEndDate());
+            cm.setPaused(dto.isPaused());
+            cm.setScheduledTimes(dto.getScheduledTimes());
 
             clientMedicationRepository.save(cm);
             System.out.println("Medication schedule assigned successfully.");
@@ -49,6 +50,7 @@ public class ClientMedicationService {
             System.out.println("Client or Medication not found.");
         }
     }
+
 
     public List<ClientMedicationDTO> getClientMedicationDTOs(Long clientId) {
         List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(clientId);
@@ -58,11 +60,12 @@ public class ClientMedicationService {
             ClientMedicationDTO dto = new ClientMedicationDTO();
             dto.setMedicationName(cm.getMedication().getName());
             dto.setDosage(cm.getDosage());
-            dto.setFrequency(cm.getFrequency());
             dto.setStartDate(cm.getStartDate());
             dto.setEndDate(cm.getEndDate());
+            dto.setScheduledTimes(cm.getScheduledTimes());
             dtos.add(dto);
         }
+
 
         return dtos;
     }

@@ -9,9 +9,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MedicationDetailsViewModel: ViewModel() {
-    private val retrofitService = RetrofitService()
-    private val apiService = retrofitService.getRetrofit().create(ApiService::class.java)
+class MedicationDetailsViewModel : ViewModel() {
+
+    // Use the singleton RetrofitService object
+    private val apiService = RetrofitService.retrofit.create(ApiService::class.java)
 
     var isLoading by mutableStateOf(false)
         private set
@@ -25,14 +26,12 @@ class MedicationDetailsViewModel: ViewModel() {
     fun fetchMedicationDetails(medsName: List<String>) {
         isLoading = true
         error = ""
-        println(medsName)
-        apiService.getMedicationWithName(medsName).enqueue(object :
-            Callback<ClientMedsDescriptions> {
+
+        apiService.getMedicationWithName(medsName).enqueue(object : Callback<ClientMedsDescriptions> {
             override fun onResponse(call: Call<ClientMedsDescriptions>, response: Response<ClientMedsDescriptions>) {
                 isLoading = false
                 if (response.isSuccessful) {
                     medsDetails = response.body()
-
                     println(medsDetails?.getInteractions())
                     println(medsDetails?.getRecommendations())
                 } else {
@@ -46,6 +45,4 @@ class MedicationDetailsViewModel: ViewModel() {
             }
         })
     }
-
-
 }

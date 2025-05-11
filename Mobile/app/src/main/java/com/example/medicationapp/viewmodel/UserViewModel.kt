@@ -16,8 +16,7 @@ import retrofit2.Response
 
 class UserViewModel : ViewModel() {
 
-    private val retrofitService = RetrofitService()
-    private val apiService = retrofitService.getRetrofit().create(ApiService::class.java)
+    private val apiService = RetrofitService.retrofit.create(ApiService::class.java)
 
     private val _status = MutableStateFlow<Status?>(null)
     val status: StateFlow<Status?> = _status

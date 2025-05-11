@@ -1,33 +1,19 @@
-//Amy Wickham 12178502
 package com.example.meditime.model;
 
-import jakarta.persistence.*;
-
-import java.time.LocalDate;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity
 public class Client {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientId;
-
     private String name;
-    private LocalDate dob;
+    private String dob;
     private String contactInfo;
-
-    @ManyToOne
-    private User carer;
-
-     public Client() {}
-     
-    public Client(String name, LocalDate dob, String contactInfo) {
-    this.name = name;
-    this.dob = dob;
-    this.contactInfo = contactInfo;
-}
+    private Long carerUserId; // Add this field for the carer user ID
 
     // Getters and Setters
-
     public Long getClientId() {
         return clientId;
     }
@@ -44,11 +30,11 @@ public class Client {
         this.name = name;
     }
 
-    public LocalDate getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(LocalDate dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 
@@ -60,12 +46,11 @@ public class Client {
         this.contactInfo = contactInfo;
     }
 
-    public User getCarer() {
-        return carer;
+    public Long getCarerUserId() {
+        return carerUserId;
     }
 
-    public void setCarer(User manager) {
-        this.carer = manager;
+    public void setCarerUserId(Long carerUserId) {
+        this.carerUserId = carerUserId;
     }
-    
 }

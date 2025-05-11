@@ -6,10 +6,13 @@ import com.example.medicationapp.model.MedicationLog
 import com.example.medicationapp.model.dao.ClientMedicationDao
 import com.example.medicationapp.model.dao.MedicationDao
 import com.example.medicationapp.model.dao.MedicationLogDao
+import com.example.medicationapp.viewmodel.ApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
 
-class MedicationRepository(private val medicationDao: MedicationDao, private val medicationLogDao: MedicationLogDao, private val clientMedicationDao: ClientMedicationDao) {
+class MedicationRepository( private val medicationDao: MedicationDao, private val medicationLogDao: MedicationLogDao, private val clientMedicationDao: ClientMedicationDao) {
 
 
     suspend fun getAllMedications(): List<Medication> = medicationDao.getAllMedications()
@@ -34,25 +37,26 @@ class MedicationRepository(private val medicationDao: MedicationDao, private val
     }
 
 
-    // Assign medication to a client with full schedule details
-    suspend fun assignMedicationToClient(
-        clientId: Long,
-        medicationId: Long,
-        dosage: String,
-        startDate: LocalDate,
-        endDate: LocalDate,
-        scheduledTimes: List<LocalTime>
-    ) : ClientMedication{
-        val clientMedication = ClientMedication(
-            clientId = clientId,
-            medicationId = medicationId,
-            dosage = dosage,
-            startDate = startDate,
-            endDate = endDate,
-            scheduledTimes = scheduledTimes
-        )
-        clientMedicationDao.insertClientMedication(clientMedication)
-        return clientMedication
-    }
+//
+//    // Assign medication to a client with full schedule details
+//    suspend fun assignMedicationToClient(
+//        clientId: Long,
+//        medicationId: Long,
+//        dosage: String,
+//        startDate: LocalDate,
+//        endDate: LocalDate,
+//        scheduledTimes: List<LocalTime>
+//    ) : ClientMedication{
+//        val clientMedication = ClientMedication(
+//            clientId = clientId,
+//            medicationId = medicationId,
+//            dosage = dosage,
+//            startDate = startDate,
+//            endDate = endDate,
+//            scheduledTimes = scheduledTimes
+//        )
+//        clientMedicationDao.insertClientMedication(clientMedication)
+//        return clientMedication
+//    }
 
 }

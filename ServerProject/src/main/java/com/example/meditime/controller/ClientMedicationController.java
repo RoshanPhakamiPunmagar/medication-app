@@ -27,6 +27,8 @@ public class ClientMedicationController {
     @PostMapping("/assign")
 public ResponseEntity<String> assignMedication(@RequestBody ClientMedicationDTO dto) {
     clientMedicationService.assignMedication(dto);
+        System.out.println("Received clientId: " + dto.getClientId());
+        System.out.println("Received medicationId: " + dto.getMedicationId());
     return ResponseEntity.ok("Medication assigned successfully.");
 }
 

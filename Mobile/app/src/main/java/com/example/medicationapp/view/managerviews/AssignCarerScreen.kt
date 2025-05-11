@@ -9,13 +9,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.User
 import com.example.medicationapp.model.repository.ClientRepository
+import com.example.medicationapp.viewmodel.ClientViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,13 +53,13 @@ fun ConfirmDialog(title: String, text: String, onConfirm: () -> Unit, onDismiss:
 
 
 @Composable
-fun AssignCarerScreen(clientRepository: ClientRepository) {
+fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),) {
 
     // Coroutine scope for launching suspend functions (like database updates)
     val scope = rememberCoroutineScope()
 
     // Holds the list of clients fetched from the repository
-    var clients by remember { mutableStateOf(emptyList<Client>()) }
+    //var clients by remember { mutableStateOf(emptyList<Client>()) }
 
     // Holds the list of carers (users with roleId = 2) fetched from the repository
     var carers by remember { mutableStateOf(emptyList<User>()) }
@@ -73,16 +77,16 @@ fun AssignCarerScreen(clientRepository: ClientRepository) {
     var showAssignConfirm by remember { mutableStateOf(false) }
     var showRemoveConfirm by remember { mutableStateOf(false) }
 
+    val clients by clientViewModel.clientsLiveData.observeAsState(emptyList())
+
     // Enables vertical scrolling of the screen
     val scrollState = rememberScrollState()
 
     // Loads data once when the Composable enters the composition
     LaunchedEffect(Unit) {
-        // Fetch list of all clients from repository
-        clients = clientRepository.getAllClients()
-
+        clientViewModel.getAllClients()
         // Fetch list of all carers (users with roleId = 2)
-        carers = clientRepository.getAllCarers()
+       // carers = clientRepository.getAllCarers()
     }
 
     Column(
@@ -201,7 +205,7 @@ fun AssignCarerScreen(clientRepository: ClientRepository) {
                         selectedClient?.carerId =
                             selectedCarer?.userId // Assign the selected carer to the client
                         selectedClient?.let {
-                            clientRepository.updateClient(it) // Use the repository to update the client data in the database
+                         //   clientRepository.updateClient(it) // Use the repository to update the client data in the database
                             message =
                                 "Assigned ${selectedCarer?.name} to ${selectedClient?.name}" // Success message
                         }
@@ -221,7 +225,7 @@ fun AssignCarerScreen(clientRepository: ClientRepository) {
                     scope.launch {
                         selectedClient?.carerId = null // Remove the carer ID from the client
                         selectedClient?.let {
-                            clientRepository.updateClient(it) // Use the repository to update the client data in the database
+                           // clientRepository.updateClient(it) // Use the repository to update the client data in the database
                             message =
                                 "Removed carer from ${selectedClient?.name}" // Success message
                         }

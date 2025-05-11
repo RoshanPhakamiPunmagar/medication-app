@@ -88,12 +88,12 @@ fun ManagerMainScreen(
                 startDestination = BottomNavItemForManager.AssignCarer.route
             ) {
                 composable(BottomNavItemForManager.AssignCarer.route) {
-                    AssignCarerScreen(clientRepository = clientRepository)
+                    AssignCarerScreen()
                 }
                 composable(BottomNavItemForManager.AssignMedication.route) {
                     AssignMedicationScreen(
-                        clientRepository = clientRepository,
-                        medicationRepository = medicationRepository
+                        //clientRepository = clientRepository,
+                      //  medicationRepository = medicationRepository
                     )
                 }
                 composable(BottomNavItemForManager.Reports.route) {

@@ -1,87 +1,57 @@
-//Amy Wickham 121785021
 package com.example.meditime.service;
 
 import com.example.meditime.dto.ClientDTO;
 import com.example.meditime.model.Client;
-import com.example.meditime.model.User;
 import com.example.meditime.repository.ClientRepository;
-import com.example.meditime.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
 
-    private final ClientRepository clientRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
-    public ClientService(ClientRepository clientRepository, UserRepository userRepository) {
-        this.clientRepository = clientRepository;
-        this.userRepository = userRepository;
-    }
-
-    // ✅ Create a new client from DTO
-    public Client addClientFromDTO(ClientDTO dto) {
-        Client client = new Client();
-        client.setName(dto.getName());
-        client.setDob(LocalDate.parse(dto.getDob()));
-        client.setContactInfo(dto.getContact());
-        return clientRepository.save(client);
-    }
-
-    // ✅ Return all clients as DTOs
-    public List<ClientDTO> getAllClientDTOs() {
-        return clientRepository.findAll().stream()
-                .map(client -> new ClientDTO(
-                        client.getName(),
-                        client.getDob().toString(),
-                        client.getContactInfo()
-                ))
-                .collect(Collectors.toList());
-    }
-
-    // ✅ Return all full client entities
     public List<Client> getAllClients() {
         return clientRepository.findAll();
     }
 
-    // ✅ Update a client by ID
+    public Client getClientById(Long clientId) {
+        return clientRepository.findById(clientId).orElse(null);
+    }
+
+    public Client addClientFromDTO(ClientDTO dto) {
+        Client client = new Client();
+        client.setName(dto.getName());
+        client.setDob(dto.getDob());
+        client.setContactInfo(dto.getContact());
+        client.setCarerUserId(dto.getCarerUserId()); // Map carerUserId here
+        return clientRepository.save(client);
+    }
+
+    public boolean deleteClientById(Long clientId) {
+        if (clientRepository.existsById(clientId)) {
+            clientRepository.deleteById(clientId);
+            return true;
+        }
+        return false;
+    }
+
     public Client updateClientFromDTO(Long id, ClientDTO dto) {
-        Optional<Client> optional = clientRepository.findById(id);
-        if (optional.isPresent()) {
-            Client client = optional.get();
-            client.setName(dto.getName());
-            client.setDob(LocalDate.parse(dto.getDob()));
-            client.setContactInfo(dto.getContact());
-            return clientRepository.save(client);
-        }
-        return null;
-    }
-
-    // ✅ Delete a client by ID
-    public boolean deleteClientById(Long id) {
-        if (clientRepository.existsById(id)) {
-            clientRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
-    // ✅ Assign a carer to a client
-    public boolean assignCarerToClient(Long clientId, Long carerId) {
-        Optional<Client> clientOpt = clientRepository.findById(clientId);
-        Optional<User> carerOpt = userRepository.findById(carerId);
-
-        if (clientOpt.isPresent() && carerOpt.isPresent()) {
+        Optional<Client> clientOpt = clientRepository.findById(id);
+        if (clientOpt.isPresent()) {
             Client client = clientOpt.get();
-            client.setCarer(carerOpt.get());
-            clientRepository.save(client);
-            return true;
+            // Update the fields of the client based on the DTO
+            client.setName(dto.getName());
+            client.setDob(dto.getDob());
+            client.setContactInfo(dto.getContact());
+            client.setCarerUserId(dto.getCarerUserId()); // Update carerUserId if needed
+
+            return clientRepository.save(client);  // Save and return the updated client
+        } else {
+            return null;  // If the client is not found
         }
-        return false;
-    }
-}
+}}

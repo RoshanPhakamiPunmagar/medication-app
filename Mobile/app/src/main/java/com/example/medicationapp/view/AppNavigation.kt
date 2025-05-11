@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.viewmodel.AlarmViewModel
+import com.example.medicationapp.viewmodel.ApiService
 
 // --- Define bottom navigation items for Manager ---
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
@@ -83,7 +84,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         MedicationRepository(
             medicationDao = db.medicationDao(),
             medicationLogDao = db.medicationLogDao(),
-            clientMedicationDao = db.clientMedicationDao()
+            clientMedicationDao = db.clientMedicationDao(),
         )
     }
 
@@ -160,15 +161,17 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
 
         // Route for assigning medication to clients
         composable("assign_medication") {
+            // Call AssignMedicationScreen with appropriate parameters
             AssignMedicationScreen(
-                clientRepository = clientRepository,
-                medicationRepository = medicationRepository
+                viewModel = viewModel(),
+                clientViewModel = viewModel() // You can use other ViewModels or pass them if needed
             )
         }
 
+
         // Route for assigning carers to clients
         composable("assign_carer") {
-            AssignCarerScreen(clientRepository = clientRepository)
+            AssignCarerScreen()
         }
 
         // Route for generating reports

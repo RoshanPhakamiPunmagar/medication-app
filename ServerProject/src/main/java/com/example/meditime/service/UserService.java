@@ -1,8 +1,10 @@
 //Amy Wickham 121785021
 package com.example.meditime.service;
 
+import com.example.meditime.model.Client;
 import com.example.meditime.model.Role;
 import com.example.meditime.model.User;
+import com.example.meditime.repository.ClientRepository;
 import com.example.meditime.repository.RoleRepository;
 import com.example.meditime.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +26,31 @@ public class UserService implements org.springframework.security.core.userdetail
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private ClientRepository clientRepository;
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);  // Fetch user by ID from UserRepository
+    }
+
+    public List<User> findByRole_Id(Long roleId) {
+        return userRepository.findByRole_RoleId(roleId);
+    }
+
+    public void assignCarerToClient(Long clientId, Long carerUserId) {
+        Optional<Client> clientOpt = clientRepository.findById(clientId);
+        if (clientOpt.isPresent()) {
+            Client client = clientOpt.get();
+            client.setCarerUserId(carerUserId);
+            clientRepository.save(client);
+        } else {
+            throw new RuntimeException("Client not found");
+        }
+    }
+
     // Return all users in the system
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    // ✅ Corrected: Return users who belong to a given role
-    public List<User> getUsersByRole(String roleName) {
-        Role role = roleRepository.findByRoleName(roleName)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
-        return userRepository.findByRole(role);
     }
 
     @Autowired
@@ -99,7 +116,7 @@ public User validateUser(String email, String password) {
     Optional<User> optionalUser = userRepository.findByEmail(email);
     if (optionalUser.isPresent()) {
         User user = optionalUser.get();
-        if (user.getPassword().equals(password)) { // if using encryption, use passwordEncoder.matches()
+        if (user.getPassword().equals(password)) {
             return user;
         }
     }

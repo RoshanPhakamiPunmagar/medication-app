@@ -22,7 +22,7 @@ public class OpenFdaMedicationService {
 
         int skip = 0;                 // Used for pagination
         int limit = 100;             // Number of records per API call
-        int maxRecords = 170;        // Maximum number of records to fetch in total
+        int maxRecords = 42;        // Maximum number of records to fetch in total
         boolean moreData = true;     // Controls the while loop
 
         while (moreData && skip < maxRecords) {

@@ -33,6 +33,9 @@ interface ApiService {
         @Body user: User,
     ): Call<Status>
 
+    @GET("mobile/userCarer")
+    fun getAllCarers(): Call<List<User>>
+
     @GET("meds/details")
     fun getMedicationWithName(@Query("medicationList") list: List<String>): Call<ClientMedsDescriptions>
 
@@ -44,6 +47,14 @@ interface ApiService {
 
     @POST("/api/medication/assign")
     fun assignMedication(@Body dto: ClientMedication): Call<ResponseBody>
+
+    @POST("mobile/assignCarerToClient")
+    @FormUrlEncoded
+    fun assignCarerToClient(
+        @Field("clientId") clientId: Long,
+        @Field("carerUserId") carerUserId: Long
+    ): Call<Map<String, String>>
+
 
 
 

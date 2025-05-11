@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // Returns all users with the given Role
-    List<User> findByRole(Role role);
+    List<User> findByRole_RoleId(Long roleId);
   
 
 Optional<User> findByEmail(String email);

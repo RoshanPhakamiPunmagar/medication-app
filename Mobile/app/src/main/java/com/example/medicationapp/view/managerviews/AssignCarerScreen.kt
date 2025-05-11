@@ -20,6 +20,7 @@ import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.User
 import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.viewmodel.ClientViewModel
+import com.example.medicationapp.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,16 +54,12 @@ fun ConfirmDialog(title: String, text: String, onConfirm: () -> Unit, onDismiss:
 
 
 @Composable
-fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),) {
+fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
+                      userViewModel: UserViewModel = viewModel(),) {
 
     // Coroutine scope for launching suspend functions (like database updates)
     val scope = rememberCoroutineScope()
 
-    // Holds the list of clients fetched from the repository
-    //var clients by remember { mutableStateOf(emptyList<Client>()) }
-
-    // Holds the list of carers (users with roleId = 2) fetched from the repository
-    var carers by remember { mutableStateOf(emptyList<User>()) }
 
     // Currently selected client from the list
     var selectedClient by remember { mutableStateOf<Client?>(null) }
@@ -79,14 +76,15 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),) {
 
     val clients by clientViewModel.clientsLiveData.observeAsState(emptyList())
 
+    val carers by userViewModel.carersLiveData.observeAsState(emptyList()) // for LiveData
+
     // Enables vertical scrolling of the screen
     val scrollState = rememberScrollState()
 
     // Loads data once when the Composable enters the composition
     LaunchedEffect(Unit) {
         clientViewModel.getAllClients()
-        // Fetch list of all carers (users with roleId = 2)
-       // carers = clientRepository.getAllCarers()
+        userViewModel.fetchCarers()
     }
 
     Column(
@@ -141,6 +139,11 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),) {
             ) {
                 Text(carer.name) // Display carer's name in the button
             }
+            if (carers.isEmpty()) {
+                Text("No carers found.", style = MaterialTheme.typography.bodyMedium)
+            }
+
+
         }
 
 
@@ -200,18 +203,18 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),) {
             ConfirmDialog(
                 title = "Confirm Assignment", // Dialog title
                 text = "Assign ${selectedCarer?.name} to ${selectedClient?.name}?", // Dialog message
-                onConfirm = { // Action to take when "Confirm" is pressed
+                onConfirm = {
                     scope.launch {
-                        selectedClient?.carerId =
-                            selectedCarer?.userId // Assign the selected carer to the client
-                        selectedClient?.let {
-                         //   clientRepository.updateClient(it) // Use the repository to update the client data in the database
-                            message =
-                                "Assigned ${selectedCarer?.name} to ${selectedClient?.name}" // Success message
+                        selectedClient?.let { client ->
+                            selectedCarer?.let { carer ->
+                                userViewModel.assignCarerToClient(client.clientId, carer.userId)
+                                message = "Assigned ${carer.name} to ${client.name}"
+                            }
                         }
-                        showAssignConfirm = false // Close the confirmation dialog
+                        showAssignConfirm = false
                     }
-                },
+                }
+                ,
                 onDismiss = { showAssignConfirm = false } // Close the dialog if dismissed
             )
         }

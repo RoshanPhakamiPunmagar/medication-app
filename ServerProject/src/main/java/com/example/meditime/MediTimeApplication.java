@@ -119,7 +119,6 @@ public class MediTimeApplication {
                 case 3 -> updateClient(scanner, clientService);
                 case 4 -> deleteClient(scanner, clientService);
                 case 5 -> addCarer(scanner, userService);
-                case 6 -> viewCarers(userService);
                 case 7 -> deleteCarer(scanner, userService);
                 case 8 -> assignMedicationSchedule(scanner, clientMedicationService, medicationInteractionService);
                 case 9 -> generateAdherenceReport(scanner, clientMedicationService);
@@ -183,10 +182,6 @@ public class MediTimeApplication {
         System.out.println("Carer added.");
     }
 
-    private static void viewCarers(UserService userService) {
-        userService.getUsersByRole("Carer").forEach(c ->
-                System.out.println("ID: " + c.getUserId() + " | Name: " + c.getName()));
-    }
 
     private static void deleteCarer(Scanner scanner, UserService userService) {
         System.out.print("Enter carer ID to delete: ");
@@ -208,8 +203,6 @@ public class MediTimeApplication {
 
         System.out.print("Dosage: ");
         String dosage = scanner.nextLine();
-        System.out.print("Frequency: ");
-        String frequency = scanner.nextLine();
         System.out.print("Start Date (yyyy-mm-dd): ");
         String start = scanner.nextLine();
         System.out.print("End Date (yyyy-mm-dd): ");

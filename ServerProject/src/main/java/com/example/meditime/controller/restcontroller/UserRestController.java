@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,6 +52,38 @@ public class UserRestController {
         } catch (Exception e) {
             response.put("status", INVALID);
             return ResponseEntity.ok(response);
+        }
+    }
+
+    @GetMapping("/userCarer")
+    public ResponseEntity<List<User>> getAllCarers() {
+        try {
+            List<User> carers = userService.findByRole_Id(2L);
+            return ResponseEntity.ok(carers);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PostMapping("/assignCarerToClient")
+    public ResponseEntity<Map<String, String>> assignCarerToClient(@RequestParam Long clientId, @RequestParam Long carerUserId) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            Optional<User> carer = userService.findById(carerUserId);
+            if (carer.isPresent() && carer.get().getRole().getRoleId() == 2) {
+                // Assign the carer to the client
+                userService.assignCarerToClient(clientId, carerUserId);
+                response.put("status", "carerAssigned");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "invalidCarer");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("status", "error");
+            return ResponseEntity.status(500).body(response);
         }
     }
 

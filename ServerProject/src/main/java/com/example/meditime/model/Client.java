@@ -11,7 +11,7 @@ public class Client {
     private String name;
     private String dob;
     private String contactInfo;
-    private Long carerUserId; // Add this field for the carer user ID
+    private Long carerUserId;
 
     // Getters and Setters
     public Long getClientId() {

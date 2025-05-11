@@ -135,6 +135,7 @@ fun AssignMedicationScreen(
                 }
             },
             modifier = Modifier.fillMaxWidth()
+
         )
         DropdownMenu(medicationExpanded, { medicationExpanded = false }) {
             medications.forEach {

@@ -29,6 +29,10 @@ class UserViewModel : ViewModel() {
     var error by mutableStateOf("")
         private set
 
+    val removeCarerStatus = MutableLiveData<Boolean>()
+    val removeCarerMessage = MutableLiveData<String>()
+
+
     fun fetchCarers() {
         isLoading = true
         error = ""
@@ -136,6 +140,34 @@ class UserViewModel : ViewModel() {
                     error = "Network error: ${t.localizedMessage}"
                 }
             })
+    }
+
+    fun removeCarerFromClient(clientId: Long) {
+        apiService.removeCarerFromClient(clientId).enqueue(object : Callback<Map<String, String>> {
+            override fun onResponse(
+                call: Call<Map<String, String>>,
+                response: Response<Map<String, String>>
+            ) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    if (result?.get("status") == "carerRemoved") {
+                        removeCarerStatus.postValue(true)
+                        removeCarerMessage.postValue("Carer removed successfully.")
+                    } else {
+                        removeCarerStatus.postValue(false)
+                        removeCarerMessage.postValue("Failed to remove carer.")
+                    }
+                } else {
+                    removeCarerStatus.postValue(false)
+                    removeCarerMessage.postValue("Error: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
+                removeCarerStatus.postValue(false)
+                removeCarerMessage.postValue("Failure: ${t.message}")
+            }
+        })
     }
 
 }

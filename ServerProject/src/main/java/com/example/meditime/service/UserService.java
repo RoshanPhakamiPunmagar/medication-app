@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
@@ -44,10 +45,28 @@ public class UserService implements org.springframework.security.core.userdetail
             Client client = clientOpt.get();
             client.setCarerUserId(carerUserId);
             clientRepository.save(client);
+            System.out.println("Assigning client " + clientId + " to carer " + carerUserId);
+
         } else {
             throw new RuntimeException("Client not found");
         }
     }
+
+
+    @Transactional
+    public void removeCarerFromClient(Long clientId) {
+        Optional<Client> clientOpt = clientRepository.findById(clientId);
+        if (clientOpt.isPresent()) {
+            Client client = clientOpt.get();
+            client.setCarerUserId(null); // Unassign the carer
+            clientRepository.save(client);
+        } else {
+            throw new RuntimeException("Client not found");
+        }
+    }
+
+
+
 
     // Return all users in the system
     public List<User> getAllUsers() {

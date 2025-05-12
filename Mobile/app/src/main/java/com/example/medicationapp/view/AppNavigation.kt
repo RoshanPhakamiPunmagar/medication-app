@@ -186,8 +186,8 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         ) { backStackEntry ->
             val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
             ClientSelectionScreen(
-                clientRepository = clientRepository,
-                navController = navController,
+                clientMedicationViewModel = viewModel(),
+                clientMedsDetailsViewModel = viewModel(),
                 carerId = carerId
             )
         }

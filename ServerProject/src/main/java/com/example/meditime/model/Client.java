@@ -13,6 +13,7 @@ public class Client {
     private String contactInfo;
     private Long carerUserId;
 
+
     // Getters and Setters
     public Long getClientId() {
         return clientId;

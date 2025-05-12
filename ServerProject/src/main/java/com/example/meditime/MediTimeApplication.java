@@ -272,15 +272,15 @@ public class MediTimeApplication {
         System.out.print("Enter client ID: ");
         Long clientId = scanner.nextLong(); scanner.nextLine();
 
-        List<ClientMedicationDTO> meds = medicationService.getClientMedicationDTOs(clientId);
-        if (meds.isEmpty()) {
-            System.out.println("No medications found for this client.");
-        } else {
-            meds.forEach(med ->
-                    System.out.printf("Medication: %s | Dosage: %s | Frequency: %s | Start: %s | End: %s%n",
-                            med.getMedicationName(), med.getDosage(),
-                            med.getStartDate(), med.getEndDate()));
-        }
+//       // List<ClientMedicationDTO> meds = medicationService.getClientMedicationDTOs(clientId);
+//        if (meds.isEmpty()) {
+//            System.out.println("No medications found for this client.");
+//        } else {
+//            meds.forEach(med ->
+//                    System.out.printf("Medication: %s | Dosage: %s | Frequency: %s | Start: %s | End: %s%n",
+//                            med.getMedicationName(), med.getDosage(),
+//                            med.getStartDate(), med.getEndDate()));
+//        }
     }
 
     private static void markMedicationStatus(Scanner scanner, MedicationLogService logService) {

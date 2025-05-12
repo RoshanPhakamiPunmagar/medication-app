@@ -108,7 +108,7 @@ fun AlarmDialogScreen( onDismiss: () -> Unit) {
     LaunchedEffect(Unit) {
         clientMedication?.let {
             meds = medicationRepository.getMedicationById(it.medicationId)
-            client = clientRepository.getClientById(it.clientId)
+            //client = clientRepository.getClientById(it.clientId)
         } ?: run {
             Log.d("Alarm", "Client medication is null.")
         }

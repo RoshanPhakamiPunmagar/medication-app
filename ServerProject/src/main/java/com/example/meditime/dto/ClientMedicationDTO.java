@@ -17,12 +17,11 @@ public class ClientMedicationDTO {
     @Setter
     @Getter
     private Long clientId;
+
     @Setter
     @Getter
     private Long medicationId;
-    @Setter
-    @Getter
-    private String medicationName;
+
     @Getter
     @Setter
     private String dosage;
@@ -36,6 +35,16 @@ public class ClientMedicationDTO {
     @Setter
     @Getter
     private List<LocalTime> scheduledTimes;
+
+    private List<ClientMedicationDTO> medications;
+
+    public List<ClientMedicationDTO> getMedications() {
+        return medications;
+    }
+
+    public void setMedications(List<ClientMedicationDTO> medications) {
+        this.medications = medications;
+    }
 
     public boolean isPaused() {
         return isPaused;

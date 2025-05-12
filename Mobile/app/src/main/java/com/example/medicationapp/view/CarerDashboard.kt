@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -71,8 +72,9 @@ fun CarrerMainScreen(clientRepository: ClientRepository, navController: NavHostC
             ) {
                 composable(BottomNavItemForCarer.SeeClient.route) {
                     ClientSelectionScreen(
-                        clientRepository = clientRepository,
-                        navController = navController,
+
+                        clientMedicationViewModel = viewModel(),
+                        clientMedsDetailsViewModel = viewModel(),
                         carerId = carerId
                     )
                 }

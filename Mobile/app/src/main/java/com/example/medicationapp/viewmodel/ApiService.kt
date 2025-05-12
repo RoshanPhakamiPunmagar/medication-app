@@ -3,6 +3,7 @@ package com.example.medicationapp.viewmodel
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.ClientMedsDescriptions
+import com.example.medicationapp.model.ClientWithMedicationsDTO
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.Status
 
@@ -16,6 +17,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -55,7 +57,16 @@ interface ApiService {
         @Field("carerUserId") carerUserId: Long
     ): Call<Map<String, String>>
 
+    @GET("api/medication/clients-with-medications/{carerId}")
+    fun getClientsWithMedications(
+        @Path("carerId") carerId: Long
+    ): Call<List<ClientWithMedicationsDTO>>
 
+    @POST("mobile/removeCarerFromClient")
+    @FormUrlEncoded
+    fun removeCarerFromClient(
+        @Field("clientId") clientId: Long
+    ): Call<Map<String, String>>
 
 
 }

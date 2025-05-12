@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
-    
 
 
+    List<Client> findByCarerUserId(Long carerUserId);
 
     @Override
     public List<Client> findAll();

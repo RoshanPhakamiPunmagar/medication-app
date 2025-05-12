@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface ClientMedicationRepository extends JpaRepository<ClientMedication, Long> {
     List<ClientMedication> findByClient_ClientId(Long clientId);
+
+
     Optional<ClientMedication> findByClient_ClientIdAndMedication_MedicationId(Long clientId, Long medicationId);
 @Query("SELECT cm.medication.id FROM ClientMedication cm WHERE cm.client.clientId = :clientId")
 List<Long> findMedicationIdsByClientId(@Param("clientId") Long clientId);

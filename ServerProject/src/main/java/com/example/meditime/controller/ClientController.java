@@ -26,7 +26,7 @@ public class ClientController {
                         client.getName(),
                         client.getDob().toString(),
                         client.getContactInfo(),
-                        client.getCarerUserId())) // Include carerUserId here
+                        client.getCarerUserId()))
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +39,7 @@ public class ClientController {
                     client.getName(),
                     client.getDob().toString(),
                     client.getContactInfo(),
-                    client.getCarerUserId()); // Include carerUserId here
+                    client.getCarerUserId());
             return ResponseEntity.ok(clientDTO);
         }
         return ResponseEntity.notFound().build();

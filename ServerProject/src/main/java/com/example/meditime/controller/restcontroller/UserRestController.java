@@ -87,6 +87,28 @@ public class UserRestController {
         }
     }
 
+    @PostMapping("/removeCarerFromClient")
+    public ResponseEntity<Map<String, String>> removeCarerFromClient(@RequestParam Long clientId) {
+        // Response map to hold status messages
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            // Call the service to remove the carer association from the client
+            userService.removeCarerFromClient(clientId);
+
+            // If successful, return a response indicating the carer was removed
+            response.put("status", "carerRemoved");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // Print stack trace for debugging in case of an error
+            e.printStackTrace();
+
+            // Return an error response with HTTP 500 status code
+            response.put("status", "error");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
 
     @PostMapping("/check")
     public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {

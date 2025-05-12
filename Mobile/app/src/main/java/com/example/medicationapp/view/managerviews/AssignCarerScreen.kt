@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.User
-import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.viewmodel.ClientViewModel
 import com.example.medicationapp.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -85,6 +84,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
     LaunchedEffect(Unit) {
         clientViewModel.getAllClients()
         userViewModel.fetchCarers()
+        println("DEBUG: Clients loaded: ${clients.map { it.name to it.carerId }}")
     }
 
     Column(
@@ -105,7 +105,9 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
         // Loop through the list of clients and display each as a button
         clients.forEach { client ->
             OutlinedButton(
-                onClick = { selectedClient = client }, // Select this client when clicked
+                onClick = { selectedClient = client
+                    println("DEBUG: Selected client: ${client.name}, Carer ID: ${client.carerId}")},
+                // Select this client when clicked
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp), // Add vertical spacing between buttons
@@ -114,6 +116,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) // Highlight if selected
                     else MaterialTheme.colorScheme.surface // Default background otherwise
                 )
+
             ) {
                 Text(client.name) // Display client's name in the button
             }
@@ -164,8 +167,12 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
             }
         }
 
-// This block shows the "Remove Carer" button only if the selected client already has a carer assigned
-        AnimatedVisibility(visible = selectedClient?.carerId != null) {
+
+        AnimatedVisibility(visible = true)
+
+
+        {
+            println("DEBUG: Inside AnimatedVisibility - Carer ID = ${selectedClient?.carerId}")
             Button(
                 onClick = {
                     showRemoveConfirm = true
@@ -206,11 +213,17 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                 onConfirm = {
                     scope.launch {
                         selectedClient?.let { client ->
+
                             selectedCarer?.let { carer ->
                                 userViewModel.assignCarerToClient(client.clientId, carer.userId)
+                                clientViewModel.getAllClients()
                                 message = "Assigned ${carer.name} to ${client.name}"
+
                             }
+
                         }
+
+
                         showAssignConfirm = false
                     }
                 }
@@ -224,18 +237,18 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
             ConfirmDialog(
                 title = "Confirm Removal", // Dialog title
                 text = "Remove carer from ${selectedClient?.name}?", // Dialog message
-                onConfirm = { // Action to take when "Confirm" is pressed
+                onConfirm = {
                     scope.launch {
-                        selectedClient?.carerId = null // Remove the carer ID from the client
-                        selectedClient?.let {
-                           // clientRepository.updateClient(it) // Use the repository to update the client data in the database
-                            message =
-                                "Removed carer from ${selectedClient?.name}" // Success message
+                        selectedClient?.let { client ->
+                            userViewModel.removeCarerFromClient(client.clientId)
+                            message = "Removed carer from ${client.name}"
+                            showRemoveConfirm = false
+                            clientViewModel.getAllClients() // Refresh list
                         }
-                        showRemoveConfirm = false // Close the confirmation dialog
                     }
                 },
-                onDismiss = { showRemoveConfirm = false } // Close the dialog if dismissed
+
+                        onDismiss = { showRemoveConfirm = false } // Close the dialog if dismissed
             )
         }
     }

@@ -24,6 +24,5 @@ data class Client(
     val name: String,
     val dob: String,
     val contactInfo: String,
-    var carerId: Long? = null,
-    var managerId: Long
+    var carerId: Long?
 )

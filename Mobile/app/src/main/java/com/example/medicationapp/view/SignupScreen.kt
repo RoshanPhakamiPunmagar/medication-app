@@ -21,7 +21,6 @@ fun SignupScreen(
     onSignupSuccess: () -> Unit,
     viewModel: UserViewModel = viewModel()
 ) {
-    val controller = remember { UserRepository(context) }
     val scope = rememberCoroutineScope()
 
     var name by remember { mutableStateOf("") }
@@ -32,32 +31,36 @@ fun SignupScreen(
 
     val status by viewModel.status.collectAsState()
 
+
     // Fixed role as "Carer"
     val selectedRole = "Carer"
+
     LaunchedEffect(status) {
-        status.let {
-            if (name.isNotBlank() && password.isNotBlank() && email.isNotBlank() && selectedRole.isNotBlank()) {
-                println(it?.getStatus())
-                if (it?.getStatus() == "register") {
-                    val result = controller.registerUser(name, email, password, selectedRole)
-                    if (result.isSuccess) {
-                        Log.d("SignUpStatus", it.getStatus())
+        status?.let {
+            if (
+                name.isNotBlank() &&
+                password.isNotBlank() &&
+                email.isNotBlank() &&
+                selectedRole.isNotBlank()
+            ) {
+                when (it.status) {
+                    "register" -> {
+                        Log.d("SignUpStatus", it.status)
                         onSignupSuccess()
-                    } else {
-                        val message = ("SignUpError " + " Registration failed")
+                    }
+                    "exists" -> {
+                        val message = "Email Taken. Try another email"
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                     }
-                } else if (it?.getStatus() == "exists") {
-                    val message =
-                   "Email Taken. Try another email"
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                } else {
-                    val message =  "Please try again later"
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    else -> {
+                        val message = "Please try again later"
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

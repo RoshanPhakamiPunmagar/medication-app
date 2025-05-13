@@ -26,9 +26,6 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
 
-    val isLoading by userViewModel::isLoading
-
-    val userRepo = remember { UserRepository(context) }
     val scope = rememberCoroutineScope()
 
     var error by remember { mutableStateOf<String?>(null) }
@@ -37,22 +34,20 @@ fun LoginScreen(
 
     LaunchedEffect(status) {
         status?.let {
-            val user = userRepo.loginUser(email, password)
-            Log.d("loginStatus", it.getStatus())
-            if (it.getStatus() == "login" && user != null) {
-
-                val roleName = userRepo.getRoleNameById(user.roleId)
-
-                if (roleName != null) {
-                    onLoginSuccess(roleName, user.userId)
-                } else {
-                    error = "User role not found"
+            if (it.status == "login") {
+                val roleName = when (it.roleId) {
+                    1L -> "Manager"
+                    2L -> "Carer"
+                    else -> "Unknown"
                 }
+
+                onLoginSuccess(roleName, it.userId)
             } else {
                 error = "Invalid email or password"
             }
         }
     }
+
 
 
     Column(

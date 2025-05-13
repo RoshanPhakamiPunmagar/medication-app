@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.medicationapp.model.LoginRequest
 import com.example.medicationapp.model.Status
 import com.example.medicationapp.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,7 +72,9 @@ class UserViewModel : ViewModel() {
         isLoading = true
         error = ""
 
-        apiService.login(email, password).enqueue(object : Callback<Status> {
+        val request = LoginRequest(email, password)
+
+        apiService.login(request).enqueue(object : Callback<Status> {
             override fun onResponse(call: Call<Status>, response: Response<Status>) {
                 isLoading = false
                 if (response.isSuccessful) {
@@ -88,6 +91,7 @@ class UserViewModel : ViewModel() {
         })
     }
 
+
     fun register(user: User) {
         isLoading = true
         error = ""
@@ -98,7 +102,7 @@ class UserViewModel : ViewModel() {
                 isLoading = false
                 if (response.isSuccessful) {
                     _status.value = response.body()
-                    Log.e("APIs", _status.value?.getStatus().toString())
+                    Log.e("APIs", _status.value?.status.toString())
                 } else {
                     error = when (response.code()) {
                         401 -> "Invalid credentials"

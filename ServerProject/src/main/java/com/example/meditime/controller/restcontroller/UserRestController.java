@@ -1,5 +1,6 @@
 package com.example.meditime.controller.restcontroller;
 
+import com.example.meditime.model.LoginRequest;
 import com.example.meditime.model.User;
 import com.example.meditime.repository.UserRepository;
 import com.example.meditime.security.JwtUtil;
@@ -40,20 +41,23 @@ public class UserRestController {
     @PostMapping("/user")
     public ResponseEntity<Map<String, String>> processSignup(@RequestBody User user) {
         Map<String, String> response = new HashMap<>();
+
         try {
             if (userService.emailExists(user.getEmail())) {
                 response.put("status", EXISTS);
                 return ResponseEntity.ok(response);
-
             }
+
             userService.addUserById(user.getName(), user.getEmail(), user.getPassword(), 2L);
             response.put("status", REGISTER);
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             response.put("status", INVALID);
             return ResponseEntity.ok(response);
         }
     }
+
 
     @GetMapping("/userCarer")
     public ResponseEntity<List<User>> getAllCarers() {
@@ -111,31 +115,36 @@ public class UserRestController {
 
 
     @PostMapping("/check")
-    public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
+        Map<String, Object> response = new HashMap<>();
         try {
+            System.out.println("Login endpoint hit");
+            System.out.println("Encoding password: " + passwordEncoder.encode("password123"));
 
-            Optional<User> user = userRepository.findByEmail(email);
+            Optional<User> optionalUser = userService.findByEmail(request.getEmail());
 
-            System.out.println(passwordEncoder.encode("password123"));
-            boolean x = authenticate(password, user.get().getPassword());
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                boolean x = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
-
-            if (x) {
-                response.put("status", LOGIN);
-                System.out.println(email + " password" + x);
-                return ResponseEntity.ok(response);
+                if (x) {
+                    response.put("status", "login");
+                    response.put("userId", user.getUserId());
+                    response.put("roleId", user.getRoleId());
+                    return ResponseEntity.ok(response);
+                } else {
+                    response.put("status", "invalid");
+                }
+            } else {
+                response.put("status", "invalid");
             }
-        }
-        catch (Exception e) {
 
-            response.put("status", INVALID);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("status", "invalid");
         }
+
         return ResponseEntity.ok(response);
     }
 
-
-    public boolean authenticate(String rawPassword, String encodedPassword) {
-        return passwordEncoder.matches(rawPassword, encodedPassword);
-    }
 }

@@ -116,6 +116,11 @@ private PasswordEncoder passwordEncoder;
         return userRepository.findByEmail(email).isPresent();
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -128,20 +133,21 @@ private PasswordEncoder passwordEncoder;
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(role.getRoleName())  // ✅ role must be string
+                .roles(role.getRoleName())
                 .build();
     }
 
 
-public User validateUser(String email, String password) {
-    Optional<User> optionalUser = userRepository.findByEmail(email);
-    if (optionalUser.isPresent()) {
-        User user = optionalUser.get();
-        if (user.getPassword().equals(password)) {
-            return user;
+    public User validateUser(String email, String password) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return user;
+            }
         }
+        return null;
     }
-    return null;
-}
+
 
 }

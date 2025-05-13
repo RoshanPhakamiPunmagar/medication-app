@@ -4,6 +4,7 @@ import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.ClientWithMedicationsDTO
+import com.example.medicationapp.model.LoginRequest
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.Status
 
@@ -24,10 +25,8 @@ import retrofit2.http.Query
 interface ApiService {
 
     @POST("mobile/check")
-    @FormUrlEncoded
     fun login(
-        @Field("email") email: String,
-        @Field("password") password: String
+        @Body request: LoginRequest
     ): Call<Status>
 
     @POST("mobile/user")

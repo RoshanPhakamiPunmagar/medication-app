@@ -1,10 +1,10 @@
-//Amy Wickham 12178502
 package com.example.meditime.model;
 
 import jakarta.persistence.*;
 
 @Entity
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -13,14 +13,10 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToOne
-@JoinColumn(name = "role_id")
-private Role role;
-
-  
+    @Column(name = "role_id")
+    private Long roleId;
 
     // Getters and Setters
-
     public Long getUserId() {
         return userId;
     }
@@ -53,12 +49,11 @@ private Role role;
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
-    
 }

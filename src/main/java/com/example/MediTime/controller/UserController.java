@@ -59,12 +59,19 @@ public Map<String, String> login(@RequestBody Map<String, String> request) {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
     }
 
-    String token = jwtUtil.generateToken(email);
-    return Map.of("token", token, "name", user.get().getName(), "role", user.get().getRole().toString());
-}
+    long roleId = user.get().getRoleId();
+String role = switch ((int) roleId) {
+    case 1 -> "ROLE_MANAGER";
+    case 2 -> "ROLE_CARER";
+    default -> "ROLE_USER";
+};
 
-    @GetMapping("/download")
-    public String showDownloadPage() {
-        return "download";
-    }
+String token = jwtUtil.generateToken(email, role);
+return Map.of("token", token, "name", user.get().getName(), "role", role);
+
+
 }
+@GetMapping("/download")
+public String showDownloadPage() {
+    return "download";
+}}

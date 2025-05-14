@@ -6,13 +6,12 @@ import com.example.meditime.model.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // Returns all users with the given Role
-    List<User> findByRole(Role role);
-  
+     List<User> findByRoleId(Long roleId);
 
-Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
 }

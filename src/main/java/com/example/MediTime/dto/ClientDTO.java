@@ -1,21 +1,25 @@
-// Amy Wickham 12178502
-// Amy Wickham 12178502
-// File: ClientDTO.java
-// Description: See MediTime documentation. This file is part of the medication management system.
-
 package com.example.meditime.dto;
 
 public class ClientDTO {
+    private Long clientId;
     private String name;
     private String dob;
     private String contact;
+    private Long carerUserId;
 
-    public ClientDTO() {}
-
-    public ClientDTO(String name, String dob, String contact) {
+    public ClientDTO(Long clientId, String name, String dob, String contact, Long carerUserId) {
+        this.clientId = clientId;
         this.name = name;
         this.dob = dob;
         this.contact = contact;
+        this.carerUserId = carerUserId;
+    }
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 
     public String getName() {
@@ -40,5 +44,13 @@ public class ClientDTO {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    public Long getCarerUserId() {
+        return carerUserId;
+    }
+
+    public void setCarerUserId(Long carerUserId) {
+        this.carerUserId = carerUserId;
     }
 }

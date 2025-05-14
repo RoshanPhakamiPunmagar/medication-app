@@ -2,6 +2,7 @@
 package com.example.meditime.service;
 
 import com.example.meditime.dto.ClientMedicationDTO;
+import com.example.meditime.dto.ClientWithMedicationsDTO;
 import com.example.meditime.model.Client;
 import com.example.meditime.model.ClientMedication;
 import com.example.meditime.model.Medication;
@@ -39,9 +40,10 @@ public class ClientMedicationService {
             cm.setClient(clientOpt.get());
             cm.setMedication(medicationOpt.get());
             cm.setDosage(dto.getDosage());
-            cm.setFrequency(dto.getFrequency());
             cm.setStartDate(dto.getStartDate());
             cm.setEndDate(dto.getEndDate());
+            cm.setPaused(dto.isPaused());
+            cm.setScheduledTimes(dto.getScheduledTimes());
 
             clientMedicationRepository.save(cm);
             System.out.println("Medication schedule assigned successfully.");
@@ -50,23 +52,82 @@ public class ClientMedicationService {
         }
     }
 
-    public List<ClientMedicationDTO> getClientMedicationDTOs(Long clientId) {
-        List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(clientId);
-        List<ClientMedicationDTO> dtos = new ArrayList<>();
+    public List<String> getMedicationNamesForClient(Long clientId) {
+        List<ClientMedication> medications = clientMedicationRepository.findByClient_ClientId(clientId);
+        List<String> names = new ArrayList<>();
 
-        for (ClientMedication cm : meds) {
-            ClientMedicationDTO dto = new ClientMedicationDTO();
-            dto.setMedicationName(cm.getMedication().getName());
-            dto.setDosage(cm.getDosage());
-            dto.setFrequency(cm.getFrequency());
-            dto.setStartDate(cm.getStartDate());
-            dto.setEndDate(cm.getEndDate());
-            dtos.add(dto);
+        for (ClientMedication cm : medications) {
+            if (cm.getMedication() != null && cm.getMedication().getName() != null) {
+                names.add(cm.getMedication().getName());
+            }
         }
 
-        return dtos;
+        return names;
     }
-     public double calculateAdherenceRate(Long clientId) {
+
+
+
+    /**
+     * Retrieves a list of clients assigned to a specific carer, along with each client's medication details.
+     *
+     * @param carerId The ID of the carer whose clients are to be retrieved.
+     * @return A list of ClientWithMedicationsDTO, each containing client info and their medications.
+     */
+    public List<ClientWithMedicationsDTO> getClientsWithMedications(Long carerId) {
+        // Fetch all clients associated with the given carer's user ID
+        List<Client> clients = clientRepository.findByCarerUserId(carerId);
+
+        // Prepare the result list to hold DTOs containing client and medication data
+        List<ClientWithMedicationsDTO> result = new ArrayList<>();
+
+        // Iterate through each client
+        for (Client client : clients) {
+            // Retrieve medications associated with the current client
+            List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(client.getClientId());
+
+            // Convert the list of ClientMedication entities to DTOs
+            List<ClientMedicationDTO> dtoList = meds.stream()
+                    .map(this::convertToDTO)
+                    .toList();
+
+            // Create a new DTO object to hold client and their medications
+            ClientWithMedicationsDTO clientDTO = new ClientWithMedicationsDTO();
+            clientDTO.setClientId(client.getClientId());
+            clientDTO.setClientName(client.getName());
+            clientDTO.setMedications(dtoList);
+
+            // Add the DTO to the result list
+            result.add(clientDTO);
+        }
+
+        // Return the final list of clients with their medications
+        return result;
+    }
+
+    /**
+     * Converts a ClientMedication entity to a ClientMedicationDTO.
+     *
+     * @param cm The ClientMedication entity to convert.
+     * @return A DTO representing the medication information.
+     */
+    private ClientMedicationDTO convertToDTO(ClientMedication cm) {
+        ClientMedicationDTO dto = new ClientMedicationDTO();
+
+        // Populate the DTO fields from the entity
+        dto.setClientId(cm.getClient().getClientId());
+        dto.setMedicationId(cm.getMedication().getMedicationId());
+        dto.setDosage(cm.getDosage());
+        dto.setStartDate(cm.getStartDate());
+        dto.setEndDate(cm.getEndDate());
+        dto.setPaused(cm.isPaused());
+        dto.setScheduledTimes(cm.getScheduledTimes());
+
+        return dto;
+    }
+
+
+
+    public double calculateAdherenceRate(Long clientId) {
     // Get all medication logs for this client's medications
     List<MedicationLog> logs = medicationLogRepository.findByClientMedication_Client_ClientId(clientId);
 

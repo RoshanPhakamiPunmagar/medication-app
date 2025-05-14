@@ -18,6 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -37,9 +44,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestPath = request.getRequestURI();
         if (requestPath.startsWith("/mobile")) {
+
+        if (path.startsWith("/mobile")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);

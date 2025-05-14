@@ -28,12 +28,15 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+
                 .requestMatchers(
                     "/signup", "/download", "/login", "/css/**", "/js/**"
                 ).permitAll()
                 .requestMatchers("/manager/**").hasRole("MANAGER")
                 .requestMatchers("/carer/**").hasRole("CARER")
                 .requestMatchers("/api/**", "/mobile/**").permitAll()
+=======
+                .requestMatchers("/mobile/**", "/login/**","/api/auth/**","/mobile/user, ", "/signup", "/download", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

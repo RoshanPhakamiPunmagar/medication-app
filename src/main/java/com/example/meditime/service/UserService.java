@@ -101,6 +101,19 @@ private PasswordEncoder passwordEncoder;
     }
 
 
+    public void addUserById(String name, String email, String password, Long roleId) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + roleId));
+        user.setRole(role);
+
+        userRepository.save(user);
+    }
+
 
     // Delete a user by ID
     public boolean deleteUserById(Long id) {

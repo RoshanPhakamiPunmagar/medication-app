@@ -4,7 +4,10 @@ import com.example.meditime.model.User;
 import com.example.meditime.repository.UserRepository;
 import com.example.meditime.security.JwtUtil;
 import com.example.meditime.service.UserService;
+<<<<<<< HEAD
 import org.apache.commons.logging.Log;
+=======
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+<<<<<<< HEAD
 import java.util.List;
+=======
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,11 +31,21 @@ import java.util.Optional;
 @RequestMapping("mobile")
 public class UserRestController {
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
     @Autowired
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
+<<<<<<< HEAD
+=======
+    private JwtUtil jwtUtil;
+
+    @Autowired
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
     private PasswordEncoder passwordEncoder;
 
     private final String LOGIN = "login";
@@ -43,14 +59,19 @@ public class UserRestController {
         try {
             if (userService.emailExists(user.getEmail())) {
                 response.put("status", EXISTS);
+<<<<<<< HEAD
                 return ResponseEntity.ok(response);
 
+=======
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
             }
             userService.addUserById(user.getName(), user.getEmail(), user.getPassword(), 2L);
             response.put("status", REGISTER);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("status", INVALID);
+<<<<<<< HEAD
             return ResponseEntity.ok(response);
         }
     }
@@ -108,18 +129,31 @@ public class UserRestController {
             return ResponseEntity.status(500).body(response);
         }
     }
+=======
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
 
 
     @PostMapping("/check")
     public ResponseEntity<Map<String, String>> checkUser(@RequestParam String email, @RequestParam String password) {
         Map<String, String> response = new HashMap<>();
         try {
+<<<<<<< HEAD
 
             Optional<User> user = userRepository.findByEmail(email);
 
             System.out.println(passwordEncoder.encode("password123"));
             boolean x = authenticate(password, user.get().getPassword());
 
+=======
+            Optional<User> user = userRepository.findByEmail(email);
+
+
+            boolean x = authenticate(password, user.get().getPassword());
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
 
             if (x) {
                 response.put("status", LOGIN);
@@ -128,10 +162,16 @@ public class UserRestController {
             }
         }
         catch (Exception e) {
+<<<<<<< HEAD
 
             response.put("status", INVALID);
         }
         return ResponseEntity.ok(response);
+=======
+            response.put("status", INVALID);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+>>>>>>> 925a9353692f9edf20f8d8c088d01ce20c76db5e
     }
 
 

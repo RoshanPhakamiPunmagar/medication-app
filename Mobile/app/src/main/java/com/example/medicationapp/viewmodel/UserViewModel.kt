@@ -4,13 +4,16 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.medicationapp.model.LoginRequest
 import com.example.medicationapp.model.Status
 import com.example.medicationapp.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,7 +36,6 @@ class UserViewModel : ViewModel() {
     val removeCarerStatus = MutableLiveData<Boolean>()
     val removeCarerMessage = MutableLiveData<String>()
 
-
     fun fetchCarers() {
         isLoading = true
         error = ""
@@ -42,7 +44,6 @@ class UserViewModel : ViewModel() {
 
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
                 if (response.isSuccessful) {
-                   // val allUsers = response.body() ?: emptyList()
                     val allUsers = response.body() ?: emptyList()
                     allUsers.forEach {
                         println("User: ${it.name}, Role ID: ${it.roleId}")
@@ -68,57 +69,86 @@ class UserViewModel : ViewModel() {
         })
     }
 
+    /**
+     * Attempts to log in a user using the provided email and password.
+     * Sends a POST request to the backend API and handles the response asynchronously.
+     *
+     * @param email The user's email address.
+     * @param password The user's password.
+     */
     fun login(email: String, password: String) {
-        isLoading = true
-        error = ""
+        isLoading = true // Show loading indicator
+        error = ""       // Clear any previous error messages
 
-        val request = LoginRequest(email, password)
+        // Create the login request body
+        val loginRequest = LoginRequest(email, password)
 
-        apiService.login(request).enqueue(object : Callback<Status> {
-            override fun onResponse(call: Call<Status>, response: Response<Status>) {
-                isLoading = false
+        // Make the API call to the backend login endpoint
+        apiService.login(loginRequest).enqueue(object : Callback<Map<String, Any>> {
+
+            // Handle HTTP response from the backend
+            override fun onResponse(call: Call<Map<String, Any>>, response: Response<Map<String, Any>>) {
                 if (response.isSuccessful) {
-                    _status.value = response.body()
-                } else {
-                    error = "Error: ${response.code()}"
-                }
-            }
+                    val body = response.body() // Get the JSON response body
+                    val status = body?.get("status") as? String
 
-            override fun onFailure(call: Call<Status>, t: Throwable) {
-                isLoading = false
-                error = "Network error: ${t.localizedMessage}"
-            }
-        })
-    }
+                    // Convert returned numbers to Long
+                    val userId = (body?.get("userId") as? Double)?.toLong()
+                    val roleId = (body?.get("roleId") as? Double)?.toLong()
 
+                    Log.d("LOGIN_RESPONSE", response.toString()) // Debug logging
 
-    fun register(user: User) {
-        isLoading = true
-        error = ""
-        Log.d("called,", "Called")
-
-        apiService.register(user).enqueue(object : Callback<Status> {
-            override fun onResponse(call: Call<Status>, response: Response<Status>) {
-                isLoading = false
-                if (response.isSuccessful) {
-                    _status.value = response.body()
-                    Log.e("APIs", _status.value?.status.toString())
-                } else {
-                    error = when (response.code()) {
-                        401 -> "Invalid credentials"
-                        404 -> "User not found"
-                        else -> "Registration failed: ${response.code()}"
+                    // Check if login was successful and required fields are present
+                    if (status != null && userId != null && roleId != null && status == "login") {
+                        // Update state to reflect successful login
+                        _status.value = Status(status, userId, roleId)
+                    } else {
+                        // Response was OK but missing expected values
+                        error = "Invalid login response"
                     }
+                } else {
+                    // Backend responded with an error code (e.g., 400, 401, 500)
+                    error = "Login failed: ${response.code()}"
                 }
             }
 
-            override fun onFailure(call: Call<Status>, t: Throwable) {
-                isLoading = false
-                error = "Network error: ${t.localizedMessage}"
-                Log.e("API", "Registration failed", t)
+            // Handle network failure (e.g., no internet connection)
+            override fun onFailure(call: Call<Map<String, Any>>, t: Throwable) {
+                error = "Network error: ${t.message}"
             }
         })
     }
+
+
+    fun register(name: String, email: String, password: String) {
+        isLoading = true
+        error = ""
+
+        val user = User(name = name, email = email, password = password,  roleId = 2L)
+
+        apiService.register(user).enqueue(object : Callback<Map<String, String>> {
+            override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
+                isLoading = false
+                if (response.isSuccessful) {
+                    val status = response.body()?.get("status")
+                    if (status == "register") {
+                        _status.value = Status("register")
+                        // Optionally show: "Please verify your email from your inbox"
+                    } else if (status == "exists") {
+                        error = "Email already exists"
+                    }
+                } else {
+                    error = "Signup failed"
+                }
+            }
+
+            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
+                isLoading = false
+                error = "Network error: ${t.localizedMessage}"
+            }
+        })
+    }
+
 
     fun assignCarerToClient(clientId: Long, carerUserId: Long) {
         isLoading = true

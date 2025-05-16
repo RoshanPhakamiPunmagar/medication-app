@@ -5,6 +5,7 @@ package com.example.medicationapp.view
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -29,19 +30,15 @@ import com.example.medicationapp.view.managerviews.AssignCarerScreen
 import com.example.medicationapp.view.managerviews.AssignMedicationScreen
 import com.example.medicationapp.view.managerviews.ClientListScreen
 import com.example.medicationapp.view.managerviews.ReportScreen
-
-// Icons for bottom navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.medicationapp.view.alarm.AlarmScheduler
 import com.example.medicationapp.viewmodel.AlarmViewModel
-import com.example.medicationapp.viewmodel.ApiService
 
-// --- Define bottom navigation items for Manager ---
+
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
     object AssignMedication : BottomNavItemForManager("assign_medication", Icons.Default.Add, "Reminders")
@@ -49,7 +46,6 @@ sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, v
     object Settings : BottomNavItemForManager("settings", Icons.Default.Settings, "Settings")
 }
 
-// --- Define bottom navigation items for Carer ---
 sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val label: String) {
     object SeeClient : BottomNavItemForCarer("client_selection/{carerId}", Icons.Default.Home, "See Client")
     object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
@@ -91,18 +87,19 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
     // Define the navigation graph with start destination as login screen
     NavHost(navController = navController, startDestination = "login") {
 
+
         // Login screen route
         composable("login") {
             LoginScreen(
-                context = context,
                 onLoginSuccess = { role, userId ->
                     // Store user session data in SharedPreferences
-                    val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                    val sharedPref =
+                        context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
                         putString("user_role", role)
                         putLong("user_id", userId)
                         apply()
-                        }
+                    }
                     val storedUserId = sharedPref.getLong("user_id", -1L)
                     Log.d("Sign in", "Stored user ID: $storedUserId")
 
@@ -110,7 +107,7 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
                     // Navigate based on user role
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer"   -> navController.navigate("carer_dashboard/$userId")
+                        "Carer" -> navController.navigate("carer_dashboard/$userId")
                     }
 
                 },
@@ -120,15 +117,18 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
             )
         }
 
-        // Signup screen route
         composable("signup") {
             SignupScreen(
                 context = context,
-                onSignupSuccess = {
-                    navController.popBackStack() // Return to previous screen after signup
+                onSignupSuccessNavigateToLogin = {
+                    navController.navigate("login") {
+                        popUpTo("signup") { inclusive = true }
+                    }
                 }
             )
         }
+
+
 
         // Manager dashboard route
         composable("manager_dashboard") {

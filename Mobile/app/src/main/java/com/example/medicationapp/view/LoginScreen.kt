@@ -1,8 +1,5 @@
 package com.example.medicationapp.view
 
-
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,22 +9,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.viewmodel.UserViewModel
-import com.example.medicationapp.model.repository.UserRepository
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun LoginScreen(
-    context: Context,
     onLoginSuccess: (role: String, userId: Long) -> Unit,
     onNavigateToSignup: () -> Unit,
     userViewModel: UserViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-
-    val scope = rememberCoroutineScope()
-
     var error by remember { mutableStateOf<String?>(null) }
 
     val status by userViewModel.status.collectAsState()
@@ -41,13 +32,16 @@ fun LoginScreen(
                     else -> "Unknown"
                 }
 
-                onLoginSuccess(roleName, it.userId)
-            } else {
+                it.userId?.let { id ->
+                    onLoginSuccess(roleName, id)
+                } ?: run {
+                    error = "Login failed: Missing user ID"
+                }
+            } else if (it.status == "invalid") {
                 error = "Invalid email or password"
             }
         }
     }
-
 
 
     Column(
@@ -75,13 +69,10 @@ fun LoginScreen(
         )
         Spacer(Modifier.height(16.dp))
 
-
         Button(
             onClick = {
                 error = null
-                scope.launch {
-                    userViewModel.login(email,password)
-                }
+                userViewModel.login(email, password)
             },
             modifier = Modifier.fillMaxWidth()
         ) {

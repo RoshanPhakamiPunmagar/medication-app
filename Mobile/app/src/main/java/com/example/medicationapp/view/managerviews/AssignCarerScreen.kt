@@ -213,20 +213,23 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                 onConfirm = {
                     scope.launch {
                         selectedClient?.let { client ->
-
                             selectedCarer?.let { carer ->
-                                userViewModel.assignCarerToClient(client.clientId, carer.userId)
-                                clientViewModel.getAllClients()
-                                message = "Assigned ${carer.name} to ${client.name}"
+                                val clientId = client.clientId
+                                val carerId = carer.userId
 
+                                if (clientId != null && carerId != null) {
+                                    userViewModel.assignCarerToClient(clientId, carerId)
+                                    clientViewModel.getAllClients()
+                                    message = "Assigned ${carer.name} to ${client.name}"
+                                } else {
+                                    message = "Client or Carer ID is missing"
+                                }
                             }
-
                         }
-
-
                         showAssignConfirm = false
                     }
                 }
+
                 ,
                 onDismiss = { showAssignConfirm = false } // Close the dialog if dismissed
             )

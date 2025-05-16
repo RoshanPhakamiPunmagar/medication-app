@@ -6,13 +6,9 @@ import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.ClientWithMedicationsDTO
 import com.example.medicationapp.model.LoginRequest
 import com.example.medicationapp.model.Medication
-import com.example.medicationapp.model.Status
-
 import com.example.medicationapp.model.User
-import com.example.medicationapp.model.dao.ClientMedicationDao
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -27,12 +23,13 @@ interface ApiService {
     @POST("mobile/check")
     fun login(
         @Body request: LoginRequest
-    ): Call<Status>
+    ): Call<Map<String, @JvmSuppressWildcards Any>>
 
     @POST("mobile/user")
     fun register(
-        @Body user: User,
-    ): Call<Status>
+        @Body user: User
+    ): Call<Map<String, String>>
+
 
     @GET("mobile/userCarer")
     fun getAllCarers(): Call<List<User>>

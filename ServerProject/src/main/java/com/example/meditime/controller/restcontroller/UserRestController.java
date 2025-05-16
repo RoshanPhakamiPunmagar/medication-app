@@ -3,23 +3,19 @@ package com.example.meditime.controller.restcontroller;
 import com.example.meditime.model.LoginRequest;
 import com.example.meditime.model.User;
 import com.example.meditime.repository.UserRepository;
-import com.example.meditime.security.JwtUtil;
+import com.example.meditime.service.MailgunService;
 import com.example.meditime.service.UserService;
-import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -33,10 +29,30 @@ public class UserRestController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private final String LOGIN = "login";
+    @Autowired
+    private MailgunService mailgunService;
+
+
     private final String REGISTER = "register";
     private final String INVALID = "invalid";
     private final String EXISTS = "exists";
+
+    @Transactional
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam(required = false) String token) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setEmailVerified(true);
+            userRepository.saveAndFlush(user);
+
+            return ResponseEntity.ok("Email verified successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid verification token.");
+        }
+    }
+
 
     @PostMapping("/user")
     public ResponseEntity<Map<String, String>> processSignup(@RequestBody User user) {
@@ -48,15 +64,37 @@ public class UserRestController {
                 return ResponseEntity.ok(response);
             }
 
-            userService.addUserById(user.getName(), user.getEmail(), user.getPassword(), 2L);
+            // Generate token
+            String token = UUID.randomUUID().toString();
+            user.setVerificationToken(token);
+            user.setEmailVerified(false);
+
+            // Encode password
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            // Set default role
+            user.setRoleId(2L); 
+
+            // Save user
+            userRepository.save(user);
+            System.out.println("Calling sendVerificationEmail...");
+
+            // Send verification email
+            mailgunService.sendVerificationEmail(user.getEmail(), token);
+            System.out.println("sendVerificationEmail called!");
+
             response.put("status", REGISTER);
             return ResponseEntity.ok(response);
 
+
+
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("status", INVALID);
             return ResponseEntity.ok(response);
         }
     }
+
 
 
     @GetMapping("/userCarer")
@@ -127,7 +165,17 @@ public class UserRestController {
                 User user = optionalUser.get();
                 boolean x = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
+
                 if (x) {
+                    if (user.getEmail().equals("manager@app.com")) {
+                    }
+
+                    if (!user.isEmailVerified()) {
+                        response.put("status", "unverified");
+                        return ResponseEntity.ok(response);
+                    }
+
+
                     response.put("status", "login");
                     response.put("userId", user.getUserId());
                     response.put("roleId", user.getRoleId());

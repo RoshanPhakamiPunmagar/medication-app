@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +31,10 @@ public class UserService implements org.springframework.security.core.userdetail
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private MailgunService mailgunService;
+
 
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);  // Fetch user by ID from UserRepository
@@ -87,8 +93,20 @@ private PasswordEncoder passwordEncoder;
         Role role = roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
         user.setRoleId(role.getRoleId());
+
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        user.setEmailVerified(false);
+
         userRepository.save(user);
+
+        mailgunService.sendVerificationEmail(user.getEmail(), token);
+
+        // ADD THIS LINE FOR DEBUGGING
+        System.out.println("Generated verification token: " + token);
     }
+
 
 
     public void addUserById(String name, String email, String password, Long roleId) {

@@ -23,4 +23,5 @@ object RetrofitService {
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
+
 }

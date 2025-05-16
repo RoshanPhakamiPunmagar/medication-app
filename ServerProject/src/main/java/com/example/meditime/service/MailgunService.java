@@ -13,8 +13,8 @@ import java.util.Base64;
 @Service
 public class MailgunService {
 
-    private static final String API_KEY = "b9363fb3babcf84bd05ac8c90e17db66-e71583bb-7da86459"; // replace with your Mailgun API key
-    private static final String DOMAIN_NAME = "sandbox9a37ee5b5cd64d0c985d25a817c6c623.mailgun.org"; // replace with your domain
+    private static final String API_KEY = "b9363fb3babcf84bd05ac8c90e17db66-e71583bb-7da86459";
+    private static final String DOMAIN_NAME = "sandbox9a37ee5b5cd64d0c985d25a817c6c623.mailgun.org"; 
 
     public void sendEmail(String toEmail, String subject, String body) {
         try {

@@ -73,7 +73,7 @@ public class UserRestController {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
             // Set default role
-            user.setRoleId(2L); 
+            user.setRoleId(2L);
 
             // Save user
             userRepository.save(user);

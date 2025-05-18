@@ -36,7 +36,9 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.medicationapp.util.TokenManager
 import com.example.medicationapp.viewmodel.AlarmViewModel
+import com.example.medicationapp.viewmodel.UserViewModel
 
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
@@ -88,34 +90,77 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
     NavHost(navController = navController, startDestination = "login") {
 
 
-        // Login screen route
+//        // Login screen route
+//        composable("login") {
+//            LoginScreen(
+//                onLoginSuccess = { role, userId ->
+//                    // Store user session data in SharedPreferences
+//                    val sharedPref =
+//                        context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+//                    with(sharedPref.edit()) {
+//                        putString("user_role", role)
+//                        putLong("user_id", userId)
+//                        apply()
+//                    }
+//                    val storedUserId = sharedPref.getLong("user_id", -1L)
+//                    Log.d("Sign in", "Stored user ID: $storedUserId")
+//
+//                    viewModel.scheduleAlarmsForCarer(userId = storedUserId)
+//                    // Navigate based on user role
+//                    when (role) {
+//                        "Manager" -> navController.navigate("manager_dashboard")
+//                        "Carer" -> navController.navigate("carer_dashboard/$userId")
+//                    }
+//
+//                },
+//                onNavigateToSignup = {
+//                    navController.navigate("signup")
+//                }
+//            )
+//        }
+
         composable("login") {
+            val context = LocalContext.current
+            val tokenManager = remember { TokenManager(context) }
+            val userViewModel: UserViewModel = viewModel()
+
+
             LoginScreen(
                 onLoginSuccess = { role, userId ->
-                    // Store user session data in SharedPreferences
-                    val sharedPref =
-                        context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                    // Save user session info
+                    val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
                         putString("user_role", role)
                         putLong("user_id", userId)
                         apply()
                     }
+
+                    //Also save token from ViewModel
+                    val token = userViewModel.status.value?.token
+                    if (!token.isNullOrBlank()) {
+                        tokenManager.saveToken(token)
+                        Log.d("Login", "Token saved: $token")
+                    } else {
+                        Log.w("Login", "No token available in ViewModel!")
+                    }
+
                     val storedUserId = sharedPref.getLong("user_id", -1L)
                     Log.d("Sign in", "Stored user ID: $storedUserId")
 
                     viewModel.scheduleAlarmsForCarer(userId = storedUserId)
-                    // Navigate based on user role
+
+                    // Navigate based on role
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
                         "Carer" -> navController.navigate("carer_dashboard/$userId")
                     }
-
                 },
                 onNavigateToSignup = {
                     navController.navigate("signup")
                 }
             )
         }
+
 
         composable("signup") {
             SignupScreen(

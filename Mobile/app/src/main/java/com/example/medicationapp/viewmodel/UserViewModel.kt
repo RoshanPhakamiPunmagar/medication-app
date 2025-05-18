@@ -4,23 +4,27 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.medicationapp.model.LoginRequest
 import com.example.medicationapp.model.Status
 import com.example.medicationapp.model.User
+import com.example.medicationapp.util.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class UserViewModel : ViewModel() {
+class UserViewModel() : ViewModel() {
 
     private val apiService = RetrofitService.retrofit.create(ApiService::class.java)
+    private lateinit var tokenManager: TokenManager
+
+    fun setTokenManager(manager: TokenManager) {
+        tokenManager = manager
+    }
+
 
     private val _status = MutableStateFlow<Status?>(null)
     val status: StateFlow<Status?> = _status
@@ -77,47 +81,39 @@ class UserViewModel : ViewModel() {
      * @param password The user's password.
      */
     fun login(email: String, password: String) {
-        isLoading = true // Show loading indicator
-        error = ""       // Clear any previous error messages
+        isLoading = true
+        error = ""
 
-        // Create the login request body
         val loginRequest = LoginRequest(email, password)
 
-        // Make the API call to the backend login endpoint
         apiService.login(loginRequest).enqueue(object : Callback<Map<String, Any>> {
-
-            // Handle HTTP response from the backend
             override fun onResponse(call: Call<Map<String, Any>>, response: Response<Map<String, Any>>) {
+                isLoading = false
                 if (response.isSuccessful) {
-                    val body = response.body() // Get the JSON response body
+                    val body = response.body()
                     val status = body?.get("status") as? String
-
-                    // Convert returned numbers to Long
                     val userId = (body?.get("userId") as? Double)?.toLong()
                     val roleId = (body?.get("roleId") as? Double)?.toLong()
+                    val token = body?.get("token") as? String  // <-- Expect backend to return the token
 
-                    Log.d("LOGIN_RESPONSE", response.toString()) // Debug logging
-
-                    // Check if login was successful and required fields are present
-                    if (status != null && userId != null && roleId != null && status == "login") {
-                        // Update state to reflect successful login
-                        _status.value = Status(status, userId, roleId)
+                    if (status == "login" && userId != null && roleId != null && token != null) {
+                        tokenManager.saveToken(token) // Save token
+                        _status.value = Status(status, userId, roleId, token = token)
                     } else {
-                        // Response was OK but missing expected values
                         error = "Invalid login response"
                     }
                 } else {
-                    // Backend responded with an error code (e.g., 400, 401, 500)
                     error = "Login failed: ${response.code()}"
                 }
             }
 
-            // Handle network failure (e.g., no internet connection)
             override fun onFailure(call: Call<Map<String, Any>>, t: Throwable) {
+                isLoading = false
                 error = "Network error: ${t.message}"
             }
         })
     }
+
 
 
     fun register(name: String, email: String, password: String) {
@@ -133,7 +129,7 @@ class UserViewModel : ViewModel() {
                     val status = response.body()?.get("status")
                     if (status == "register") {
                         _status.value = Status("register")
-                        // Optionally show: "Please verify your email from your inbox"
+
                     } else if (status == "exists") {
                         error = "Email already exists"
                     }

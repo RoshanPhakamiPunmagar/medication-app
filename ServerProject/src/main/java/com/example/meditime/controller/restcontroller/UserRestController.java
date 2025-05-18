@@ -179,6 +179,7 @@ public class UserRestController {
                     response.put("status", "login");
                     response.put("userId", user.getUserId());
                     response.put("roleId", user.getRoleId());
+                    response.put("token", user.getVerificationToken()); // Send token for reuse
                     return ResponseEntity.ok(response);
                 } else {
                     response.put("status", "invalid");
@@ -194,5 +195,17 @@ public class UserRestController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/secureData")
+    public ResponseEntity<String> getSecureData(@RequestParam String token) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+
+        if (optionalUser.isEmpty() || !optionalUser.get().isEmailVerified()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or unverified token.");
+        }
+
+        return ResponseEntity.ok("This is your secure data.");
+    }
+
 
 }

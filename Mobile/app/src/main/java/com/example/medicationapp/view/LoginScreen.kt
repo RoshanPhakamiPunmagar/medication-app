@@ -6,8 +6,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.medicationapp.util.TokenManager
 import com.example.medicationapp.viewmodel.UserViewModel
 
 
@@ -22,6 +24,13 @@ fun LoginScreen(
     var error by remember { mutableStateOf<String?>(null) }
 
     val status by userViewModel.status.collectAsState()
+    val context = LocalContext.current
+    val tokenManager = remember { TokenManager(context) }
+
+    // Inject TokenManager into ViewModel after it's created
+    LaunchedEffect(Unit) {
+        userViewModel.setTokenManager(tokenManager)
+    }
 
     LaunchedEffect(status) {
         status?.let {

@@ -5,11 +5,9 @@ package com.example.medicationapp.view
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -30,14 +28,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.util.TokenManager
 import com.example.medicationapp.viewmodel.AlarmViewModel
+import com.example.medicationapp.viewmodel.ClientViewModel
 import com.example.medicationapp.viewmodel.UserViewModel
 
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
+    object ManageClients : BottomNavItemForManager("manage_clients", Icons.Default.Person, "Clients")
     object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
     object AssignMedication : BottomNavItemForManager("assign_medication", Icons.Default.Add, "Reminders")
     object Reports : BottomNavItemForManager("generate_reports", Icons.Default.DateRange, "Reports")
@@ -138,7 +139,8 @@ fun AppNavigation(navController: NavHostController) {
 
         // Route to view and manage list of clients (for managers)
         composable("manage_clients") {
-            ClientListScreen()
+            val clientViewModel: ClientViewModel = viewModel()
+            ClientListScreen(clientViewModel = clientViewModel)
         }
 
         // Route for assigning medication to clients

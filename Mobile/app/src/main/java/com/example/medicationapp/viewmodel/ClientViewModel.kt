@@ -17,6 +17,7 @@ class ClientViewModel : ViewModel() {
     val totalPages = MutableLiveData<Int>()
     val totalItems = MutableLiveData<Long>()
 
+
     fun setCurrentPage(page: Int) {
         currentPage.postValue(page)
     }
@@ -27,6 +28,7 @@ class ClientViewModel : ViewModel() {
             override fun onResponse(
                 call: Call<Map<String, Any>>,
                 response: Response<Map<String, Any>>
+
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let { responseMap ->
@@ -50,6 +52,7 @@ class ClientViewModel : ViewModel() {
             override fun onFailure(call: Call<Map<String, Any>>, t: Throwable) {
                 Log.e("ClientViewModel", "Failure: ${t.message}")
             }
+
         })
     }
 

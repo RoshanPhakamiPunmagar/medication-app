@@ -23,6 +23,6 @@ data class Client(
 
     val name: String,
     val dob: String,
-    val contactInfo: String,
+    val contact: String,
     var carerId: Long?
 )

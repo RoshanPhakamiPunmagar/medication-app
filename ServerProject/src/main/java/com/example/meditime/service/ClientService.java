@@ -21,10 +21,6 @@ public class ClientService {
         return clientRepository.findAll(pageable);
     }
 
-    public List<Client> getAllClients() {
-        return clientRepository.findAll();
-    }
-
     public Client getClientById(Long clientId) {
         return clientRepository.findById(clientId).orElse(null);
     }

@@ -9,37 +9,72 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.livedata.observeAsState
 import com.example.medicationapp.model.Client
-import kotlinx.coroutines.launch
+import com.example.medicationapp.viewmodel.ClientViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClientListScreen() {
-    val coroutineScope = rememberCoroutineScope()
-    var clients by remember { mutableStateOf<List<Client>>(emptyList()) }
+fun ClientListScreen(clientViewModel: ClientViewModel = viewModel()) {
+    val clients by clientViewModel.clientsLiveData.observeAsState(emptyList())
+    val currentPage by clientViewModel.currentPage.observeAsState(0)
+    val totalPages by clientViewModel.totalPages.observeAsState(1)
 
-    // Fetch clients from the database when the screen is launched
+    // Trigger the initial data load
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-
-        }
+        clientViewModel.getClientsPaged(page = 0, size = 20)
     }
 
-    Column(Modifier.fillMaxSize().padding(24.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(24.dp)) {
+
         Text("Clients", style = MaterialTheme.typography.headlineMedium)
 
-        // Display a list of clients
         if (clients.isEmpty()) {
-            Text("No clients available", style = MaterialTheme.typography.bodyMedium)
+            CircularProgressIndicator(modifier = Modifier.padding(top = 24.dp))
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(clients) { client ->
-                    ClientItem(client = client)  // Custom composable to display each client
+                    ClientItem(client = client)
+                }
+             //Pagination controls
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        if (currentPage > 0) {
+                            Button(
+                                onClick = {
+                                    clientViewModel.getClientsPaged(currentPage - 1, 20)
+                                    clientViewModel.setCurrentPage(currentPage - 1)
+                                }
+                            ) {
+                                Text("Previous")
+                            }
+                        }
+
+                        if (currentPage < totalPages - 1) {
+                            Button(
+                                onClick = {
+                                    clientViewModel.getClientsPaged(currentPage + 1, 20)
+                                    clientViewModel.setCurrentPage(currentPage + 1)
+                                }
+                            ) {
+                                Text("Load More")
+                            }
+                        }
+                    }
+                }
+
                 }
             }
         }
     }
-}
 
 @Composable
 fun ClientItem(client: Client) {
@@ -51,9 +86,8 @@ fun ClientItem(client: Client) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Name: ${client.name}", style = MaterialTheme.typography.bodyLarge)
-            Text(text = "Email: ${client.dob}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Phone: ${client.contactInfo}", style = MaterialTheme.typography.bodyMedium)
-
+            Text(text = "DOB: ${client.dob}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Phone: ${client.contact}", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

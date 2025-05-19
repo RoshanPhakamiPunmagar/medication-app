@@ -19,14 +19,10 @@ import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.viewmodel.MedicationViewModel
 import com.example.medicationapp.viewmodel.ClientViewModel
-import com.example.medicationapp.repository.MedicationRepository
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import androidx.compose.runtime.livedata.observeAsState
-import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.view.TimeWheelPickerDialog
 import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 
@@ -63,7 +59,7 @@ fun AssignMedicationScreen(
 
 
     LaunchedEffect(Unit) {
-        clientViewModel.getClientsPaged(page = 0, size = 10)
+        clientViewModel.getClientsPaged(page = 0, size = 1000)
         viewModel.fetchMedications()
     }
 

@@ -16,7 +16,6 @@ class AlarmDialogActivity : ComponentActivity() {
         // Use the clientMedication object in your UI logic
         Log.d("AlarmDialogActivity", "Received medication: Call")
 
-        // Optionally stop the ringtone when the dialog is displayed
         setContent {
             AlarmDialogScreen(onDismiss = { finish() })
         }

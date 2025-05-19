@@ -28,8 +28,6 @@ import com.example.medicationapp.view.alarm.getClientMedication
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
-import com.example.medicationapp.model.repository.ClientRepository
-import com.example.medicationapp.repository.MedicationRepository
 
 @Composable
 fun AlarmAlertPopUp (
@@ -78,26 +76,7 @@ fun AlarmAlertPopUp (
 @Composable
 fun AlarmDialogScreen( onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val db = remember { com.example.medicationapp.database.AppDatabase.getDatabase(context) }
 
-    val clientRepository = remember {
-        ClientRepository(
-            clientDao = db.clientDao(),
-            adherenceLogDao = db.adherenceLogDao(),
-            clientMedicationDao = db.clientMedicationDao(),
-            medicationDao = db.medicationDao(),
-            medicationLogDao = db.medicationLogDao(),
-            userDao = db.userDao()
-        )
-    }
-
-    val medicationRepository = remember {
-        MedicationRepository(
-            medicationDao = db.medicationDao(),
-            medicationLogDao = db.medicationLogDao(),
-            clientMedicationDao = db.clientMedicationDao()
-        )
-    }
 
     val clientMedication: ClientMedication? = getClientMedication()
 
@@ -107,8 +86,6 @@ fun AlarmDialogScreen( onDismiss: () -> Unit) {
 
     LaunchedEffect(Unit) {
         clientMedication?.let {
-            meds = medicationRepository.getMedicationById(it.medicationId)
-            //client = clientRepository.getClientById(it.clientId)
         } ?: run {
             Log.d("Alarm", "Client medication is null.")
         }

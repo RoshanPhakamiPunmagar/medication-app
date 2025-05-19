@@ -14,14 +14,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.medicationapp.model.repository.ClientRepository
 import com.example.medicationapp.view.carer.IncidentNotesScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarrerMainScreen(clientRepository: ClientRepository, navController: NavHostController, carerId: Long, context: Context) {
+fun CarrerMainScreen(navController: NavHostController, carerId: Long, context: Context) {
     val bottomNavController = rememberNavController()
 
     val bottomNavItems = listOf(

@@ -18,10 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 
-// Database and repositories
-import com.example.medicationapp.database.AppDatabase
-import com.example.medicationapp.model.repository.ClientRepository
-import com.example.medicationapp.repository.MedicationRepository
 
 // Screens
 import com.example.medicationapp.view.carer.IncidentNotesScreen
@@ -56,68 +52,14 @@ sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifier) {
+fun AppNavigation(navController: NavHostController) {
     val context = LocalContext.current
 
-
     val viewModel: AlarmViewModel = viewModel()
-
-    // Get a reference to the singleton Room database
-    val db = remember { AppDatabase.getDatabase(context) }
-
-    // Create and remember an instance of the ClientRepository
-    val clientRepository = remember {
-        ClientRepository(
-            clientDao = db.clientDao(),
-            clientMedicationDao = db.clientMedicationDao(),
-            medicationDao = db.medicationDao(),
-            medicationLogDao = db.medicationLogDao(),
-            adherenceLogDao = db.adherenceLogDao(),
-            userDao = db.userDao()
-        )
-    }
-
-    // Create and remember an instance of the MedicationRepository
-    val medicationRepository = remember {
-        MedicationRepository(
-            medicationDao = db.medicationDao(),
-            medicationLogDao = db.medicationLogDao(),
-            clientMedicationDao = db.clientMedicationDao(),
-        )
-    }
 
     // Define the navigation graph with start destination as login screen
     NavHost(navController = navController, startDestination = "login") {
 
-
-//        // Login screen route
-//        composable("login") {
-//            LoginScreen(
-//                onLoginSuccess = { role, userId ->
-//                    // Store user session data in SharedPreferences
-//                    val sharedPref =
-//                        context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
-//                    with(sharedPref.edit()) {
-//                        putString("user_role", role)
-//                        putLong("user_id", userId)
-//                        apply()
-//                    }
-//                    val storedUserId = sharedPref.getLong("user_id", -1L)
-//                    Log.d("Sign in", "Stored user ID: $storedUserId")
-//
-//                    viewModel.scheduleAlarmsForCarer(userId = storedUserId)
-//                    // Navigate based on user role
-//                    when (role) {
-//                        "Manager" -> navController.navigate("manager_dashboard")
-//                        "Carer" -> navController.navigate("carer_dashboard/$userId")
-//                    }
-//
-//                },
-//                onNavigateToSignup = {
-//                    navController.navigate("signup")
-//                }
-//            )
-//        }
 
         composable("login") {
             val context = LocalContext.current
@@ -146,8 +88,6 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
 
                     val storedUserId = sharedPref.getLong("user_id", -1L)
                     Log.d("Sign in", "Stored user ID: $storedUserId")
-
-                    viewModel.scheduleAlarmsForCarer(userId = storedUserId)
 
                     // Navigate based on role
                     when (role) {
@@ -178,8 +118,6 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         // Manager dashboard route
         composable("manager_dashboard") {
             ManagerMainScreen(
-                clientRepository = clientRepository,
-                medicationRepository = medicationRepository,
                 context = context,
                 navController = navController
             )
@@ -192,16 +130,15 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier = Modifie
         ) { backStackEntry ->
             val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
             CarrerMainScreen(
-                clientRepository = clientRepository,
                 navController = navController,
                 carerId = carerId,
-                context = context,
+                context = context
             )
         }
 
         // Route to view and manage list of clients (for managers)
         composable("manage_clients") {
-            ClientListScreen(clientRepository = clientRepository)
+            ClientListScreen()
         }
 
         // Route for assigning medication to clients

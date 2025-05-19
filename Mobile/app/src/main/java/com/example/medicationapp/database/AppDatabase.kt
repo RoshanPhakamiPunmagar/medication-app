@@ -6,11 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.medicationapp.model.*
-import com.example.medicationapp.model.dao.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalTime
 
 @Database(
     entities = [
@@ -30,17 +28,6 @@ import java.time.LocalTime
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-
-    abstract fun userDao(): UserDao
-    abstract fun roleDao(): RoleDao
-    abstract fun clientDao(): ClientDao
-    abstract fun medicationDao(): MedicationDao
-    abstract fun medicationInteractionDao(): MedicationInteractionDao
-    abstract fun clientMedicationDao(): ClientMedicationDao
-    abstract fun medicationLogDao(): MedicationLogDao
-    abstract fun reminderDao(): ReminderDao
-    abstract fun adherenceLogDao(): AdherenceLogDao
-    abstract fun reportDao(): ReportDao
 
     companion object {
         @Volatile
@@ -72,7 +59,6 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
         }
-
 
     }
 }

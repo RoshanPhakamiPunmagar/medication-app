@@ -94,7 +94,7 @@ class UserViewModel() : ViewModel() {
                     val status = body?.get("status") as? String
                     val userId = (body?.get("userId") as? Double)?.toLong()
                     val roleId = (body?.get("roleId") as? Double)?.toLong()
-                    val token = body?.get("token") as? String  // <-- Expect backend to return the token
+                    val token = body?.get("token") as? String
 
                     if (status == "login" && userId != null && roleId != null && token != null) {
                         tokenManager.saveToken(token) // Save token

@@ -167,19 +167,16 @@ public class UserRestController {
 
 
                 if (x) {
-                    if (user.getEmail().equals("manager@app.com")) {
-                    }
 
-                    if (!user.isEmailVerified()) {
+                    if (!user.isEmailVerified() && !user.getEmail().equalsIgnoreCase("manager@app.com")) {
                         response.put("status", "unverified");
                         return ResponseEntity.ok(response);
                     }
 
-
                     response.put("status", "login");
                     response.put("userId", user.getUserId());
                     response.put("roleId", user.getRoleId());
-                    response.put("token", user.getVerificationToken()); // Send token for reuse
+                    response.put("token", user.getVerificationToken());
                     return ResponseEntity.ok(response);
                 } else {
                     response.put("status", "invalid");

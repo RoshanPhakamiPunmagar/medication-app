@@ -63,7 +63,7 @@ fun AssignMedicationScreen(
 
 
     LaunchedEffect(Unit) {
-        clientViewModel.getAllClients()
+        clientViewModel.getClientsPaged(page = 0, size = 10)
         viewModel.fetchMedications()
     }
 

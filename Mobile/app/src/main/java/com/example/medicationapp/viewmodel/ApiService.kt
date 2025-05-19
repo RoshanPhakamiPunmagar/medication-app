@@ -20,6 +20,14 @@ import retrofit2.http.Query
 
 interface ApiService {
 
+    @GET("api/clients")
+    fun getClientsPaged(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Call<Map<String, @JvmSuppressWildcards Any>>
+
+
+
     @POST("mobile/check")
     fun login(
         @Body request: LoginRequest

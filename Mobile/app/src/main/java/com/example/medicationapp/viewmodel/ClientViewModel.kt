@@ -4,40 +4,56 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.medicationapp.model.Client
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ClientViewModel : ViewModel() {
-    private val apiService: ApiService
+    private val apiService = RetrofitService.retrofit.create(ApiService::class.java)
 
-    // LiveData to observe the list of clients
     val clientsLiveData = MutableLiveData<List<Client>>()
+    val currentPage = MutableLiveData<Int>()
+    val totalPages = MutableLiveData<Int>()
+    val totalItems = MutableLiveData<Long>()
 
-    init {
-        // Initialize ApiService using RetrofitService
-        apiService = RetrofitService.retrofit.create(ApiService::class.java)
+    fun setCurrentPage(page: Int) {
+        currentPage.postValue(page)
     }
 
-    fun getAllClients() {
-        // Make the network call asynchronously
-        apiService.getAllClients().enqueue(object : Callback<List<Client>> {
-            override fun onResponse(call: Call<List<Client>>, response: Response<List<Client>>) {
+
+    fun getClientsPaged(page: Int, size: Int) {
+        apiService.getClientsPaged(page, size).enqueue(object : Callback<Map<String, Any>> {
+            override fun onResponse(
+                call: Call<Map<String, Any>>,
+                response: Response<Map<String, Any>>
+            ) {
                 if (response.isSuccessful) {
-                    // Update LiveData with the list of clients
-                    clientsLiveData.postValue(response.body())
-                    val clients = response.body()
-                    Log.d("ClientViewModel", "Fetched clients: $clients")
+                    response.body()?.let { responseMap ->
+                        val clientsJson = responseMap["clients"]
+                        val gson = Gson()
+                        val jsonStr = gson.toJson(clientsJson)
+                        val newClients = gson.fromJson(jsonStr, Array<Client>::class.java).toList()
+
+                        clientsLiveData.postValue(newClients)
+
+                        // Update pagination info
+                        currentPage.postValue((responseMap["currentPage"] as Double).toInt())
+                        totalPages.postValue((responseMap["totalPages"] as Double).toInt())
+                        totalItems.postValue((responseMap["totalItems"] as Double).toLong())
+                    }
                 } else {
-                    // Handle error (optional)
                     Log.e("ClientViewModel", "Error: ${response.message()}")
                 }
             }
 
-            override fun onFailure(call: Call<List<Client>>, t: Throwable) {
-                // Handle failure (optional)
+            override fun onFailure(call: Call<Map<String, Any>>, t: Throwable) {
                 Log.e("ClientViewModel", "Failure: ${t.message}")
             }
         })
     }
+
+
+
+
 }

@@ -115,7 +115,6 @@ public class MediTimeApplication {
 
             switch (choice) {
                 case 1 -> addClient(scanner, clientService);
-                case 2 -> listClients(clientService);
                 case 3 -> updateClient(scanner, clientService);
                 case 4 -> deleteClient(scanner, clientService);
                 case 5 -> addCarer(scanner, userService);
@@ -143,10 +142,10 @@ public class MediTimeApplication {
         System.out.println("Client added successfully!");
     }
 
-    private static void listClients(ClientService clientService) {
-        clientService.getAllClients().forEach(c ->
-                System.out.println("ID: " + c.getClientId() + " | Name: " + c.getName()));
-    }
+//    private static void listClients(ClientService clientService) {
+//        clientService.getAllClients().forEach(c ->
+//                System.out.println("ID: " + c.getClientId() + " | Name: " + c.getName()));
+//    }
 
     private static void updateClient(Scanner scanner, ClientService clientService) {
         System.out.print("Enter ID of client to update: ");

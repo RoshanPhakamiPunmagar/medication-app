@@ -20,7 +20,7 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("api/clients")
+    @GET("https://medication-app-deployment.onrender.com/api/clients")
     fun getClientsPaged(
         @Query("page") page: Int,
         @Query("size") size: Int
@@ -28,45 +28,45 @@ interface ApiService {
 
 
 
-    @POST("mobile/check")
+    @POST("https://medication-app-deployment.onrender.com/mobile/check")
     fun login(
         @Body request: LoginRequest
     ): Call<Map<String, @JvmSuppressWildcards Any>>
 
-    @POST("mobile/user")
+    @POST("https://medication-app-deployment.onrender.com/mobile/user")
     fun register(
         @Body user: User
     ): Call<Map<String, String>>
 
 
-    @GET("mobile/userCarer")
+    @GET("https://medication-app-deployment.onrender.com/mobile/userCarer")
     fun getAllCarers(): Call<List<User>>
 
-    @GET("meds/details")
+    @GET("https://medication-app-deployment.onrender.com/meds/details")
     fun getMedicationWithName(@Query("medicationList") list: List<String>): Call<ClientMedsDescriptions>
 
-    @GET("api/medications")
+    @GET("https://medication-app-deployment.onrender.com/api/medications")
     fun getAllMedications(): Call<List<Medication>>
 
-    @GET("api/clients")
+    @GET("https://medication-app-deployment.onrender.com/api/clients")
     fun getAllClients(): Call<List<Client>>
 
-    @POST("/api/medication/assign")
+    @POST("https://medication-app-deployment.onrender.com/api/medication/assign")
     fun assignMedication(@Body dto: ClientMedication): Call<ResponseBody>
 
-    @POST("mobile/assignCarerToClient")
+    @POST("https://medication-app-deployment.onrender.com/mobile/assignCarerToClient")
     @FormUrlEncoded
     fun assignCarerToClient(
         @Field("clientId") clientId: Long,
         @Field("carerUserId") carerUserId: Long
     ): Call<Map<String, String>>
 
-    @GET("api/medication/clients-with-medications/{carerId}")
+    @GET("https://medication-app-deployment.onrender.com/api/medication/clients-with-medications/{carerId}")
     fun getClientsWithMedications(
         @Path("carerId") carerId: Long
     ): Call<List<ClientWithMedicationsDTO>>
 
-    @POST("mobile/removeCarerFromClient")
+    @POST("https://medication-app-deployment.onrender.com/mobile/removeCarerFromClient")
     @FormUrlEncoded
     fun removeCarerFromClient(
         @Field("clientId") clientId: Long

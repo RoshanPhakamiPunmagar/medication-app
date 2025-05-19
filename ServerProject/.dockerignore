@@ -1,0 +1,17 @@
+# Maven
+target/
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+*.iml
+.idea/
+*.log
+
+# OS & misc
+.DS_Store
+*.class
+*.jar
+*.war
+*.zip
+*.tmp

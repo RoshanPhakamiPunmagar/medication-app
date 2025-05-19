@@ -1,17 +1,7 @@
-# Maven
-target/
-.mvn/
-!.mvn/wrapper/maven-wrapper.jar
-
-# IDEs
+target
+.idea
 *.iml
-.idea/
 *.log
-
-# OS & misc
-.DS_Store
-*.class
-*.jar
-*.war
-*.zip
 *.tmp
+Dockerfile
+.dockerignore

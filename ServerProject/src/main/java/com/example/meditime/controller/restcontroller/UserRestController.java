@@ -59,7 +59,6 @@ public class UserRestController {
     }
 
 
-
     @GetMapping("/userCarer")
     public ResponseEntity<List<User>> getAllCarers() {
         try {
@@ -120,6 +119,11 @@ public class UserRestController {
         Map<String, Object> response = new HashMap<>();
 
         try {
+            // TEMP: Generate and print encoded password
+            String samplePassword = "password123";
+            String encodedSample = passwordEncoder.encode(samplePassword);
+            System.out.println("Encoded 'password123': " + encodedSample);
+
             Optional<User> optionalUser = userService.findByEmail(request.getEmail());
 
             if (optionalUser.isPresent()) {
@@ -142,5 +146,4 @@ public class UserRestController {
 
         return ResponseEntity.ok(response);
     }
-
 }

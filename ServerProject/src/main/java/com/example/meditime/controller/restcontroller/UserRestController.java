@@ -3,7 +3,6 @@ package com.example.meditime.controller.restcontroller;
 import com.example.meditime.model.LoginRequest;
 import com.example.meditime.model.User;
 import com.example.meditime.repository.UserRepository;
-import com.example.meditime.service.MailgunService;
 import com.example.meditime.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

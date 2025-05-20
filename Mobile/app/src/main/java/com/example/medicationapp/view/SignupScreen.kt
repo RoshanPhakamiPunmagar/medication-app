@@ -65,8 +65,6 @@ fun SignupScreen(
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
-            Spacer(Modifier.height(8.dp))
-            Text("Please check your email to verify your account before logging in.")
         }
     } else {
         // Signup form screen

@@ -42,7 +42,7 @@ public class MailgunService {
     }
 
     public void sendVerificationEmail(String toEmail, String token) {
-        String verificationLink = "https://fcfc-203-164-254-42.ngrok-free.app/mobile/verify?token=" + token;
+        String verificationLink = "https://dd5c-203-164-254-42.ngrok-free.app/mobile/verify?token=" + token;
         String subject = "Verify your MediTime Email";
         String body = "Hello,\n\nPlease verify your email by clicking the link below:\n" + verificationLink + "\n\nThank you!";
         sendEmail(toEmail, subject, body);

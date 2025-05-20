@@ -39,7 +39,7 @@
 
                 <data
                     android:scheme="https"
-                android:host="6f7d-203-164-254-42.ngrok-free.app"
+                android:host="dd5c-203-164-254-42.ngrok-free.app"
                     android:pathPrefix="/mobile/verify" />
             </intent-filter>
         </activity>

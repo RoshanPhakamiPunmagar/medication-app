@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByVerificationToken(String token);
 
      List<User> findByRoleId(Long roleId);
 

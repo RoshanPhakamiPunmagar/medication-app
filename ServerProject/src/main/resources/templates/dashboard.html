@@ -1,0 +1,53 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<header class="bg-dark text-white text-center py-4">
+    <h1>We Care Disability Support</h1>
+</header>
+
+<section class="container mt-4">
+    <h2>Welcome, <span th:text="${name}">User</span>!</h2>
+    <p>Your role is: <span th:text="${role}">Role</span></p>
+
+    <div>
+        <h3>Dashboard Overview</h3>
+        <p>This is your personalized dashboard. From here, you can access different features based on your role.</p>
+    </div>
+
+    <!-- Add more dashboard content here based on role -->
+    <div th:if="${role == '1'}">
+        <h4>Admin Panel</h4>
+        <ul>
+            <li><a th:href="@{/admin/users}">Manage Users</a></li>
+            <li><a th:href="@{/admin/settings}">System Settings</a></li>
+        </ul>
+    </div>
+
+    <div th:if="${role == '2'}">
+        <h4>Support Worker Tools</h4>
+        <ul>
+            <li><a th:href="@{/support/schedule}">View Schedule</a></li>
+            <li><a th:href="@{/support/clients}">Manage Clients</a></li>
+        </ul>
+    </div>
+
+    <div th:if="${role == '3'}">
+        <h4>Client Section</h4>
+        <ul>
+            <li><a th:href="@{/client/profile}">My Profile</a></li>
+            <li><a th:href="@{/client/services}">Available Services</a></li>
+        </ul>
+    </div>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</section>
+</body>
+</html>

@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY = "meditime_secret_key"; // Change in production!
+    private final String SECRET_KEY = "meditime_secret_key";
     private final long EXPIRATION = 86400000; // 24 hours
 
     public String generateToken(String email) {

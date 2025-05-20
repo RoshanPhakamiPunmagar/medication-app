@@ -94,13 +94,11 @@ class UserViewModel() : ViewModel() {
                     val status = body?.get("status") as? String
                     val userId = (body?.get("userId") as? Double)?.toLong()
                     val roleId = (body?.get("roleId") as? Double)?.toLong()
-                    val token = body?.get("token") as? String
 
-                    if (status == "login" && userId != null && roleId != null && token != null) {
-                        tokenManager.saveToken(token) // Save token
-                        _status.value = Status(status, userId, roleId, token = token)
+                    if (status == "login" && userId != null && roleId != null) {
+                        _status.value = Status(status, userId, roleId)
                     } else {
-                        error = "Invalid login response"
+                        error = "Invalid login credentials"
                     }
                 } else {
                     error = "Login failed: ${response.code()}"
@@ -114,27 +112,23 @@ class UserViewModel() : ViewModel() {
         })
     }
 
-
-
     fun register(name: String, email: String, password: String) {
         isLoading = true
         error = ""
 
-        val user = User(name = name, email = email, password = password,  roleId = 2L)
+        val user = User(name = name, email = email, password = password, roleId = 2L)
 
         apiService.register(user).enqueue(object : Callback<Map<String, String>> {
             override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
                 isLoading = false
                 if (response.isSuccessful) {
-                    val status = response.body()?.get("status")
-                    if (status == "register") {
-                        _status.value = Status("register")
-
-                    } else if (status == "exists") {
-                        error = "Email already exists"
+                    when (val status = response.body()?.get("status")) {
+                        "register" -> _status.value = Status("register")
+                        "exists" -> error = "Email already exists"
+                        else -> error = "Unknown signup response"
                     }
                 } else {
-                    error = "Signup failed"
+                    error = "Signup failed: ${response.code()}"
                 }
             }
 

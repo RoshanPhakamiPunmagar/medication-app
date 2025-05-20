@@ -21,7 +21,7 @@ public class UserController {
         @Autowired
     private UserRepository userRepository;
     @Autowired
-private JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
 
     @GetMapping("/signup")

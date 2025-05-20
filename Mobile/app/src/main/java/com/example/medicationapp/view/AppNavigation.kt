@@ -64,9 +64,7 @@ fun AppNavigation(navController: NavHostController) {
 
         composable("login") {
             val context = LocalContext.current
-            val tokenManager = remember { TokenManager(context) }
             val userViewModel: UserViewModel = viewModel()
-
 
             LoginScreen(
                 onLoginSuccess = { role, userId ->
@@ -78,15 +76,7 @@ fun AppNavigation(navController: NavHostController) {
                         apply()
                     }
 
-                    //Also save token from ViewModel
-                    val token = userViewModel.status.value?.token
-                    if (!token.isNullOrBlank()) {
-                        tokenManager.saveToken(token)
-                        Log.d("Login", "Token saved: $token")
-                    } else {
-                        Log.w("Login", "No token available in ViewModel!")
-                    }
-
+                    // Log user ID for debug
                     val storedUserId = sharedPref.getLong("user_id", -1L)
                     Log.d("Sign in", "Stored user ID: $storedUserId")
 
@@ -94,6 +84,7 @@ fun AppNavigation(navController: NavHostController) {
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
                         "Carer" -> navController.navigate("carer_dashboard/$userId")
+                        else -> Log.w("Login", "Unknown role: $role")
                     }
                 },
                 onNavigateToSignup = {

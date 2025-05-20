@@ -1,16 +1,9 @@
 package com.example.meditime.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 public class User {
-
-    @Getter
-    @Setter
-    private String verificationToken;
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +15,6 @@ public class User {
 
     @Column(name = "role_id")
     private Long roleId;
-
-    @Column(name = "email_verified")
-    @Getter @Setter
-    private boolean emailVerified = false;
 
 
     // Getters and Setters

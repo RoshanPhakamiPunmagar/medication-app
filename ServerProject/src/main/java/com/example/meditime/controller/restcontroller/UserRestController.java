@@ -28,62 +28,32 @@ public class UserRestController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    private final String REGISTER = "register";
-    private final String INVALID = "invalid";
-    private final String EXISTS = "exists";
-
-    @Transactional
-    @GetMapping("/verify")
-    public ResponseEntity<String> verifyEmail(@RequestParam(required = false) String token) {
-        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setEmailVerified(true);
-            userRepository.saveAndFlush(user);
-
-            return ResponseEntity.ok("Email verified successfully.");
-        } else {
-            return ResponseEntity.badRequest().body("Invalid verification token.");
-        }
-    }
-
-
     @PostMapping("/user")
     public ResponseEntity<Map<String, String>> processSignup(@RequestBody User user) {
         Map<String, String> response = new HashMap<>();
 
         try {
             if (userService.emailExists(user.getEmail())) {
-                response.put("status", EXISTS);
+                response.put("status", "exists");
                 return ResponseEntity.ok(response);
             }
 
-            // Generate token
-            String token = UUID.randomUUID().toString();
-            user.setVerificationToken(token);
-            user.setEmailVerified(false);
-
             // Encode password
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
 
-            // Set default role
+            // Set default role (e.g., user role)
             user.setRoleId(2L);
 
             // Save user
             userRepository.save(user);
-            System.out.println("Calling sendVerificationEmail...");
 
-
-            response.put("status", REGISTER);
+            response.put("status", "register");
             return ResponseEntity.ok(response);
-
-
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("status", INVALID);
+            response.put("status", "invalid");
             return ResponseEntity.ok(response);
         }
     }
@@ -148,35 +118,22 @@ public class UserRestController {
     @PostMapping("/check")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
         Map<String, Object> response = new HashMap<>();
-        try {
-            System.out.println("Login endpoint hit");
-            System.out.println("Encoding password: " + passwordEncoder.encode("password123"));
 
+        try {
             Optional<User> optionalUser = userService.findByEmail(request.getEmail());
 
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                boolean x = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
-
-                if (x) {
-
-                    if (!user.isEmailVerified() && !user.getEmail().equalsIgnoreCase("manager@app.com")) {
-                        response.put("status", "unverified");
-                        return ResponseEntity.ok(response);
-                    }
-
+                if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                     response.put("status", "login");
                     response.put("userId", user.getUserId());
                     response.put("roleId", user.getRoleId());
-                    response.put("token", user.getVerificationToken());
                     return ResponseEntity.ok(response);
-                } else {
-                    response.put("status", "invalid");
                 }
-            } else {
-                response.put("status", "invalid");
             }
+
+            response.put("status", "invalid");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -185,17 +142,5 @@ public class UserRestController {
 
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/secureData")
-    public ResponseEntity<String> getSecureData(@RequestParam String token) {
-        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
-
-        if (optionalUser.isEmpty() || !optionalUser.get().isEmailVerified()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or unverified token.");
-        }
-
-        return ResponseEntity.ok("This is your secure data.");
-    }
-
 
 }

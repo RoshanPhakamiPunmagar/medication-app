@@ -69,8 +69,6 @@ public class UserService implements org.springframework.security.core.userdetail
     }
 
 
-
-
     // Return all users in the system
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -91,17 +89,9 @@ private PasswordEncoder passwordEncoder;
                 .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
         user.setRoleId(role.getRoleId());
 
-
-        String token = UUID.randomUUID().toString();
-        user.setVerificationToken(token);
-        user.setEmailVerified(false);
-
         userRepository.save(user);
-
-        // ADD THIS LINE FOR DEBUGGING
-        System.out.println("Generated verification token: " + token);
+        System.out.println("User created: " + user.getEmail());
     }
-
 
 
     public void addUserById(String name, String email, String password, Long roleId) {

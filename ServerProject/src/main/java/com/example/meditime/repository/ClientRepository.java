@@ -13,15 +13,15 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     List<Client> findByCarerUserId(Long carerUserId);
 
     @Override
-    public List<Client> findAll();
+     List<Client> findAll();
 
     @Override
-    public Optional<Client> findById(Long id);
+    Optional<Client> findById(Long id);
 
     @Override
-    public Client save(Client client);
+    Client save(Client client);
 
     @Override
-    public void deleteById(Long id);
+    void deleteById(Long id);
     
 }

@@ -4,5 +4,4 @@ data class Status(
     val status: String,
     val userId: Long? = null,
     val roleId: Long? = null,
-    val token: String? = null
 )

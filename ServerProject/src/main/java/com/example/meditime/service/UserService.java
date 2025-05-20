@@ -32,9 +32,6 @@ public class UserService implements org.springframework.security.core.userdetail
     @Autowired
     private ClientRepository clientRepository;
 
-    @Autowired
-    private MailgunService mailgunService;
-
 
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);  // Fetch user by ID from UserRepository
@@ -100,8 +97,6 @@ private PasswordEncoder passwordEncoder;
         user.setEmailVerified(false);
 
         userRepository.save(user);
-
-        mailgunService.sendVerificationEmail(user.getEmail(), token);
 
         // ADD THIS LINE FOR DEBUGGING
         System.out.println("Generated verification token: " + token);

@@ -28,9 +28,6 @@ public class UserRestController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private MailgunService mailgunService;
-
 
     private final String REGISTER = "register";
     private final String INVALID = "invalid";
@@ -78,9 +75,6 @@ public class UserRestController {
             userRepository.save(user);
             System.out.println("Calling sendVerificationEmail...");
 
-            // Send verification email
-            mailgunService.sendVerificationEmail(user.getEmail(), token);
-            System.out.println("sendVerificationEmail called!");
 
             response.put("status", REGISTER);
             return ResponseEntity.ok(response);

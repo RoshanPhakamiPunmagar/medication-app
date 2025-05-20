@@ -32,7 +32,7 @@ public class ClientController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllClients(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "5") int size
     ) {
         // Create a Pageable object based on the requested page and size
         Pageable pageable = PageRequest.of(page, size);

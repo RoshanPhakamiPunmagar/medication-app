@@ -88,7 +88,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
 
     // Loads data once when the Composable enters the composition
     LaunchedEffect(Unit) {
-        clientViewModel.getClientsPaged(currentPage, 20)
+        clientViewModel.getClientsPaged(currentPage, 5)
         userViewModel.fetchCarers()
         println("DEBUG: Clients loaded: ${clients.map { it.name to it.carerId }}")
     }
@@ -228,7 +228,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
 
                                     if (clientId != null && carerId != null) {
                                         userViewModel.assignCarerToClient(clientId, carerId)
-                                        clientViewModel.getClientsPaged(page = 0, size = 20)
+                                        clientViewModel.getClientsPaged(page = 0, size = 5)
                                         message = "Assigned ${carer.name} to ${client.name}"
                                     } else {
                                         message = "Client or Carer ID is missing"
@@ -254,7 +254,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                                 userViewModel.removeCarerFromClient(client.clientId)
                                 message = "Removed carer from ${client.name}"
                                 showRemoveConfirm = false
-                                clientViewModel.getClientsPaged(page = 0, size = 20)
+                                clientViewModel.getClientsPaged(page = 0, size = 5)
                             }
                         }
                     },
@@ -289,7 +289,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                 onClick = {
                     if (currentPage > 0) {
                         clientViewModel.setCurrentPage(currentPage - 1)
-                        clientViewModel.getClientsPaged(currentPage - 1, 20)
+                        clientViewModel.getClientsPaged(currentPage - 1, 5)
                     }
                 },
                 enabled = currentPage > 0
@@ -301,7 +301,7 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                 onClick = {
                     if (currentPage < totalPages - 1) {
                         clientViewModel.setCurrentPage(currentPage + 1)
-                        clientViewModel.getClientsPaged(currentPage + 1, 20)
+                        clientViewModel.getClientsPaged(currentPage + 1, 5)
                     }
                 },
                 enabled = currentPage < totalPages - 1

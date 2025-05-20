@@ -23,7 +23,7 @@ fun ClientListScreen(clientViewModel: ClientViewModel = viewModel()) {
 
     // Trigger the initial data load
     LaunchedEffect(Unit) {
-        clientViewModel.getClientsPaged(page = 0, size = 20)
+        clientViewModel.getClientsPaged(page = 0, size = 5)
     }
 
     Column(modifier = Modifier
@@ -50,7 +50,7 @@ fun ClientListScreen(clientViewModel: ClientViewModel = viewModel()) {
                         if (currentPage > 0) {
                             Button(
                                 onClick = {
-                                    clientViewModel.getClientsPaged(currentPage - 1, 20)
+                                    clientViewModel.getClientsPaged(currentPage - 1, 5)
                                     clientViewModel.setCurrentPage(currentPage - 1)
                                 }
                             ) {
@@ -61,7 +61,7 @@ fun ClientListScreen(clientViewModel: ClientViewModel = viewModel()) {
                         if (currentPage < totalPages - 1) {
                             Button(
                                 onClick = {
-                                    clientViewModel.getClientsPaged(currentPage + 1, 20)
+                                    clientViewModel.getClientsPaged(currentPage + 1, 5)
                                     clientViewModel.setCurrentPage(currentPage + 1)
                                 }
                             ) {

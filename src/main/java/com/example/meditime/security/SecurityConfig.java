@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .requestMatchers("/manager/**").hasRole("MANAGER")
                 .requestMatchers("/carer/**").hasRole("CARER")
                 .requestMatchers("/api/**", "/mobile/**").permitAll()
-=======
+
                 .requestMatchers("/mobile/**", "/login/**","/api/auth/**","/mobile/user, ", "/signup", "/download", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )

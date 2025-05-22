@@ -18,8 +18,8 @@ public class MedicationLog {
     //@JoinColumn(name = "carer_id")  // optional: maps to DB column name
     private User carer;  // this is the "carerId" from the diagram
 
-    private LocalDateTime scheduledTime;
-    private LocalDateTime actualTime;
+    private String scheduledTime;
+    private String actualTime;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -56,19 +56,19 @@ public class MedicationLog {
         this.carer = carer;
     }
 
-    public LocalDateTime getScheduledTime() {
+    public String getScheduledTime() {
         return scheduledTime;
     }
 
-    public void setScheduledTime(LocalDateTime scheduledTime) {
+    public void setScheduledTime(String scheduledTime) {
         this.scheduledTime = scheduledTime;
     }
 
-    public LocalDateTime getActualTime() {
+    public String getActualTime() {
         return actualTime;
     }
 
-    public void setActualTime(LocalDateTime actualTime) {
+    public void setActualTime(String actualTime) {
         this.actualTime = actualTime;
     }
 

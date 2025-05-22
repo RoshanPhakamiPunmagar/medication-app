@@ -43,5 +43,4 @@ data class ClientMedication(
     val isPaused: Boolean = false,
     val scheduledTimes: List<LocalTime>
 
-
 ):Parcelable

@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.medicationapp.model.*
+import com.example.medicationapp.model.dto.ClientMedicationDTO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,7 +25,8 @@ class ClientMedicationViewModel : ViewModel() {
     val medications = MutableLiveData<List<ClientMedication>>()
 
 
-
+    private val _clientsMedsLoggedUser =  MutableStateFlow<List<ClientMedicationDTO>>(emptyList())
+    val clientsMedsLoggedUser: StateFlow<List<ClientMedicationDTO>?> = _clientsMedsLoggedUser
 
     // Assign medication (already implemented)
     fun assignMedicationToClient(dto: ClientMedication) {
@@ -48,9 +52,39 @@ class ClientMedicationViewModel : ViewModel() {
             }
         })
 
+    }
+    fun fetchClientMedsOfLoggedUser(carerId : Long){
+        apiService.getClientsMedicationOfLoggedUser(carerId)
+            .enqueue(object : Callback<List<ClientMedicationDTO>> {
+                override fun onResponse(
+                    call: Call<List<ClientMedicationDTO>>,
+                    response: Response<List<ClientMedicationDTO>>
+                ) {
+                    if (response.isSuccessful) {
+                        // Post the data into LiveData to update the UI
+                        val clientMedsData = response.body()
+                        if (clientMedsData != null) {
+
+                            _clientsMedsLoggedUser.value = clientMedsData
+                        } else {
+                            // Handle case when response is empty
+                            _clientsMedsLoggedUser.value = emptyList()
+                        }
+                    } else {
+                        // Handle error if response is not successful
+                        fetchErrorMessage.postValue(
+                            "Error: ${response.errorBody()?.string() ?: response.message()}"
+                        )
+                    }
+                }
+
+                override fun onFailure(call: Call<List<ClientMedicationDTO>>, t: Throwable) {
+                    // Handle failure case
+                    fetchErrorMessage.postValue("Failure: ${t.message}")
+                }
+            })
 
     }
-
     fun fetchClientsWithMedications(carerId: Long) {
         apiService.getClientsWithMedications(carerId)
             .enqueue(object : Callback<List<ClientWithMedicationsDTO>> {

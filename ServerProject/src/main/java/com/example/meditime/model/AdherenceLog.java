@@ -4,6 +4,7 @@ package com.example.meditime.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 public class AdherenceLog {
@@ -17,10 +18,14 @@ public class AdherenceLog {
     @ManyToOne
     private User user;
 
-    private LocalDateTime checkedTime;
+    private LocalTime checkedTime;
     private Double adherenceRate;
 
     // Getters and Setters
+
+    @ManyToOne
+    @JoinColumn(name= "medication_log_id")
+    private MedicationLog medicationLog;
 
     public Long getAdherenceId() {
         return adherenceId;
@@ -46,11 +51,19 @@ public class AdherenceLog {
         this.user = user;
     }
 
-    public LocalDateTime getCheckedTime() {
+    public MedicationLog getMedicationLog() {
+        return medicationLog;
+    }
+
+    public void setMedicationLog(MedicationLog medicationLog) {
+        this.medicationLog = medicationLog;
+    }
+
+    public LocalTime getCheckedTime() {
         return checkedTime;
     }
 
-    public void setCheckedTime(LocalDateTime checkedTime) {
+    public void setCheckedTime(LocalTime checkedTime) {
         this.checkedTime = checkedTime;
     }
 
@@ -61,5 +74,5 @@ public class AdherenceLog {
     public void setAdherenceRate(Double adherenceRate) {
         this.adherenceRate = adherenceRate;
     }
-    
+
 }

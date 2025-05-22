@@ -75,7 +75,7 @@ public class ClientMedicationService {
      */
     public List<ClientWithMedicationsDTO> getClientsWithMedications(Long carerId) {
         // Fetch all clients associated with the given carer's user ID
-        List<Client> clients = clientRepository.findByCarerUserId(carerId);
+        List<Client> clients = clientRepository.findAllByCarerUserId(carerId);
 
         // Prepare the result list to hold DTOs containing client and medication data
         List<ClientWithMedicationsDTO> result = new ArrayList<>();
@@ -123,6 +123,36 @@ public class ClientMedicationService {
         dto.setScheduledTimes(cm.getScheduledTimes());
 
         return dto;
+    }
+
+
+//    public List<ClientMedicationDTO> getClientMedicationDTOs(Long clientId) {
+//        List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(clientId);
+//        List<ClientMedicationDTO> dtos = new ArrayList<>();
+//
+//        for (ClientMedication cm : meds) {
+//            ClientMedicationDTO dto = new ClientMedicationDTO();
+//            dto.setMedicationName(cm.getMedication().getName());
+//            dto.setDosage(cm.getDosage());
+//            dto.setFrequency(cm.getFrequency());
+//            dto.setStartDate(cm.getStartDate());
+//            dto.setEndDate(cm.getEndDate());
+//            dtos.add(dto);
+//        }
+//
+//        return dtos;
+//    }
+
+    public List<Long> getClientMedicationByUserId(Long clientMedId) {
+        List<Long> meds = clientMedicationRepository.findMedicationIdsByClientId(clientMedId);
+
+        return meds;
+    }
+
+    public List<ClientMedication> getClientMedicationByClientId(Long clientId) {
+        List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(clientId);
+
+        return meds;
     }
 
 

@@ -8,22 +8,99 @@ package com.example.meditime.dto;
 import lombok.Data;
 import com.example.meditime.model.MedicationLog;
 
+import java.time.format.DateTimeParseException;
+
 @Data
 public class MedicationLogDTO {
     private Long logId;
-    private String carerName;
-    private String status;
-    private String scheduledTime;
+    private Long clientMedicationId;  // Just the ID
+    private Long carerId;
+    private String scheduledTime;  // Change from LocalTime to String
     private String actualTime;
+    private String status;
+    private String notes;
 
     public static MedicationLogDTO fromEntity(MedicationLog log) {
         if (log == null) return null;
         MedicationLogDTO dto = new MedicationLogDTO();
         dto.setLogId(log.getLogId());
-        dto.setCarerName(log.getCarer().getName());
-        dto.setStatus(log.getStatus().name());
-        dto.setScheduledTime(log.getScheduledTime().toString());
-        dto.setActualTime(log.getActualTime().toString());
+        dto.setCarerId(log.getCarer().getUserId());
+        dto.setStatus(log.getStatus().toString());
+        dto.setScheduledTime(log.getScheduledTime());
+        dto.setActualTime(log.getActualTime());
         return dto;
+    }
+
+
+    // Additional helper method for string-based time parsing
+    public void setScheduledTimeFromString(String timeString) {
+        try {
+            this.scheduledTime = timeString;
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid time format: " + timeString);
+        }
+    }
+
+    public String setActualTimeFromString() {
+
+        return    this.actualTime;
+
+    }
+    // Getters and Setters
+    public Long getLogId() {
+        return logId;
+    }
+
+    public void setLogId(Long logId) {
+        this.logId = logId;
+    }
+
+    public Long getClientMedicationId() {
+        return clientMedicationId;
+    }
+
+    public void setClientMedicationId(Long clientMedicationId) {
+        this.clientMedicationId = clientMedicationId;
+    }
+
+    public Long getCarerId() {
+        return carerId;
+    }
+
+    public void setCarerId(Long carerId) {
+        this.carerId = carerId;
+    }
+
+
+    public String getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(String scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
+
+    public String getActualTime() {
+        return actualTime;
+    }
+
+    public void setActualTime(String actualTime) {
+        this.actualTime = actualTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

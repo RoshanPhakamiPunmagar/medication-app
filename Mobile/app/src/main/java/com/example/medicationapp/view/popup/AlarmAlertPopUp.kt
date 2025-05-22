@@ -28,6 +28,7 @@ import com.example.medicationapp.view.alarm.getClientMedication
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
+import com.example.medicationapp.model.dto.ClientMedicationDTO
 
 @Composable
 fun AlarmAlertPopUp (
@@ -78,7 +79,7 @@ fun AlarmDialogScreen( onDismiss: () -> Unit) {
     val context = LocalContext.current
 
 
-    val clientMedication: ClientMedication? = getClientMedication()
+    val clientMedication: ClientMedicationDTO? = getClientMedication()
 
     var client by rememberSaveable { mutableStateOf<Client?>(null) }
     var meds by rememberSaveable { mutableStateOf<Medication?>(null) }

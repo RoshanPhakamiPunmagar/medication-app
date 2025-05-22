@@ -21,12 +21,19 @@ public class AdherenceLogService {
         adherenceLogRepository.save(log);
     }
 
-    public List<AdherenceLog> getLogsByClientMedicationId(Long clientMedicationId) {
-        return adherenceLogRepository.findByClientMedicationClientMedicationId(clientMedicationId);
-    }
 
     public void logAdherence(AdherenceLog log) {
         adherenceLogRepository.save(log);
+    }
+
+
+    public AdherenceLog getLogsByClientMedicationId(Long clientMedicationId) {
+        return adherenceLogRepository.findByClientMedicationClientMedicationId(clientMedicationId);
+    }
+
+
+    public void updateAdheranceRate(Double adherenceRate, Long clientMedicationId) {
+        adherenceLogRepository.updateAdherenceLogByAdherenceRate(adherenceRate, clientMedicationId);
     }
     
 }

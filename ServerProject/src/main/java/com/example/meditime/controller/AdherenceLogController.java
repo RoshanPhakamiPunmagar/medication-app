@@ -27,7 +27,7 @@ public class AdherenceLogController {
     private AdherenceLogService adherenceLogService;
 
     @GetMapping("/client/{clientMedicationId}")
-    public ResponseEntity<List<AdherenceLog>> getLogs(@PathVariable Long clientMedicationId) {
+    public ResponseEntity<AdherenceLog> getLogs(@PathVariable Long clientMedicationId) {
         return ResponseEntity.ok(adherenceLogService.getLogsByClientMedicationId(clientMedicationId));
     }
 

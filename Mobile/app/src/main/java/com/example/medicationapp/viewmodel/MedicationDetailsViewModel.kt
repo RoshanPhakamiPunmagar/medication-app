@@ -23,7 +23,7 @@ class MedicationDetailsViewModel : ViewModel() {
     var error by mutableStateOf("")
         private set
 
-    fun fetchMedicationDetails(medsName: List<String>) {
+    fun fetchMedicationDetails(medsName: List<Long>) {
         isLoading = true
         error = ""
 
@@ -35,7 +35,7 @@ class MedicationDetailsViewModel : ViewModel() {
                     println(medsDetails?.getInteractions())
                     println(medsDetails?.getRecommendations())
                 } else {
-                    error = "Error: ${response.code()}"
+                    error = "Error: Try again"
                 }
             }
 

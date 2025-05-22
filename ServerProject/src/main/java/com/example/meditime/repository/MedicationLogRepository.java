@@ -19,4 +19,7 @@ public interface MedicationLogRepository extends JpaRepository<MedicationLog, Lo
 
     // Optional: fetch logs by client and medication name if needed
     List<MedicationLog> findByClientMedication_Client_ClientIdAndClientMedication_Medication_Name(Long clientId, String medicationName);
+
+
+    List<MedicationLog> findByClientMedication_ClientMedicationId(Long clientMedicationId);
 }

@@ -3,6 +3,7 @@ package com.example.meditime.controller.restcontroller;
 
 import com.example.meditime.model.ClientMedsDescriptions;
 import com.example.meditime.model.Medication;
+import com.example.meditime.service.MedicationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.coyote.Request;
 import org.springframework.ai.chat.client.ChatClient;
@@ -22,17 +23,20 @@ import java.util.Map;
 public class MedicationDetailsRestController {
 
     private final ChatClient chatClient;
-
-    public MedicationDetailsRestController(OllamaChatModel chatClient) {
+    private final MedicationService medicationService;
+    public MedicationDetailsRestController(OllamaChatModel chatClient, MedicationService medicationService) {
         this.chatClient = ChatClient.builder(chatClient).build();
+        this.medicationService = medicationService;
     }
 
+    @GetMapping("details")
+    public ClientMedsDescriptions getMedicationDetails(@RequestParam List<Long> medicationList) {
+        ArrayList<String> medsList = new ArrayList<>();
+        for (Long x : medicationList) {
+            medsList.add(medicationService.getMedicationById(x).getName());
+        }
+        String joinedMeds = String.join(", ", medsList);
 
-    @GetMapping("/details")
-    public ClientMedsDescriptions getMedicationDetails(@RequestParam List<String> medicationList) {
-        String joinedMeds = String.join(", ", medicationList);
-
-        // Simplified prompt - local LLMs respond better to clear examples
         String prompt = """
         You are a medical expert. For these medications: %s
         Return STRICTLY in this JSON format (example shown):
@@ -49,21 +53,34 @@ public class MedicationDetailsRestController {
 
         String aiResponse = chatClient.prompt(new Prompt(prompt)).call().content();
 
-        // Debug raw response
         System.out.println("RAW RESPONSE:\n" + aiResponse);
 
-        // Handle cases where LLM adds unwanted text
         try {
-            // Extract first JSON block if response contains extra text
+            // Extract JSON block only
             String jsonStr = aiResponse.replaceAll("(?s)^.*?(\\{.*\\}).*$", "$1");
+
+            // Clean invalid tokens like com="..."
+            jsonStr = jsonStr.replaceAll("\\w+=\"[^\"]*\"", "");
+
+            // Ensure mandatory keys exist; if missing, add default values
+            if (!jsonStr.contains("\"interactions\"")) {
+                jsonStr = jsonStr.replaceFirst("\\}$", ", \"interactions\":\"No interactions found\" }");
+            }
+            if (!jsonStr.contains("\"recommendations\"")) {
+                jsonStr = jsonStr.replaceFirst("\\}$", ", \"recommendations\":\"No recommendations\" }");
+            }
+
+            // Fix common missing quotes typo
+            jsonStr = jsonStr.replaceAll("(?<!\")recommendations\":", "\"recommendations\":");
+
             return new ObjectMapper().readValue(jsonStr, ClientMedsDescriptions.class);
         } catch (Exception e) {
-
             return new ClientMedsDescriptions(
-                    medicationList,
+                    medsList,
                     "Error: Could not parse LLM response",
                     "Please check the model output format"
             );
         }
     }
+
 }

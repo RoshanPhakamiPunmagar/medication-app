@@ -7,11 +7,15 @@ package com.example.meditime.controller;
 
 import com.example.meditime.dto.ClientMedicationDTO;
 import com.example.meditime.dto.ClientWithMedicationsDTO;
+import com.example.meditime.model.Client;
+import com.example.meditime.model.ClientMedication;
 import com.example.meditime.service.ClientMedicationService;
+import com.example.meditime.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,10 +23,11 @@ import java.util.List;
 public class ClientMedicationController {
 
     private final ClientMedicationService clientMedicationService;
-
+    private final ClientService clientService;
     @Autowired
-    public ClientMedicationController(ClientMedicationService clientMedicationService) {
+    public ClientMedicationController(ClientMedicationService clientMedicationService, ClientService clientService) {
         this.clientMedicationService = clientMedicationService;
+        this.clientService = clientService;
     }
 
 //    @GetMapping("/carer/{carerId}/clients-with-medications")
@@ -55,6 +60,29 @@ public ResponseEntity<String> assignMedication(@RequestBody ClientMedicationDTO 
         return ResponseEntity.ok(schedule);
     }
 
+    @GetMapping("get/{clientId}")
+    public List<ClientMedicationDTO> getClientMedicationWithClientId(@PathVariable Long clientId) {
+        List<Client> assignedClients = clientService.getAllClientsByUserId(clientId);
+        List<ClientMedicationDTO> dtoList = new ArrayList<>();
+
+        for (Client client : assignedClients) {
+            List<ClientMedication> meds = clientMedicationService.getClientMedicationByClientId(client.getClientId());
+            for (ClientMedication med : meds) {
+                ClientMedicationDTO dto = new ClientMedicationDTO();
+                dto.setClientId(med.getClient().getClientId());
+                dto.setMedicationId(med.getMedication().getMedicationId());
+                dto.setDosage(med.getDosage());
+                dto.setStartDate(med.getStartDate());
+                dto.setEndDate(med.getEndDate());
+                dto.setPaused(med.isPaused());
+                dto.setScheduledTimes(med.getScheduledTimes());
+
+                dtoList.add(dto);
+            }
+        }
+        System.out.println(dtoList.size() + " Client Id");
+        return dtoList;
+    }
 
     @GetMapping("/names/{clientId}")
     public ResponseEntity<List<String>> getMedicationNamesForClient(@PathVariable Long clientId) {

@@ -9,7 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
-import com.example.medicationapp.model.ClientMedication
+import com.example.medicationapp.model.dto.ClientMedicationDTO
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
@@ -21,7 +21,7 @@ class AlarmScheduler(private val context: Context) {
 
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-    fun setUpAlarm(clientMedication: ClientMedication) {
+    fun setUpAlarm(clientMedication: ClientMedicationDTO) {
         try {
             //setting Client Medication
             setClientMedication(clientMedication)
@@ -42,7 +42,7 @@ class AlarmScheduler(private val context: Context) {
                 """.trimIndent())
 
             // 3. Force-create the intent
-            val testIntent = createAlarmPendingIntent(clientMedication,clientMedication.clientMedicationId.hashCode())
+            val testIntent = createAlarmPendingIntent(clientMedication,clientMedication.clientId.hashCode())
 
             // 4. Set the alarm
             alarmManager.setExactAndAllowWhileIdle(
@@ -57,9 +57,9 @@ class AlarmScheduler(private val context: Context) {
     }
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-    fun setAlarm(clientMedication: ClientMedication, triggerAtMillis: Long) {
+    fun setAlarm(clientMedication: ClientMedicationDTO, triggerAtMillis: Long) {
         try {
-            val requestCode = (clientMedication.clientMedicationId.toString() + triggerAtMillis.toString()).hashCode()
+            val requestCode = (clientMedication.clientId.toString() + triggerAtMillis.toString()).hashCode()
             val pendingIntent = createAlarmPendingIntent(clientMedication, requestCode)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -83,7 +83,7 @@ class AlarmScheduler(private val context: Context) {
     }
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-    fun setUpAlarmDateRange(clientMedication: ClientMedication) {
+    fun setUpAlarmDateRange(clientMedication: ClientMedicationDTO) {
         try {
             if (clientMedication.scheduledTimes.isEmpty()) {
                 Log.e("AlarmError", "No scheduled times provided")
@@ -117,7 +117,7 @@ class AlarmScheduler(private val context: Context) {
         }
     }
 
-    private fun createAlarmPendingIntent(clientMedication: ClientMedication, requestCode: Int): PendingIntent {
+    private fun createAlarmPendingIntent(clientMedication: ClientMedicationDTO, requestCode: Int): PendingIntent {
         return PendingIntent.getBroadcast(
             context,
             requestCode,
@@ -137,13 +137,13 @@ class AlarmScheduler(private val context: Context) {
 
 }
 
-private var clientMeds: ClientMedication? = null
+private var clientMeds: ClientMedicationDTO? = null
 
-fun getClientMedication(): ClientMedication? {
+fun getClientMedication(): ClientMedicationDTO? {
     return clientMeds
 }
 
-fun setClientMedication(clientMedication: ClientMedication) {
+fun setClientMedication(clientMedication: ClientMedicationDTO) {
     clientMeds = clientMedication
 }
 

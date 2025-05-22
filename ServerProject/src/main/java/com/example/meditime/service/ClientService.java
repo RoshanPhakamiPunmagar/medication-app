@@ -42,6 +42,10 @@ public class ClientService {
         return false;
     }
 
+    public List<Client> getAllClientsByUserId(Long userId) {
+        return clientRepository.findAllByCarerUserId(userId);
+    }
+
     public Client updateClientFromDTO(Long id, ClientDTO dto) {
         Optional<Client> clientOpt = clientRepository.findById(id);
         if (clientOpt.isPresent()) {

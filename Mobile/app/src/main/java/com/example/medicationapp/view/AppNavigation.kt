@@ -30,9 +30,15 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.util.TokenManager
 import com.example.medicationapp.viewmodel.AlarmViewModel
+import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 import com.example.medicationapp.viewmodel.ClientViewModel
 import com.example.medicationapp.viewmodel.UserViewModel
 
@@ -46,7 +52,7 @@ sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, v
 }
 
 sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val label: String) {
-    object SeeClient : BottomNavItemForCarer("client_selection/{carerId}", Icons.Default.Home, "See Client")
+    object SeeClient : BottomNavItemForCarer("client_selection", Icons.Default.Home, "See Client")
     object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
     object Settings : BottomNavItemForCarer("settings", Icons.Default.Settings, "Settings")
 }
@@ -56,7 +62,20 @@ sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val
 fun AppNavigation(navController: NavHostController) {
     val context = LocalContext.current
 
-    val viewModel: AlarmViewModel = viewModel()
+    val viewModelAlarm: AlarmViewModel = viewModel()
+
+    val viewModelClientMeds: ClientMedicationViewModel = viewModel()
+    val clientMedsData by viewModelClientMeds.clientsMedsLoggedUser.collectAsState()
+    val storedUserId = rememberSaveable { mutableStateOf(-1L) }
+
+    LaunchedEffect(storedUserId.value) {
+        if (storedUserId.value != -1L) {
+            viewModelClientMeds.fetchClientMedsOfLoggedUser(storedUserId.value)
+        }
+    }
+    LaunchedEffect(clientMedsData) {
+        clientMedsData?.let { viewModelAlarm.scheduleAlarmsForCarer(it) }
+    }
 
     // Define the navigation graph with start destination as login screen
     NavHost(navController = navController, startDestination = "login") {
@@ -77,13 +96,15 @@ fun AppNavigation(navController: NavHostController) {
                     }
 
                     // Log user ID for debug
-                    val storedUserId = sharedPref.getLong("user_id", -1L)
+                    storedUserId.value = userId
+                    Log.d("User id", storedUserId.toString())
                     Log.d("Sign in", "Stored user ID: $storedUserId")
 
+                    //viewModelClientMeds.fetchClientMedsOfLoggedUser(storedUserId.value)
                     // Navigate based on role
                     when (role) {
                         "Manager" -> navController.navigate("manager_dashboard")
-                        "Carer" -> navController.navigate("carer_dashboard/$userId")
+                        "Carer" -> navController.navigate("carer_dashboard")
                         else -> Log.w("Login", "Unknown role: $role")
                     }
                 },
@@ -117,13 +138,13 @@ fun AppNavigation(navController: NavHostController) {
 
         // Carer dashboard route with carerId as argument
         composable(
-            "carer_dashboard/{carerId}",
-            arguments = listOf(navArgument("carerId") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
+            "carer_dashboard"
+        ) {
+            Log.d("ssdsd", storedUserId.value.toString())
+            val carerId = storedUserId
             CarrerMainScreen(
                 navController = navController,
-                carerId = carerId,
+                carerId = carerId.value,
                 context = context
             )
         }
@@ -156,14 +177,12 @@ fun AppNavigation(navController: NavHostController) {
 
         // Route for carer to select a client (carerId is passed as an argument)
         composable(
-            "client_selection/{carerId}",
-            arguments = listOf(navArgument("carerId") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val carerId = backStackEntry.arguments?.getLong("carerId") ?: 0L
+            "client_selection") {
+            Log.d("ssdsd", storedUserId.value.toString())
             ClientSelectionScreen(
                 clientMedicationViewModel = viewModel(),
                 clientMedsDetailsViewModel = viewModel(),
-                carerId = carerId
+                carerId = storedUserId.value
             )
         }
 

@@ -4,6 +4,76 @@
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
   <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    section {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      margin-top: 0;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 15px;
+    }
+
+    a {
+      text-decoration: none;
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #2980b9;
+    }
+
+    button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c0392b;
+    }
+
+    .welcome {
+      margin-bottom: 30px;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
 <header>
@@ -11,16 +81,17 @@
 </header>
 
 <section>
-  <p>Hello, <span th:text="${name}">Admin</span>!</p>
+  <p class="welcome">Welcome back, <strong th:text="${name}">Admin</strong>!</p>
 
   <h2>Admin Panel</h2>
   <ul>
-    <li><a th:href="@{/admin/users}">Manage Users</a></li>
-    <li><a th:href="@{/admin/settings}">System Settings</a></li>
+    <li><a th:href="@{/admin/users}">👤 Manage Users</a></li>
+    <li><a th:href="@{/admin/medications}">💊 Manage Medications</a></li>
+
   </ul>
 
   <form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
+    <button type="submit">🚪 Logout</button>
   </form>
 </section>
 </body>

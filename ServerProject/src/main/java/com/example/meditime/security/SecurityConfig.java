@@ -30,70 +30,38 @@ public class SecurityConfig {
     // 🟢 Web Session-Based Login
     @Bean
     @Order(1)
-    public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain webFilterChain(HttpSecurity http,
+                                              CustomLoginSuccessHandler customLoginSuccessHandler) throws Exception {
         http
-                // Disable CSRF protection for simplicity (adjust if needed for production)
                 .csrf(csrf -> csrf.disable())
-
-                // Set the custom UserDetailsService for authentication
                 .userDetailsService(userDetailsService)
-
-                // Configure URL authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Allow unauthenticated access to these URLs (login, signup, static resources)
                         .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**").permitAll()
-
-                        // Only users with 'ADMIN' role can access URLs under /admin/
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // Only users with 'CARER' role can access URLs under /support/
-                        .requestMatchers("/support/**").hasRole("CARER")
-
-                        // Only users with 'CLIENT' role can access URLs under /client/
-                        .requestMatchers("/client/**").hasRole("CLIENT")
-
-                        // All other requests require the user to be authenticated (logged in)
-                        .anyRequest().authenticated()
+                        .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
+                        .anyRequest().denyAll()
                 )
-
-                // Configure form-based login
                 .formLogin(form -> form
-                        // Custom login page URL
                         .loginPage("/login")
-
-                        // Redirect here after successful login (true forces redirect even if user was trying to access other page)
-                        .defaultSuccessUrl("/dashboard", true)
-
-                        // Allow everyone to access login page
+                        .successHandler(customLoginSuccessHandler)
                         .permitAll()
                 )
-
-                // Configure logout behavior
                 .logout(logout -> logout
-                        // URL to trigger logout (default is /logout)
                         .logoutUrl("/logout")
-
-                        // Redirect here after successful logout
                         .logoutSuccessUrl("/login?logout")
-
-                        // Allow everyone to access logout URL
                         .permitAll()
                 )
-
-                // Session management configuration
                 .sessionManagement(session -> session
-                        // Create session if required (enable sessions for web login)
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
-        // Build and return the configured SecurityFilterChain
         return http.build();
     }
 
 
+
     // 🟢 Mobile JWT-Based Login
     @Bean
-    @Order(2) // LOWER priority
+    @Order(2)
     public SecurityFilterChain jwtFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())

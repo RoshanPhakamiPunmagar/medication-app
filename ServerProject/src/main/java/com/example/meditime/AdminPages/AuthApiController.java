@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.Optional;
 
+// For mobile
+
 @RestController
 @RequestMapping("/api")
 public class AuthApiController {

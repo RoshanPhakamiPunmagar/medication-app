@@ -34,7 +34,7 @@ public class CustomUserDetails implements UserDetails {
             case 1 -> "ROLE_ADMIN";
             case 2 -> "ROLE_CARER";
             case 3 -> "ROLE_CLIENT";
-            default -> "ROLE_USER";
+            default -> "UNKNOWN";
         };
         return List.of(new SimpleGrantedAuthority(role));
     }

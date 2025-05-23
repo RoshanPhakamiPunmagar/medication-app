@@ -34,7 +34,7 @@ public class UserService implements org.springframework.security.core.userdetail
 
 
     public Optional<User> findById(Long id) {
-        return userRepository.findById(id);  // Fetch user by ID from UserRepository
+        return userRepository.findById(id);
     }
 
     public List<User> findByRoleId(Long roleId) {

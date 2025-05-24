@@ -95,11 +95,12 @@ class UserViewModel() : ViewModel() {
                     val userId = (body?.get("userId") as? Double)?.toLong()
                     val roleId = (body?.get("roleId") as? Double)?.toLong()
 
-                    if (status == "login" && userId != null && roleId != null) {
-                        _status.value = Status(status, userId, roleId)
-                    } else {
-                        error = "Invalid login credentials"
-                    }
+                    _status.value = Status(status ?: "", userId, roleId)
+//                    if (status == "login" && userId != null && roleId != null) {
+//                        _status.value = Status(status, userId, roleId)
+//                    } else {
+//                        error = "Invalid login credentials"
+//                    }
                 } else {
                     error = "Login failed: ${response.code()}"
                 }

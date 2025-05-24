@@ -83,4 +83,13 @@ public class MedicationDetailsRestController {
         }
     }
 
+
+    @GetMapping("one/get/{medsId}")
+    public String getMedicationDetails(@PathVariable  Long medsId) {
+       return medicationService.getMedicationById(medsId).getName();
+
+    }
+
+
+
 }

@@ -43,6 +43,11 @@ interface ApiService {
         @Body user: User
     ): Call<Map<String, String>>
 
+    @GET("meds/one/get/{medsId}")
+    fun getMeds(
+        @Path("medsId") medsId: Long
+    ): Call<String>
+
 
     @GET("mobile/userCarer")
     fun getAllCarers(): Call<List<User>>
@@ -57,7 +62,7 @@ interface ApiService {
     fun getAllClients(): Call<List<Client>>
 
     @POST("api/medication/assign")
-    fun assignMedication(@Body dto: ClientMedication): Call<ResponseBody>
+    fun assignMedication(@Body dto: ClientMedicationDTO): Call<ResponseBody>
 
     @POST("mobile/assignCarerToClient")
     @FormUrlEncoded

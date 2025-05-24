@@ -3,16 +3,21 @@ package com.example.medicationapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.medicationapp.model.*
 import com.example.medicationapp.model.dto.ClientMedicationDTO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable.isActive
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
-
+import com.example.medicationapp.model.ClientMedication
 class ClientMedicationViewModel : ViewModel() {
 
     private val apiService: ApiService = RetrofitService.retrofit.create(ApiService::class.java)
@@ -24,12 +29,15 @@ class ClientMedicationViewModel : ViewModel() {
     // Added LiveData for medications and names
     val medications = MutableLiveData<List<ClientMedication>>()
 
+    private var medsFetchJob: Job? = null
+    private var clientsFetchJob: Job? = null
+
 
     private val _clientsMedsLoggedUser =  MutableStateFlow<List<ClientMedicationDTO>>(emptyList())
     val clientsMedsLoggedUser: StateFlow<List<ClientMedicationDTO>?> = _clientsMedsLoggedUser
 
     // Assign medication (already implemented)
-    fun assignMedicationToClient(dto: ClientMedication) {
+    fun assignMedicationToClient(dto: ClientMedicationDTO) {
         apiService.assignMedication(dto).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -53,6 +61,56 @@ class ClientMedicationViewModel : ViewModel() {
         })
 
     }
+
+
+    fun startFetchingMedsPeriodically(carerId: Long) {
+        // Cancel any existing job to avoid multiple concurrent jobs
+        medsFetchJob?.cancel()
+
+        medsFetchJob = viewModelScope.launch {
+            while (true) {
+                try {
+                    Log.d("PeriodicFetch", "Fetching client medications...")
+                    fetchClientMedsOfLoggedUser(carerId)
+                    delay(30_000) // 30 seconds
+                } catch (e: Exception) {
+                    Log.e("PeriodicFetch", "Error fetching medications", e)
+                    // Add delay before retry to avoid rapid retries on failure
+                    delay(10_000)
+                }
+            }
+        }
+    }
+
+
+    fun startFetchingClientWithMedsPeriodically(carerId: Long) {
+        // Cancel any existing job to avoid multiple concurrent jobs
+        clientsFetchJob?.cancel()
+
+        clientsFetchJob = viewModelScope.launch {
+            while (true) {
+                try {
+                    Log.d("PeriodicFetch", "Fetching clients with medications...")
+                    fetchClientsWithMedications(carerId)
+                    delay(30_000) // 30 seconds
+                } catch (e: Exception) {
+                    Log.e("PeriodicFetch", "Error fetching clients", e)
+                    // Add delay before retry to avoid rapid retries on failure
+                    delay(10_000)
+                }
+            }
+        }
+    }
+
+
+    fun stopAllPeriodicFetches() {
+        medsFetchJob?.cancel()
+        clientsFetchJob?.cancel()
+        medsFetchJob = null
+        clientsFetchJob = null
+        Log.d("PeriodicFetch", "Stopped all periodic fetches")
+    }
+
     fun fetchClientMedsOfLoggedUser(carerId : Long){
         apiService.getClientsMedicationOfLoggedUser(carerId)
             .enqueue(object : Callback<List<ClientMedicationDTO>> {
@@ -117,6 +175,24 @@ class ClientMedicationViewModel : ViewModel() {
                 }
             })
     }
+
+    fun fetchMedications(medsId: Long, onResult: (String?) -> Unit) {
+        apiService.getMeds(medsId).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    onResult(response.body())
+                } else {
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
+
+
 
 
 

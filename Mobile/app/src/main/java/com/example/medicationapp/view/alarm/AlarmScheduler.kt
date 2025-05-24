@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.dto.ClientMedicationDTO
 import java.time.LocalDate
 import java.time.ZoneId
@@ -18,7 +19,7 @@ class AlarmScheduler(private val context: Context) {
     private val today = LocalDate.now()
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-
+    private lateinit var clientMedicationObjects : ClientMedicationDTO
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun setUpAlarm(clientMedication: ClientMedicationDTO) {
@@ -58,6 +59,7 @@ class AlarmScheduler(private val context: Context) {
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun setAlarm(clientMedication: ClientMedicationDTO, triggerAtMillis: Long) {
+        this.clientMedicationObjects = clientMedication
         try {
             val requestCode = (clientMedication.clientId.toString() + triggerAtMillis.toString()).hashCode()
             val pendingIntent = createAlarmPendingIntent(clientMedication, requestCode)
@@ -81,6 +83,7 @@ class AlarmScheduler(private val context: Context) {
             Log.e("AlarmError", "Failed to set alarm", e)
         }
     }
+
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
     fun setUpAlarmDateRange(clientMedication: ClientMedicationDTO) {
@@ -124,6 +127,7 @@ class AlarmScheduler(private val context: Context) {
             Intent(context, AlarmReceiver::class.java).apply {
                 action = "com.example.medicationapp.ALARM_ACTION"
                 putExtra("carer_id", clientMedication.clientId)
+                putExtra("client_medication", clientMedication)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or
                     (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

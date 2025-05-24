@@ -20,11 +20,20 @@ public class ClientMedicationDTO {
 
     @Setter
     @Getter
+    private Long clientMedicationId;
+    @Setter
+    @Getter
     private Long medicationId;
 
     @Getter
     @Setter
     private String dosage;
+    @Getter
+    @Setter
+    private String clientName;
+    @Getter
+    @Setter
+    private String medicationName;
     @Setter
     @Getter
     private LocalDate startDate;

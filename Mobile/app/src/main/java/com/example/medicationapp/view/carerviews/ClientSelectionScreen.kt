@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -27,8 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.model.AiAnalysisResponse
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.ClientWithMedicationsDTO
-import com.example.medicationapp.model.MedicationLog
 import com.example.medicationapp.model.dto.AdherenceLogDTO
+import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.model.dto.MedicationLogDTO
 import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 import com.example.medicationapp.viewmodel.MedicationDetailsViewModel
@@ -36,7 +37,7 @@ import com.example.medicationapp.viewmodel.MedicationLogViewModel
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.collections.forEach
-
+import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +62,8 @@ fun ClientSelectionScreen(
     var showMedicalDetails by remember { mutableStateOf(false) }
     var showMedicalAiDetails by remember { mutableStateOf(false) }
 
+    var showListOfMedications by remember { mutableStateOf(false) }
+
 
     val medicationLogViewModel : MedicationLogViewModel = viewModel()
     val adhlogs by medicationLogViewModel.adhlogs.collectAsState() // 'logs' is the delegated property
@@ -73,8 +76,6 @@ fun ClientSelectionScreen(
         selectedClient?.medications?.let { medications ->
             // Extract all medicationIds into a list
             val medIds = medications.map { it.medicationId }
-
-            // Assign new list to meds (this triggers recomposition)
             meds = meds + medIds // or simply meds = medIds if you want to replace fully
         }
         Log.d("here is meds", meds.toString() )
@@ -84,7 +85,7 @@ fun ClientSelectionScreen(
 
     // Fetch data when the Composable is first launched or when the carerId changes
     LaunchedEffect(carerId) {
-        clientMedicationViewModel.fetchClientsWithMedications(carerId)
+        clientMedicationViewModel.startFetchingClientWithMedsPeriodically(carerId)
     }
 
     Scaffold(
@@ -94,174 +95,150 @@ fun ClientSelectionScreen(
         }
     ) { innerPadding ->
 
-        val scrollState = rememberScrollState()
+//    val scrollState = rememberScrollState()
 
-        // Main column that holds all content
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(innerPadding)
-                .padding(16.dp),
+                .padding(innerPadding),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
-            // If no client is selected, show the list of clients
             if (selectedClient == null) {
-
-                Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
+                item {
+                    Text("Tap on a client to view medications",
+                        style = MaterialTheme.typography.bodyMedium)
+                }
 
                 if (clientsWithMedications.isEmpty()) {
-                    // No clients available
-                    Text("No clients with medications available.")
+                    item { Text("No clients with medications available.") }
                 } else {
-                    // Show each client in a card
-                    clientsWithMedications.forEach { clientWithMeds ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selectedClient = clientWithMeds
-                                    showDetails = false
-                                },
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                        ) {
-                            Column(Modifier.padding(16.dp)) {
-                                Text(clientWithMeds.clientName, style = MaterialTheme.typography.titleMedium)
-                                Text("Client ID: ${clientWithMeds.clientId}", style = MaterialTheme.typography.bodySmall)
-                            }
+                    items(clientsWithMedications) { client ->
+                        ClientCard(client) {
+                            selectedClient = client
+                            showDetails = false
                         }
                     }
                 }
             } else {
-                // A client is selected, show their medications
-                Text(
-                    "Medications for ${selectedClient?.clientName}:",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                item {
+                    Button(
+                        onClick = { showListOfMedications = !showListOfMedications },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(if (showListOfMedications) "Hide Medications" else "Show Medications")
+                    }
+                }
 
-                // Debug log for developer insight
-                Log.d("DEBUG", "Fetching for carerId = $carerId")
+                if (showListOfMedications) {
+                    item {
+                        Text(
+                            "Medications for ${selectedClient?.clientName}:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
 
-                if (selectedClient?.medications.isNullOrEmpty()) {
-                    // Client has no medications assigned
-                    Text("No medications assigned.")
-                } else {
-                    // List each medication in a card with details
-                    selectedClient?.medications?.forEach { med ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth().clickable {
+                    if (selectedClient?.medications.isNullOrEmpty()) {
+                        item { Text("No medications assigned.") }
+                    } else {
+                        items(selectedClient?.medications ?: emptyList()) { med ->
+                            MedicationCard(med) {
                                 selectedMedication = med
                                 showLogDialog = true
-                            },
-
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                        ) {
-                            Column(Modifier.padding(16.dp)) {
-                                Text("Dosage: ${med.dosage}", style = MaterialTheme.typography.bodyMedium)
-                                Text("From: ${med.startDate}", style = MaterialTheme.typography.bodySmall)
-                                Text("To: ${med.endDate}", style = MaterialTheme.typography.bodySmall)
-                                Text("Times: ${med.scheduledTimes.joinToString()}", style = MaterialTheme.typography.bodySmall)
-
-                                // If medication is paused, show status in error color
-                                if (med.isPaused) {
-                                    Text("Status: Paused", color = MaterialTheme.colorScheme.error)
-                                }
                             }
                         }
                     }
                 }
 
-                if (showLogDialog) {
-                    MedicationLogDialog(
-                        carerId = carerId ,
-                        clientMedication = selectedMedication,  // Replace with actual value
-                        onDismiss = { showLogDialog = false },
-                        onSubmit = { logDto ->
-                            medicationLogViewModel.postLog(logDto)
-                            showLogDialog = false
-                        }
-                    )
-                }
 
-                Spacer(modifier = Modifier.height(20.dp))
-                //Interactions
-                Button(onClick = {
-                    showDetails = false
-                    selectedClient = null
-                }) {
-                    Text("Back to Client List")
-                }
 
-                Button(onClick = {
-
-                    if (showDetails == true) {
-
-                        showDetails = false
-                    } else {
-                        showDetails = true
-                        clientMedsDetailsViewModel.fetchMedicationDetails(meds)
-
+                item {
+                    Button(
+                        onClick = {
+                            showDetails = !showDetails
+                            if (showDetails) {
+                                clientMedsDetailsViewModel.fetchMedicationDetails(meds)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("More AI Details")
                     }
-                }){
-                    Text("More AI Details")
                 }
 
-                // Conditionally render the MoreDetails Composable
                 if (showDetails) {
-                    MoreDetails(viewModel = clientMedsDetailsViewModel)
-                }
-
-                Button(onClick = {
-
-
-                    if (showMedicalAiDetails == true) {
-
-                        showMedicalAiDetails = false
-                    } else {
-                        showMedicalAiDetails = true
-                        selectedClient?.let {
-                            medicationLogViewModel.fetchLogs(it.clientId)
-                        }
-
+                    item {
+                        MoreDetails(viewModel = clientMedsDetailsViewModel)
                     }
-                }) {
-                    Text("Ai Adherence Analysis")
-                }
-                val aiAnalysisRes = aiAnalysis
-                if (showMedicalAiDetails && aiAnalysisRes != null) {
-                    AiAnalysisCard(aiAnalysisRes)
                 }
 
+                item {
+                    Button(
+                        onClick = {
+                            showMedicalAiDetails = !showMedicalAiDetails
+                            if (showMedicalAiDetails) {
+                                selectedClient?.let {
+                                    medicationLogViewModel.fetchLogs(it.clientId)
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("AI Adherence Analysis")
+                    }
+                }
+
+                if (showMedicalAiDetails) {
+                    item {
+                        val response = aiAnalysis
+                        if (response != null) {
+                            AiAnalysisCard(response)
+                        } else {
+                            NoAdherenceMessage()
+                        }
+                    }
+                }
 
 
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    // Your button
+                item {
                     Button(
                         onClick = {
                             showMedicalDetails = !showMedicalDetails
-
-                            selectedClient?.let {
-                                medicationLogViewModel.fetchLogs(it.clientId)
+                            if (showMedicalDetails) {
+                                selectedClient?.let {
+                                    medicationLogViewModel.fetchLogs(it.clientId)
+                                }
                             }
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Adherence Logs")
                     }
+                }
+                item {
+                    Button(
+                        onClick = {
+                            showDetails = false
+                            showLogDialog = false
+                            showMedicalDetails = false
+                            showMedicalAiDetails = false
+                            showListOfMedications = false
+                            selectedClient = null
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Back to Client List")
+                    }
+                }
 
-                    // Adherence Logs shown only if flag is true
-                    if (showMedicalDetails) {
-                        val currLogs = adhlogs
+                if (showMedicalDetails) {
+                    val currLogs = adhlogs
+                    item {
                         if (currLogs.isNullOrEmpty()) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .weight(1f), // Take remaining space but bounded
+                                    .height(200.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text("No adherence logs available")
@@ -271,19 +248,141 @@ fun ClientSelectionScreen(
                         }
                     }
                 }
+            }
+        }
 
+        if (showLogDialog) {
+            MedicationLogDialog(
+                carerId = carerId,
+                clientMedication = selectedMedication,
+                onDismiss = { showLogDialog = false },
+                onSubmit = { logDto ->
+                    medicationLogViewModel.postLog(logDto)
+                    showLogDialog = false
+                }
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun ClientListSection(
+    clientsWithMedications: List<ClientWithMedicationsDTO>,
+    onClientSelected: (ClientWithMedicationsDTO) -> Unit
+) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Tap on a client to view medications", style = MaterialTheme.typography.bodyMedium)
+
+        if (clientsWithMedications.isEmpty()) {
+            Text("No clients with medications available.")
+        } else {
+            LazyColumn {
+                items(clientsWithMedications) { client ->
+                    ClientCard(
+                        client = client,
+                        onClick = { onClientSelected(client) }  // Pass the client here
+                    )
+                }
             }
         }
     }
-            }
+}
+@Composable
+fun NoAdherenceMessage() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No adherence available",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+@Composable
+private fun MedicationListSection(
+    selectedClient: ClientWithMedicationsDTO?,
+    onMedicationClick: (ClientMedication) -> Unit
+) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            "Medications for ${selectedClient?.clientName}:",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
+        if (selectedClient?.medications.isNullOrEmpty()) {
+            Text("No medications assigned.")
+        } else {
+            selectedClient?.medications?.forEach { med ->
+                MedicationCard(
+                    medication = med,
+                    onClick = { onMedicationClick(med) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ClientCard(
+    client: ClientWithMedicationsDTO,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(client.clientName, style = MaterialTheme.typography.titleMedium)
+            Text("Client ID: ${client.clientId}", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun MedicationCard(
+    medication: ClientMedication,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = if (medication.isPaused) {
+                MaterialTheme.colorScheme.errorContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
+        )
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text("Dosage: ${medication.dosage}", style = MaterialTheme.typography.bodyMedium)
+            Text("From: ${medication.startDate}", style = MaterialTheme.typography.bodySmall)
+            Text("To: ${medication.endDate}", style = MaterialTheme.typography.bodySmall)
+            Text("Times: ${medication.scheduledTimes.joinToString()}", style = MaterialTheme.typography.bodySmall)
+            if (medication.isPaused) {
+                Text("Status: Paused", color = MaterialTheme.colorScheme.error)
+            }
+        }
+    }
+}
 
 @Composable
 fun MedicationLogDialog(
     carerId: Long,
     clientMedication: ClientMedication?,
     onDismiss: () -> Unit,
-    onSubmit: (MedicationLogDTO) -> Unit // ✅ Fixed type
+    onSubmit: (MedicationLogDTO) -> Unit
 ) {
     var selectedStatus by remember { mutableStateOf("Given") }
     var actualTime by remember { mutableStateOf<LocalTime?>(null) }
@@ -291,8 +390,6 @@ fun MedicationLogDialog(
     var showTimePicker by remember { mutableStateOf(false) }
     var medicationViewModel: MedicationLogViewModel = viewModel()
 
-    val error = medicationViewModel.error
-    val isLoading = medicationViewModel.isLoading
 
 
 
@@ -305,10 +402,6 @@ fun MedicationLogDialog(
             Column {
                 // STATUS DROPDOWN
                 var expanded by remember { mutableStateOf(false) }
-                if (isLoading) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                }
-
                 Text("Status:")
                 Box {
                     OutlinedButton(onClick = { expanded = true }) {
@@ -370,6 +463,7 @@ fun MedicationLogDialog(
             Button(
                 onClick = {
                     if (clientMedication != null && actualTime != null) {
+                        Log.d("Cl id", clientMedication?.clientMedicationId.toString())
                         onSubmit(
                             MedicationLogDTO(
                                 clientMedicationId = clientMedication.clientMedicationId,
@@ -402,48 +496,54 @@ fun AiAnalysisCard(response: AiAnalysisResponse) {
     val medicationViewModel: MedicationLogViewModel = viewModel()
     val error = medicationViewModel.error
     val isLoading = medicationViewModel.isLoading
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        if (isLoading) {
+    when {
+        isLoading -> {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
 
-            // Patterns Section
-            if (response.patterns.isNotEmpty()) {
-                AnalysisSection(
-                    title = "Patterns Identified",
-                    content = response.patterns,
-                    icon = Icons.Default.Insights,
-                    color = Color(0xFF6200EE) // Purple
-                )
-            }
+        else -> {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
 
-            // Risks Section
-            if (response.risks.isNotEmpty()) {
-                AnalysisSection(
-                    title = "Potential Risks",
-                    content = response.risks,
-                    icon = Icons.Default.Warning,
-                    color = Color(0xFFD32F2F) // Red
-                )
-            }
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
-            // Recommendations Section
-            if (response.recommendations.isNotEmpty()) {
-                AnalysisSection(
-                    title = "Recommendations",
-                    content = response.recommendations,
-                    icon = Icons.Default.Lightbulb,
-                    color = Color(0xFF388E3C) // Green
-                )
+                    // Patterns Section
+                    if (response.patterns.isNotEmpty()) {
+                        AnalysisSection(
+                            title = "Patterns Identified",
+                            content = response.patterns,
+                            icon = Icons.Default.Insights,
+                            color = Color(0xFF6200EE) // Purple
+                        )
+                    }
+
+                    // Risks Section
+                    if (response.risks.isNotEmpty()) {
+                        AnalysisSection(
+                            title = "Potential Risks",
+                            content = response.risks,
+                            icon = Icons.Default.Warning,
+                            color = Color(0xFFD32F2F) // Red
+                        )
+                    }
+
+                    // Recommendations Section
+                    if (response.recommendations.isNotEmpty()) {
+                        AnalysisSection(
+                            title = "Recommendations",
+                            content = response.recommendations,
+                            icon = Icons.Default.Lightbulb,
+                            color = Color(0xFF388E3C) // Green
+                        )
+                    }
+                }
             }
         }
     }
@@ -572,36 +672,3 @@ fun TimeWheelPickerDialog(
     }
 }
 
-@Composable
-fun DropdownMenuBox(
-    selected: String,
-    onStatusSelected: (String) -> Unit
-) {
-    val options = listOf("GIVEN", "MISSED", "REFUSED") // Add more statuses if needed
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { expanded = true }
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(8.dp)
-    ) {
-        Text(text = selected)
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        onStatusSelected(option)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}

@@ -14,6 +14,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,16 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.view.alarm.AlarmConfig
 import com.example.medicationapp.view.alarm.getClientMedication
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.dto.ClientMedicationDTO
+import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 
 @Composable
 fun AlarmAlertPopUp (
-    onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,
     dialogText: String,
@@ -49,7 +51,6 @@ fun AlarmAlertPopUp (
             Text(text = dialogText)
         },
         onDismissRequest = {
-            onDismissRequest()
         },
         confirmButton = {
             TextButton(
@@ -58,39 +59,17 @@ fun AlarmAlertPopUp (
                     AlarmConfig.stop()
                 }
             ) {
-                Text("Taken")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    AlarmConfig.stop()
-                    onConfirmation()
-                }
-            ) {
-                Text("Skip")
+                Text("Ok")
             }
         }
     )
 }
 
 @Composable
-fun AlarmDialogScreen( onDismiss: () -> Unit) {
+fun AlarmDialogScreen(clientMedication: ClientMedicationDTO?, onDismiss: () -> Unit) {
     val context = LocalContext.current
 
 
-    val clientMedication: ClientMedicationDTO? = getClientMedication()
-
-    var client by rememberSaveable { mutableStateOf<Client?>(null) }
-    var meds by rememberSaveable { mutableStateOf<Medication?>(null) }
-
-
-    LaunchedEffect(Unit) {
-        clientMedication?.let {
-        } ?: run {
-            Log.d("Alarm", "Client medication is null.")
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -100,10 +79,9 @@ fun AlarmDialogScreen( onDismiss: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
             AlarmAlertPopUp(
-                onDismissRequest = onDismiss,
                 onConfirmation = onDismiss,
-                dialogTitle = "Reminder for ${client?.name}",
-                dialogText = "Medication Name:  ${meds?.name} \n Dosage : ${clientMedication?.dosage}",
+                dialogTitle = "Reminder for ${clientMedication?.clientName}",
+                dialogText = "Medication Name:  ${clientMedication?.medicationName} \n Dosage : ${clientMedication?.dosage}",
 
                 icon = Icons.Default.Done
             )

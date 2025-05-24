@@ -26,6 +26,7 @@ import com.example.medicationapp.view.managerviews.ClientListScreen
 import com.example.medicationapp.view.managerviews.ReportScreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -44,16 +45,16 @@ import com.example.medicationapp.viewmodel.UserViewModel
 
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
-    object ManageClients : BottomNavItemForManager("manage_clients", Icons.Default.Person, "Clients")
-    object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Home, "Assign Carer")
-    object AssignMedication : BottomNavItemForManager("assign_medication", Icons.Default.Add, "Reminders")
-    object Reports : BottomNavItemForManager("generate_reports", Icons.Default.DateRange, "Reports")
+    object ManageClients : BottomNavItemForManager("manage_clients", Icons.Default.Home, "Clients")
+    object AssignCarer : BottomNavItemForManager("assign_carer", Icons.Default.Add, "Assign Carer")
+    object AssignMedication : BottomNavItemForManager("assign_medication", Icons.Default.AlarmAdd, "Reminders")
+//    object Reports : BottomNavItemForManager("generate_reports", Icons.Default.DateRange, "Reports")
     object Settings : BottomNavItemForManager("settings", Icons.Default.Settings, "Settings")
 }
 
 sealed class BottomNavItemForCarer(val route: String, val icon: ImageVector, val label: String) {
     object SeeClient : BottomNavItemForCarer("client_selection", Icons.Default.Home, "See Client")
-    object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
+//    object IncidentReport : BottomNavItemForCarer("assign_medication", Icons.Default.Add, "Incident Reports")
     object Settings : BottomNavItemForCarer("settings", Icons.Default.Settings, "Settings")
 }
 
@@ -70,7 +71,7 @@ fun AppNavigation(navController: NavHostController) {
 
     LaunchedEffect(storedUserId.value) {
         if (storedUserId.value != -1L) {
-            viewModelClientMeds.fetchClientMedsOfLoggedUser(storedUserId.value)
+            viewModelClientMeds.startFetchingMedsPeriodically(storedUserId.value)
         }
     }
     LaunchedEffect(clientMedsData) {

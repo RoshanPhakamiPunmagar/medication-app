@@ -34,7 +34,7 @@ fun ManagerMainScreen(
         BottomNavItemForManager.ManageClients,
         BottomNavItemForManager.AssignCarer,
         BottomNavItemForManager.AssignMedication,
-        BottomNavItemForManager.Reports,
+//        BottomNavItemForManager.Reports,
         BottomNavItemForManager.Settings
     )
 
@@ -75,7 +75,7 @@ fun ManagerMainScreen(
         Box(Modifier.padding(innerPadding)) {
             NavHost(
                 navController = bottomNavController,
-                startDestination = BottomNavItemForManager.AssignCarer.route
+                startDestination = BottomNavItemForManager.ManageClients.route
             )
             {
                 composable(BottomNavItemForManager.ManageClients.route) {
@@ -90,9 +90,9 @@ fun ManagerMainScreen(
                     AssignMedicationScreen(
                     )
                 }
-                composable(BottomNavItemForManager.Reports.route) {
-                    ReportScreen()
-                }
+//                composable(BottomNavItemForManager.Reports.route) {
+//                    ReportScreen()
+//                }
                 composable(BottomNavItemForManager.Settings.route) {
                     SettingScreen(context, navController)
                 }

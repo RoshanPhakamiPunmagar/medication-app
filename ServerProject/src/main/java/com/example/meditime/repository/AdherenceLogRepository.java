@@ -3,6 +3,8 @@ package com.example.meditime.repository;
 
 import com.example.meditime.model.AdherenceLog;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +15,7 @@ public interface AdherenceLogRepository extends JpaRepository<AdherenceLog, Long
 
     AdherenceLog findByClientMedicationClientMedicationId(Long id);
 
-    AdherenceLog findByClientMedication_ClientMedicationId(Long id);
+    Optional<AdherenceLog> findByClientMedication_ClientMedicationId(Long id);
 
 
     @Modifying

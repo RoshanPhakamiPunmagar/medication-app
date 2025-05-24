@@ -25,7 +25,7 @@ fun CarrerMainScreen(navController: NavHostController, carerId: Long, context: C
 
     val bottomNavItems = listOf(
         BottomNavItemForCarer.SeeClient,
-        BottomNavItemForCarer.IncidentReport,
+//        BottomNavItemForCarer.IncidentReport,
         BottomNavItemForCarer.Settings
     )
 
@@ -77,7 +77,7 @@ fun CarrerMainScreen(navController: NavHostController, carerId: Long, context: C
                         carerId = carerId
                     )
                 }
-                composable(BottomNavItemForCarer.IncidentReport.route) { IncidentNotesScreen() }
+//                composable(BottomNavItemForCarer.IncidentReport.route) { IncidentNotesScreen() }
                 composable(BottomNavItemForCarer.Settings.route) {
                     SettingScreen(context,navController)
                 }

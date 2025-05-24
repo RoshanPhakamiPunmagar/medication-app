@@ -8,17 +8,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.medicationapp.view.carer.IncidentNotesScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
+import com.example.medicationapp.viewmodel.ClientMedicationViewModel
+import kotlinx.coroutines.NonCancellable.isActive
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(context:Context, navController: NavHostController) {
-
+    val clientMedicationViewModel : ClientMedicationViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -41,7 +44,7 @@ fun SettingScreen(context:Context, navController: NavHostController) {
                     Log.d("Sign out", "Removed user ID: $storedUserId")
                     sharedPref.edit().remove("user_role").apply()
 
-
+                    clientMedicationViewModel.stopAllPeriodicFetches()
 
                     navController.navigate("login") {
                         popUpTo(0) { inclusive = true } // clears backstack
@@ -53,3 +56,5 @@ fun SettingScreen(context:Context, navController: NavHostController) {
         }
     }
 }
+
+

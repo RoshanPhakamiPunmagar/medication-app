@@ -143,7 +143,7 @@ public class UserRestController {
             e.printStackTrace();
             response.put("status", "invalid");
         }
-
+        System.out.println(response.toString());
         return ResponseEntity.ok(response);
     }
 }

@@ -106,6 +106,7 @@ class MedicationLogViewModel : ViewModel() {
                 call: Call<AiAnalysisResponse>,
                 response: Response<AiAnalysisResponse>
             ) {
+                isLoading = false
                 if(response.isSuccessful)
                 {
                     _aiAnalysis.value = response.body()!!

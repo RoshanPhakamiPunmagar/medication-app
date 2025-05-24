@@ -37,9 +37,11 @@ public class ClientMedicationController {
 //    }
 
     @GetMapping("/clients-with-medications/{carerId}")
-    public ResponseEntity<List<ClientWithMedicationsDTO>> getClientsWithMedications(@PathVariable Long carerId) {
+    public List<ClientWithMedicationsDTO> getClientsWithMedications(@PathVariable Long carerId) {
         List<ClientWithMedicationsDTO> response = clientMedicationService.getClientsWithMedications(carerId);
-        return ResponseEntity.ok(response);
+        System.out.println(response.get(0).getMedications().get(0).getClientMedicationId());
+//        return ResponseEntity.ok(response);
+        return response;
     }
 
 
@@ -60,9 +62,9 @@ public ResponseEntity<String> assignMedication(@RequestBody ClientMedicationDTO 
         return ResponseEntity.ok(schedule);
     }
 
-    @GetMapping("get/{clientId}")
-    public List<ClientMedicationDTO> getClientMedicationWithClientId(@PathVariable Long clientId) {
-        List<Client> assignedClients = clientService.getAllClientsByUserId(clientId);
+    @GetMapping("get/{carerId}")
+    public List<ClientMedicationDTO> getClientMedicationWithClientId(@PathVariable Long carerId) {
+        List<Client> assignedClients = clientService.getAllClientsByUserId(carerId);
         List<ClientMedicationDTO> dtoList = new ArrayList<>();
 
         for (Client client : assignedClients) {
@@ -76,6 +78,9 @@ public ResponseEntity<String> assignMedication(@RequestBody ClientMedicationDTO 
                 dto.setEndDate(med.getEndDate());
                 dto.setPaused(med.isPaused());
                 dto.setScheduledTimes(med.getScheduledTimes());
+                dto.setMedicationName(med.getMedication().getName());
+                dto.setClientName(med.getClient().getName());
+
 
                 dtoList.add(dto);
             }

@@ -23,6 +23,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.runtime.livedata.observeAsState
+import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.TimeWheelPickerDialog
 import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 
@@ -190,13 +191,16 @@ fun AssignMedicationScreen(
                         return@Button
                     }
 
-                    val dto = ClientMedication(
+                    val dto = ClientMedicationDTO(
                         clientId = selectedClient!!.clientId.toLong(),
                         medicationId = selectedMedication!!.medicationId.toLong(),
                         dosage = dosage,
                         startDate = parsedStart,
                         endDate = parsedEnd,
-                        scheduledTimes = scheduledTimes
+                        medicationName = selectedMedication!!.name,
+                        clientName = selectedClient!!.name,
+                        scheduledTimes = scheduledTimes,
+                        isPaused = false
                     )
 
                     Log.d("AssignMedication", "Client ID: ${selectedClient!!.clientId}, Medication ID: ${selectedMedication!!.medicationId}")

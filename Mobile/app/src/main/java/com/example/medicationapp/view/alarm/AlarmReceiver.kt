@@ -7,6 +7,7 @@ import android.media.Ringtone
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.popup.AlarmDialogActivity
 
 
@@ -25,10 +26,13 @@ class AlarmReceiver() : BroadcastReceiver() {
         Log.d("AlarmReceiver", "Client Medication: 1")
         val test = intent?.getStringExtra("test")
         Log.d("AlarmReceiver", "Test extra: $test")
+        val clientMedication = intent?.getSerializableExtra("client_medication") as? ClientMedicationDTO
+
 
         val alarmIntent = Intent(context, AlarmDialogActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("test", "hello")
+            putExtra("client_medication", clientMedication)
         }
 
         context.startActivity(alarmIntent)

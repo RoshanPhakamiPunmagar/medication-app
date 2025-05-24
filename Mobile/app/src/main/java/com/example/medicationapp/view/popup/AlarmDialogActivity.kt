@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import com.example.medicationapp.model.ClientMedication
+import com.example.medicationapp.model.dto.ClientMedicationDTO
 
 class AlarmDialogActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -14,10 +15,11 @@ class AlarmDialogActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Use the clientMedication object in your UI logic
-        Log.d("AlarmDialogActivity", "Received medication: Call")
-
+        val clientMedication = intent?.getSerializableExtra("client_medication") as? ClientMedicationDTO
         setContent {
-            AlarmDialogScreen(onDismiss = { finish() })
+            AlarmDialogScreen(clientMedication = clientMedication, onDismiss = {  finish()
+
+            })
         }
     }
 }

@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.medicationapp.database.AppDatabase
 import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.alarm.AlarmScheduler

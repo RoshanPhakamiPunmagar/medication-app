@@ -30,7 +30,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/mobile/secureData","/mobile/test-email","/mobile/is_verified",
                         "/mobile/verify","/mobile/login","/mobile/removeCarerFromClient",
-                        "/api/medication/clients-with-medications/{carerId}",
+                        "/api/medication/clients-with-medications/{carerId}","/meds/**",
                         "/api/medication/schedule/{clientId}", "api/medication/names/{clientId}",
                         "/mobile/**","/mobile/userCarer","mobile/check","api/clients","logs/**",
                         "api/medications","api/medication/assign",

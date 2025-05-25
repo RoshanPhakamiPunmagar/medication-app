@@ -35,8 +35,9 @@ public class AdminController {
     @PostMapping("/save")
     public String saveUser(@ModelAttribute("user") User user) {
         if (user.getUserId() == null) {
-            // New user — always hash password
+            // New user — hash password and assign default roleId = 2
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRoleId(2L); // Set roleId to 2 for new users
         } else {
             // Existing user — update password only if not blank
             User existing = userRepository.findById(user.getUserId()).orElseThrow();
@@ -45,7 +46,13 @@ public class AdminController {
             } else {
                 user.setPassword(existing.getPassword());
             }
+
+            // Keep the original roleId if not explicitly updated
+            if (user.getRoleId() == null) {
+                user.setRoleId(existing.getRoleId());
+            }
         }
+
         userRepository.save(user);
         return "redirect:/admin/users";
     }

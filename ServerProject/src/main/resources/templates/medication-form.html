@@ -2,21 +2,93 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Medication Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            padding: 40px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h2 th:text="${medication.medicationId == null} ? 'Add Medication' : 'Edit Medication'"></h2>
-<form th:action="@{/admin/medications/save}" th:object="${medication}" method="post">
-    <input type="hidden" th:field="*{medicationId}" />
-    <label>Name:</label><br/>
-    <input type="text" th:field="*{name}" required/><br/>
-    <label>Description:</label><br/>
-    <textarea th:field="*{description}"></textarea><br/>
-    <label>Side Effects:</label><br/>
-    <textarea th:field="*{sideEffects}"></textarea><br/>
-    <label>Interaction Info:</label><br/>
-    <textarea th:field="*{interactionInfo}"></textarea><br/>
-    <button type="submit">Save</button>
-</form>
-<a th:href="@{/admin/medications}">Back to List</a>
+<div class="form-container">
+    <h2 th:text="${medication.medicationId == null} ? 'Add Medication' : 'Edit Medication'"></h2>
+    <form th:action="@{/admin/medications/save}" th:object="${medication}" method="post">
+        <input type="hidden" th:field="*{medicationId}" />
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" required />
+
+        <label for="description">Description:</label>
+        <textarea id="description" rows="3" th:field="*{description}"></textarea>
+
+        <label for="sideEffects">Side Effects:</label>
+        <textarea id="sideEffects" rows="3" th:field="*{sideEffects}"></textarea>
+
+        <label for="interactionInfo">Interaction Info:</label>
+        <textarea id="interactionInfo" rows="3" th:field="*{interactionInfo}"></textarea>
+
+        <button type="submit">Save</button>
+    </form>
+    <a class="back-link" th:href="@{/admin/medications}">← Back to Medication List</a>
+</div>
 </body>
 </html>

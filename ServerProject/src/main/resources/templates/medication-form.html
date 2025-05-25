@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Medication Form</title>
+</head>
+<body>
+<h2 th:text="${medication.medicationId == null} ? 'Add Medication' : 'Edit Medication'"></h2>
+<form th:action="@{/admin/medications/save}" th:object="${medication}" method="post">
+    <input type="hidden" th:field="*{medicationId}" />
+    <label>Name:</label><br/>
+    <input type="text" th:field="*{name}" required/><br/>
+    <label>Description:</label><br/>
+    <textarea th:field="*{description}"></textarea><br/>
+    <label>Side Effects:</label><br/>
+    <textarea th:field="*{sideEffects}"></textarea><br/>
+    <label>Interaction Info:</label><br/>
+    <textarea th:field="*{interactionInfo}"></textarea><br/>
+    <button type="submit">Save</button>
+</form>
+<a th:href="@{/admin/medications}">Back to List</a>
+</body>
+</html>

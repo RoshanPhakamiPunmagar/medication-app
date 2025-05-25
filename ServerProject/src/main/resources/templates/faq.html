@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQs – MediTime App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f7fdf9;
+            color: #333;
+        }
+        header, footer {
+            background: linear-gradient(90deg, #5bb98c, #7fd6b1);
+            color: #fff;
+            padding: 1.5rem 0;
+        }
+        .accordion-button {
+            background-color: #e6f5ef;
+            color: #2c604e;
+            font-weight: bold;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #d2f0e2;
+            color: #234d3c;
+        }
+        .accordion-body {
+            background-color: #f4fbf8;
+        }
+        .container {
+            padding-top: 40px;
+            padding-bottom: 60px;
+        }
+        a.back-link {
+            text-decoration: none;
+            color: #5bb98c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header class="text-center">
+    <h1>MediTime – Frequently Asked Questions</h1>
+</header>
+
+<div class="container">
+    <a href="download.html" class="back-link mb-4 d-block"><i class="bi bi-arrow-left-circle"></i> Back to Home</a>
+
+    <div class="accordion" id="faqAccordion">
+        <!-- FAQ 1 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq1-heading">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    Is MediTime a free app?
+                </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Yes, MediTime is completely free for all We Care Disability Support staff.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq2-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    Is it mandatory to download the app?
+                </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Yes. As part of your job role and safety procedures, all support workers are required to use the app.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq3-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                    What devices are compatible?
+                </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    MediTime is currently supported on Android smartphones and tablets. iOS support is coming soon.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq4-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                    How do I reset my password?
+                </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    On the login screen, tap "Forgot Password" and follow the prompts to reset via email.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 5 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq5-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                    Can I see previous reports and medication history?
+                </button>
+            </h2>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Yes, the app includes weekly and monthly reporting features for medication administration.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 6 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq6-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                    Who has access to the reports I create?
+                </button>
+            </h2>
+            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Only authorized healthcare professionals and family members (with permission) can access shared reports.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 7 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq7-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                    What if I can't see my client’s schedule?
+                </button>
+            </h2>
+            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Please contact your team leader or manager to confirm your assignment and ensure your app is synced.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 8 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq8-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+                    Is my data secure in MediTime?
+                </button>
+            </h2>
+            <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Yes. All data is encrypted and securely stored according to Australian health data regulations.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="text-center">
+    <p>&copy; 2025 We Care Disability Support</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>

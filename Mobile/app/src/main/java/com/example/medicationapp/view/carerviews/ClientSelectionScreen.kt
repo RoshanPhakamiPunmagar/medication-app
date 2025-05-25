@@ -2,6 +2,7 @@ package com.example.medicationapp.view.carerviews
 
 import android.app.TimePickerDialog
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -46,6 +47,7 @@ fun ClientSelectionScreen(
     clientMedicationViewModel: ClientMedicationViewModel = viewModel(),
     clientMedsDetailsViewModel: MedicationDetailsViewModel = viewModel(),
 ) {
+
     // Observe the list of clients with their medications from the ViewModel
     val clientsWithMedications by clientMedicationViewModel.clientsWithMedications.observeAsState(emptyList())
 
@@ -78,7 +80,6 @@ fun ClientSelectionScreen(
             val medIds = medications.map { it.medicationId }
             meds = meds + medIds // or simply meds = medIds if you want to replace fully
         }
-        Log.d("here is meds", meds.toString() )
         selectedClient?.let { medicationLogViewModel.fetchLogs(it.clientId) }
         selectedClient?.let {medicationLogViewModel.fetchAiLogs(it.clientId)}
     }
@@ -90,8 +91,14 @@ fun ClientSelectionScreen(
 
     Scaffold(
         topBar = {
+            if(selectedClient !=  null ){
+                CenterAlignedTopAppBar(title = { Text("${selectedClient?.clientName}") })
+            }
+            else{
+                CenterAlignedTopAppBar(title = { Text("Client Selection Screen") })
+            }
             // Display a centered top app bar with a title
-            CenterAlignedTopAppBar(title = { Text("Client List") })
+
         }
     ) { innerPadding ->
 
@@ -390,9 +397,7 @@ fun MedicationLogDialog(
     var showTimePicker by remember { mutableStateOf(false) }
     var medicationViewModel: MedicationLogViewModel = viewModel()
 
-
-
-
+    val context = LocalContext.current
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
     AlertDialog(
@@ -463,7 +468,6 @@ fun MedicationLogDialog(
             Button(
                 onClick = {
                     if (clientMedication != null && actualTime != null) {
-                        Log.d("Cl id", clientMedication?.clientMedicationId.toString())
                         onSubmit(
                             MedicationLogDTO(
                                 clientMedicationId = clientMedication.clientMedicationId,
@@ -475,6 +479,9 @@ fun MedicationLogDialog(
                             )
                         )
                         onDismiss()
+                    }
+                    else{
+                        Toast.makeText(context, "Please make sure all required fields are filled in.", Toast.LENGTH_SHORT).show()
                     }
                 }
             ) {

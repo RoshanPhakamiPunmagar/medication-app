@@ -48,7 +48,6 @@ public class UserService implements org.springframework.security.core.userdetail
             Client client = clientOpt.get();
             client.setCarerUserId(carerUserId);
             clientRepository.save(client);
-            System.out.println("Assigning client " + clientId + " to carer " + carerUserId);
 
         } else {
             throw new RuntimeException("Client not found");
@@ -90,7 +89,6 @@ private PasswordEncoder passwordEncoder;
         user.setRoleId(role.getRoleId());
 
         userRepository.save(user);
-        System.out.println("User created: " + user.getEmail());
     }
 
 

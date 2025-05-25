@@ -56,14 +56,11 @@ class MedicationLogViewModel : ViewModel() {
                 val response = api.postMedicationLog(log)
                 if (response.isSuccessful) {
                     success = true
-                    Log.d("API", "Log posted successfully")
                 } else {
                     error = "Server error: ${response.code()}"
-                    Log.e("API", "Error: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 error = "Network error: ${e.localizedMessage}"
-                Log.e("API", "Failed to post log", e)
             } finally {
                 isLoading = false
             }
@@ -80,7 +77,7 @@ class MedicationLogViewModel : ViewModel() {
                 response: Response<List<AdherenceLogDTO>>
             ) {
                 if(response.isSuccessful)
-                {   Log.d("sizeeeeeeeeeeee", response.body()?.size.toString())
+                {
                     _logs.value = response.body()!!
 
                 }

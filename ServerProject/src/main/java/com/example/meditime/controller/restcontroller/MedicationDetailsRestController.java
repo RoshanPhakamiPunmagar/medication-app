@@ -6,11 +6,10 @@ import com.example.meditime.model.Medication;
 import com.example.meditime.service.MedicationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.coyote.Request;
-import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.converter.BeanOutputConverter;
-import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.openai.OpenAiChatClient;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +21,13 @@ import java.util.Map;
 @RequestMapping("meds")
 public class MedicationDetailsRestController {
 
-    private final ChatClient chatClient;
+    private final OpenAiChatClient chatClient;
     private final MedicationService medicationService;
-    public MedicationDetailsRestController(OllamaChatModel chatClient, MedicationService medicationService) {
-        this.chatClient = ChatClient.builder(chatClient).build();
+
+    public MedicationDetailsRestController(
+            OpenAiChatClient chatClient,
+            MedicationService medicationService) {
+        this.chatClient = chatClient;
         this.medicationService = medicationService;
     }
 
@@ -49,47 +51,38 @@ public class MedicationDetailsRestController {
         - Only return valid JSON
         - Never add comments or markdown
         - All fields must be present
+        - Escape all special characters
         """.formatted(joinedMeds);
 
-        String aiResponse = chatClient.prompt(new Prompt(prompt)).call().content();
+        // OpenAI-specific invocation
+        ChatResponse response = chatClient.call(new Prompt(prompt));
+        String aiResponse = response.getResult().getOutput().getContent();
 
-        System.out.println("RAW RESPONSE:\n" + aiResponse);
 
         try {
-            // Extract JSON block only
             String jsonStr = aiResponse.replaceAll("(?s)^.*?(\\{.*\\}).*$", "$1");
-
-            // Clean invalid tokens like com="..."
             jsonStr = jsonStr.replaceAll("\\w+=\"[^\"]*\"", "");
 
-            // Ensure mandatory keys exist; if missing, add default values
             if (!jsonStr.contains("\"interactions\"")) {
                 jsonStr = jsonStr.replaceFirst("\\}$", ", \"interactions\":\"No interactions found\" }");
             }
             if (!jsonStr.contains("\"recommendations\"")) {
                 jsonStr = jsonStr.replaceFirst("\\}$", ", \"recommendations\":\"No recommendations\" }");
             }
-
-            // Fix common missing quotes typo
             jsonStr = jsonStr.replaceAll("(?<!\")recommendations\":", "\"recommendations\":");
 
             return new ObjectMapper().readValue(jsonStr, ClientMedsDescriptions.class);
         } catch (Exception e) {
             return new ClientMedsDescriptions(
                     medsList,
-                    "Error: Could not parse LLM response",
+                    "Error: Could not parse AI response",
                     "Please check the model output format"
             );
         }
     }
 
-
     @GetMapping("one/get/{medsId}")
-    public String getMedicationDetails(@PathVariable  Long medsId) {
-       return medicationService.getMedicationById(medsId).getName();
-
+    public String getMedicationDetails(@PathVariable Long medsId) {
+        return medicationService.getMedicationById(medsId).getName();
     }
-
-
-
 }

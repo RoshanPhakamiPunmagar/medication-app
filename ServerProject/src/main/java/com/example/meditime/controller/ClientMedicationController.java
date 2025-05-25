@@ -39,8 +39,6 @@ public class ClientMedicationController {
     @GetMapping("/clients-with-medications/{carerId}")
     public List<ClientWithMedicationsDTO> getClientsWithMedications(@PathVariable Long carerId) {
         List<ClientWithMedicationsDTO> response = clientMedicationService.getClientsWithMedications(carerId);
-        System.out.println(response.get(0).getMedications().get(0).getClientMedicationId());
-//        return ResponseEntity.ok(response);
         return response;
     }
 
@@ -50,8 +48,6 @@ public class ClientMedicationController {
     @PostMapping("/assign")
 public ResponseEntity<String> assignMedication(@RequestBody ClientMedicationDTO dto) {
     clientMedicationService.assignMedication(dto);
-        System.out.println("Received clientId: " + dto.getClientId());
-        System.out.println("Received medicationId: " + dto.getMedicationId());
     return ResponseEntity.ok("Medication assigned successfully.");
 }
 
@@ -85,7 +81,6 @@ public ResponseEntity<String> assignMedication(@RequestBody ClientMedicationDTO 
                 dtoList.add(dto);
             }
         }
-        System.out.println(dtoList.size() + " Client Id");
         return dtoList;
     }
 

@@ -18,11 +18,10 @@ class AlarmViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun scheduleAlarmsForCarer(clientMedications: List<ClientMedicationDTO>) {
-        Log.d("size",clientMedications.size.toString())
+
         viewModelScope.launch(Dispatchers.IO) {
 
             for (client in clientMedications) {
-                Log.d("size",client.scheduledTimes.toString())
                 client.let(scheduler::setUpAlarmDateRange)
             }
         }

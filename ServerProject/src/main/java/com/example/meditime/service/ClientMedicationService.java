@@ -85,7 +85,6 @@ public class ClientMedicationService {
             // Retrieve medications associated with the current client
             List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(client.getClientId());
 
-            System.out.println( "ahsdiasdk21" + meds.size());
             // Convert the list of ClientMedication entities to DTOs
             List<ClientMedicationDTO> dtoList = meds.stream()
                     .map(this::convertToDTO)
@@ -100,7 +99,6 @@ public class ClientMedicationService {
             // Add the DTO to the result list
             result.add(clientDTO);
         }
-        System.out.println( "ahsdiasdk" + result.get(0).getMedications().get(0).getClientMedicationId());
         // Return the final list of clients with their medications
         return result;
     }
@@ -114,7 +112,6 @@ public class ClientMedicationService {
     private ClientMedicationDTO convertToDTO(ClientMedication cm) {
         ClientMedicationDTO dto = new ClientMedicationDTO();
 
-        System.out.println(cm.getClientMedicationId() + "sa");
         // Populate the DTO fields from the entity
         dto.setClientId(cm.getClient().getClientId());
         dto.setClientMedicationId(cm.getClientMedicationId());

@@ -44,7 +44,6 @@ fun LoginScreen(
 
     LaunchedEffect(status) {
         status?.let {
-            Log.d("status", it.status)
             if (it.status == "login") {
                 val roleName = when (it.roleId) {
                     1L -> "Manager"
@@ -105,7 +104,6 @@ fun LoginScreen(
             onClick = {
                 error = null
                 userViewModel.login(email, password)
-                Log.d("clicked", "clicked")
             },
             modifier = Modifier.fillMaxWidth()
         ) {

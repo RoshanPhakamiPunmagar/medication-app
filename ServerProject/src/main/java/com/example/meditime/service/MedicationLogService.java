@@ -147,7 +147,7 @@ public class MedicationLogService {
             medicationLogRepository.save(log);
             System.out.println("✅ Medication log recorded.");
         } else {
-            System.out.println("❌ Medication not found for client.");
+            System.out.println("Medication not found for client.");
         }
     }
 

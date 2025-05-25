@@ -114,7 +114,6 @@ fun AssignCarerScreen(clientViewModel: ClientViewModel = viewModel(),
                 OutlinedButton(
                     onClick = {
                         selectedClient = client
-                        println("DEBUG: Selected client: ${client.name}, Carer ID: ${client.carerId}")
                     },
                     // Select this client when clicked
                     modifier = Modifier

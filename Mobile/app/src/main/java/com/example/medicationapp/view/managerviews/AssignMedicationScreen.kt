@@ -203,9 +203,6 @@ fun AssignMedicationScreen(
                         isPaused = false
                     )
 
-                    Log.d("AssignMedication", "Client ID: ${selectedClient!!.clientId}, Medication ID: ${selectedMedication!!.medicationId}")
-
-
                     clientMedicationViewModel.assignMedicationToClient(dto)
                 }
                     catch (e: Exception) {

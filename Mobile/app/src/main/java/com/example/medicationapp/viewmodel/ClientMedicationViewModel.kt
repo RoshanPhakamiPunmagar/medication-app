@@ -44,7 +44,7 @@ class ClientMedicationViewModel : ViewModel() {
                     val responseText = response.body()?.string() ?: "Success"
                     assignStatus.postValue(true)
                     assignMessage.postValue(responseText)
-                    Log.d("AssignMedication", "Success: $responseText")
+
                 } else {
                     val errorText = response.errorBody()?.string() ?: "Unknown error"
                     assignStatus.postValue(false)
@@ -70,7 +70,7 @@ class ClientMedicationViewModel : ViewModel() {
         medsFetchJob = viewModelScope.launch {
             while (true) {
                 try {
-                    Log.d("PeriodicFetch", "Fetching client medications...")
+
                     fetchClientMedsOfLoggedUser(carerId)
                     delay(30_000) // 30 seconds
                 } catch (e: Exception) {
@@ -90,7 +90,7 @@ class ClientMedicationViewModel : ViewModel() {
         clientsFetchJob = viewModelScope.launch {
             while (true) {
                 try {
-                    Log.d("PeriodicFetch", "Fetching clients with medications...")
+
                     fetchClientsWithMedications(carerId)
                     delay(30_000) // 30 seconds
                 } catch (e: Exception) {
@@ -108,7 +108,6 @@ class ClientMedicationViewModel : ViewModel() {
         clientsFetchJob?.cancel()
         medsFetchJob = null
         clientsFetchJob = null
-        Log.d("PeriodicFetch", "Stopped all periodic fetches")
     }
 
     fun fetchClientMedsOfLoggedUser(carerId : Long){

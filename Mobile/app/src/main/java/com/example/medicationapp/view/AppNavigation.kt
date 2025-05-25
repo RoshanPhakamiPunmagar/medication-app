@@ -98,8 +98,6 @@ fun AppNavigation(navController: NavHostController) {
 
                     // Log user ID for debug
                     storedUserId.value = userId
-                    Log.d("User id", storedUserId.toString())
-                    Log.d("Sign in", "Stored user ID: $storedUserId")
 
                     //viewModelClientMeds.fetchClientMedsOfLoggedUser(storedUserId.value)
                     // Navigate based on role
@@ -141,7 +139,6 @@ fun AppNavigation(navController: NavHostController) {
         composable(
             "carer_dashboard"
         ) {
-            Log.d("ssdsd", storedUserId.value.toString())
             val carerId = storedUserId
             CarrerMainScreen(
                 navController = navController,
@@ -179,7 +176,6 @@ fun AppNavigation(navController: NavHostController) {
         // Route for carer to select a client (carerId is passed as an argument)
         composable(
             "client_selection") {
-            Log.d("ssdsd", storedUserId.value.toString())
             ClientSelectionScreen(
                 clientMedicationViewModel = viewModel(),
                 clientMedsDetailsViewModel = viewModel(),

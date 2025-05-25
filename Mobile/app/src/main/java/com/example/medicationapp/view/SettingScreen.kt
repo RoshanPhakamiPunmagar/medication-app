@@ -41,7 +41,6 @@ fun SettingScreen(context:Context, navController: NavHostController) {
                 onClick = {
                     val sharedPref = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
                     val storedUserId = sharedPref.getLong("user_id", -1L)
-                    Log.d("Sign out", "Removed user ID: $storedUserId")
                     sharedPref.edit().remove("user_role").apply()
 
                     clientMedicationViewModel.stopAllPeriodicFetches()

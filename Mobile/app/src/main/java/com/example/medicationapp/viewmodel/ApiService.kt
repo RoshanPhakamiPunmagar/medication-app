@@ -90,8 +90,8 @@ interface ApiService {
     @GET("logs/get/{id}")
     fun getAdherenceLogs(@Path("id") id : Long): Call<List<AdherenceLogDTO>>
 
-    @GET("logs/get/ai/{id}")
-    fun getAiAnalysis(@Path("id") id : Long): Call<AiAnalysisResponse>
+    @GET("logs/get/ai/{patientId}")
+    fun getAiAnalysis(@Path("patientId") patientId : Long): Call<AiAnalysisResponse>
 
     @POST("logs/post/log")
     suspend fun postMedicationLog(@Body dto: MedicationLogDTO): Response<Unit>

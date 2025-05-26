@@ -129,12 +129,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/mobile/**",
+                                "/mobile/check",
+                                "/mobile/user",
+                                "/mobile/userCarer",
+                                "/mobile/assignCarerToClient",
+                                "/mobile/removeCarerFromClient",
                                 "/api/**",
+                                "/meds/**",
+                                "/logs/**",
                                 "/login/**", "/signup", "/download", "/css/**", "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

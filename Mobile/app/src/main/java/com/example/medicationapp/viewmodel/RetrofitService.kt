@@ -10,7 +10,7 @@ import java.time.LocalTime
 
 object RetrofitService {
 
-    private const val BASE_URL = "http://10.0.2.2:8080/" // For Android Emulator localhost
+   // private const val BASE_URL = "http://10.0.2.2:8080/" // For Android Emulator localhost
 
     // Custom Gson to handle LocalDate and LocalTime
     private val gson = GsonBuilder()
@@ -20,7 +20,7 @@ object RetrofitService {
 
     // Retrofit instance with custom Gson converter
     val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl("https://medication-app-cxxi.onrender.com/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 

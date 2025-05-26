@@ -175,21 +175,21 @@ class ClientMedicationViewModel : ViewModel() {
             })
     }
 
-    fun fetchMedications(medsId: Long, onResult: (String?) -> Unit) {
-        apiService.getMeds(medsId).enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.isSuccessful) {
-                    onResult(response.body())
-                } else {
-                    onResult(null)
-                }
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                onResult(null)
-            }
-        })
-    }
+//    fun fetchMedications(medsId: Long, onResult: (String?) -> Unit) {
+//        apiService.getMeds(medsId).enqueue(object : Callback<String> {
+//            override fun onResponse(call: Call<String>, response: Response<String>) {
+//                if (response.isSuccessful) {
+//                    onResult(response.body())
+//                } else {
+//                    onResult(null)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<String>, t: Throwable) {
+//                onResult(null)
+//            }
+//        })
+//    }
 
 
 

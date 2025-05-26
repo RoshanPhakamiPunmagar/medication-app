@@ -8,7 +8,6 @@ package com.example.meditime.controller;
 
 import com.example.meditime.model.Medication;
 import com.example.meditime.service.MedicationService;
-import com.example.meditime.service.OpenFdaMedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +20,6 @@ public class MedicationController {
 
     @Autowired
     private MedicationService medicationService;
-
-    @Autowired
-    private OpenFdaMedicationService fdaService;
-
-    @GetMapping("/import-openfda")
-    public String importFromOpenFDA() {
-        fdaService.fetchOpenFdaMedications();
-        return "Medications imported from openFDA.";
-    }
 
 
     @GetMapping

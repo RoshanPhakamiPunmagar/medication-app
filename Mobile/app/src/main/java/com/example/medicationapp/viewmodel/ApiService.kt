@@ -2,7 +2,6 @@ package com.example.medicationapp.viewmodel
 
 import com.example.medicationapp.model.AiAnalysisResponse
 import com.example.medicationapp.model.Client
-import com.example.medicationapp.model.ClientMedication
 import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.ClientWithMedicationsDTO
 import com.example.medicationapp.model.LoginRequest

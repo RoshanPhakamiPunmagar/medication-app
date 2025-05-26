@@ -27,7 +27,7 @@ public class SecurityConfig {
     }
 
 
-@Bean
+    @Bean
     @Order(1)
     public SecurityFilterChain webFilterChain(HttpSecurity http,
                                               CustomLoginSuccessHandler customLoginSuccessHandler) throws Exception {
@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**","/mobile/**").permitAll()
                         .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
                         .requestMatchers("/admin/medications/").hasRole("ADMIN")
                         .anyRequest().denyAll()
@@ -64,39 +64,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                // Mobile endpoints
-                                "/mobile/**",
-
-                                // Medication-related endpoints
-                                "/api/medication/get/**",
-                                "/api/medication/assign",
-                                "/api/medication/clients-with-medications/**",
-                                "/api/medication/schedule/**",
-                                "/api/medication/names/**",
-
-                                // Logs
-                                "/logs/get/**",
-                                "/logs/post/log",
-
-                                // Medications
-                                "/api/medications",
-                                "/meds/details",
-
-                                // Clients
-                                "/api/clients",
-
-                                // User authentication and registration
-                                "/mobile/check",
-                                "/mobile/user",
-                                "/mobile/userCarer",
-                                "/mobile/assignCarerToClient",
-                                "/mobile/removeCarerFromClient",
-
-                                // Misc (signup, download, frontend assets)
-                                "/signup",
-                                "/download",
-                                "/css/**",
-                                "/js/**"
+                                "/mobile/secureData", "/mobile/test-email", "/mobile/is_verified", "/mobile/verify",
+                                "/mobile/login", "/mobile/removeCarerFromClient",
+                                "/api/medication/clients-with-medications/{carerId}",
+                                "/api/medication/schedule/{clientId}", "api/medication/names/{clientId}",
+                                "/mobile/**", "/mobile/userCarer", "mobile/check",
+                                "api/clients", "api/medications", "api/medication/assign",
+                                "/api/medications/import-openfda", "/meds/**", "/login/**", "/meds/details",
+                                "/api/auth/**", "/mobile/user", "/signup", "/download", "/css/**", "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

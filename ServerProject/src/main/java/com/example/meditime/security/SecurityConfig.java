@@ -35,7 +35,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**","/mobile/**").permitAll()
+                        .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**","/mobile/**",
+                                "/api/medication/get/{carerId}",
+                                "/logs/get/{id}",
+                                "logs/get/ai/{patientId}",
+                                "/logs/post/log",
+                                "/meds/details",
+                                "/api/**"
+                                ).permitAll()
                         .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
                         .requestMatchers("/admin/medications/").hasRole("ADMIN")
                         .anyRequest().denyAll()
@@ -69,8 +76,7 @@ public class SecurityConfig {
                                 "/api/medication/clients-with-medications/{carerId}",
                                 "/api/medication/schedule/{clientId}", "api/medication/names/{clientId}",
                                 "/mobile/**", "/mobile/userCarer", "mobile/check",
-                                "api/clients", "api/medications", "api/medication/assign",
-                                "/api/medications/import-openfda", "/meds/**", "/login/**", "/meds/details",
+                                "api/clients", "api/medications", "api/medication/assign", "/meds/**", "/login/**", "/meds/details",
                                 "/api/auth/**", "/mobile/user", "/signup", "/download", "/css/**", "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated()

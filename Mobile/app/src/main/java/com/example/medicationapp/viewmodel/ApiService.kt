@@ -42,7 +42,6 @@ interface ApiService {
     ): Call<Map<String, @JvmSuppressWildcards Any>>
 
 
-
     @POST("https://medication-app-deployment.onrender.com/mobile/check")
     fun login(
         @Body request: LoginRequest

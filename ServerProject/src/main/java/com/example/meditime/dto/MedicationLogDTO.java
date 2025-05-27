@@ -1,4 +1,4 @@
-//Amy Wickham 121785021
+// Amy Wickham 121785021
 // Amy Wickham 12178502
 // File: MedicationLogDTO.java
 // Description: See MediTime documentation. This file is part of the medication management system.
@@ -12,95 +12,66 @@ import java.time.format.DateTimeParseException;
 
 @Data
 public class MedicationLogDTO {
+
+    // Unique identifier for the medication log
     private Long logId;
-    private Long clientMedicationId;  // Just the ID
+
+    // ID referencing the associated client medication
+    private Long clientMedicationId;
+
+    // ID of the carer responsible for this log entry
     private Long carerId;
-    private String scheduledTime;  // Change from LocalTime to String
+
+    // Scheduled medication time, stored as a string for flexibility in serialization
+    private String scheduledTime;
+
+    // Actual medication time, stored as a string
     private String actualTime;
+
+    // Status of the medication adherence (e.g., TAKEN, MISSED)
     private String status;
+
+    // Optional notes about the medication event
     private String notes;
 
+    /**
+     * Static factory method to create a DTO from the MedicationLog entity.
+     * Converts entity fields into DTO fields, adapting types as needed.
+     * @param log The MedicationLog entity to convert
+     * @return MedicationLogDTO instance or null if log is null
+     */
     public static MedicationLogDTO fromEntity(MedicationLog log) {
         if (log == null) return null;
         MedicationLogDTO dto = new MedicationLogDTO();
         dto.setLogId(log.getLogId());
         dto.setCarerId(log.getCarer().getUserId());
         dto.setStatus(log.getStatus().toString());
-        dto.setScheduledTime(log.getScheduledTime());
-        dto.setActualTime(log.getActualTime());
+        dto.setScheduledTime(log.getScheduledTime()); // assuming this returns String
+        dto.setActualTime(log.getActualTime());       // assuming this returns String
         return dto;
     }
 
-
-    // Additional helper method for string-based time parsing
+    /**
+     * Helper method to set scheduledTime from a string representation.
+     * Performs validation and throws IllegalArgumentException on invalid format.
+     * @param timeString the string representing the scheduled time
+     */
     public void setScheduledTimeFromString(String timeString) {
         try {
+            // Here could be a parsing attempt if needed
             this.scheduledTime = timeString;
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid time format: " + timeString);
         }
     }
 
+    /**
+     * Returns the actual time string.
+     * Method currently just returns the actualTime field.
+     * Could be expanded for validation or conversion.
+     * @return actual time as string
+     */
     public String setActualTimeFromString() {
-
-        return    this.actualTime;
-
-    }
-    // Getters and Setters
-    public Long getLogId() {
-        return logId;
-    }
-
-    public void setLogId(Long logId) {
-        this.logId = logId;
-    }
-
-    public Long getClientMedicationId() {
-        return clientMedicationId;
-    }
-
-    public void setClientMedicationId(Long clientMedicationId) {
-        this.clientMedicationId = clientMedicationId;
-    }
-
-    public Long getCarerId() {
-        return carerId;
-    }
-
-    public void setCarerId(Long carerId) {
-        this.carerId = carerId;
-    }
-
-
-    public String getScheduledTime() {
-        return scheduledTime;
-    }
-
-    public void setScheduledTime(String scheduledTime) {
-        this.scheduledTime = scheduledTime;
-    }
-
-    public String getActualTime() {
-        return actualTime;
-    }
-
-    public void setActualTime(String actualTime) {
-        this.actualTime = actualTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
+        return this.actualTime;
     }
 }

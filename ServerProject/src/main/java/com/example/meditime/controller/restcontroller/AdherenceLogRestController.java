@@ -12,11 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ai.openai.OpenAiChatClient;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller that handles medication adherence logs and AI-based analysis.
+ */
 @RestController
 @RequestMapping("/logs")
 public class AdherenceLogRestController {
@@ -25,11 +29,12 @@ public class AdherenceLogRestController {
     private final ClientMedicationService clientMedicationService;
     private final ClientService clientService;
     private final MedicationService medicationService;
-    private final OpenAiChatClient  chatClient; // Now using OpenAI's ChatClient
+    private final OpenAiChatClient chatClient; // OpenAI Chat Client used for generating AI-based analysis
     private final MedicationLogService medicationLogService;
 
+    // Constructor for injecting all required services and the OpenAI chat client
     public AdherenceLogRestController(
-            OpenAiChatClient chatClient, // Injected OpenAI ChatClient
+            OpenAiChatClient chatClient,
             AdherenceLogService adherenceLogService,
             ClientMedicationService clientMedicationService,
             ClientService clientService,
@@ -41,10 +46,14 @@ public class AdherenceLogRestController {
         this.clientService = clientService;
         this.medicationService = medicationService;
         this.medicationLogService = medicationLogService;
-        this.chatClient = chatClient; // No need for builder with OpenAI
+        this.chatClient = chatClient;
     }
 
-    // Get adherence log by ID
+    /**
+     * Retrieves all adherence logs associated with a specific client ID.
+     * @param id Client ID
+     * @return List of AdherenceLogDTOs
+     */
     @GetMapping("get/{id}")
     public List<AdherenceLogDTO> getAdherenceLog(@PathVariable Long id) {
         List<AdherenceLogDTO> dtoList = new ArrayList<>();
@@ -62,29 +71,38 @@ public class AdherenceLogRestController {
         return dtoList;
     }
 
-
+    /**
+     * Saves a medication log entry submitted by the client.
+     * @param medicationLog DTO containing log details
+     */
     @PostMapping("post/log")
     public void postMedicationLog(@RequestBody MedicationLogDTO medicationLog) {
         medicationLogService.save(medicationLog);
-
     }
 
+    /**
+     * Generates an AI-powered analysis report of the client's last 5 medication logs.
+     * Includes adherence patterns, risks, and improvement suggestions.
+     * @param patientId ID of the patient
+     * @return JSON-formatted analysis or error message
+     */
     @GetMapping("get/ai/{patientId}")
     public ResponseEntity<?> getAiReportMedicalLog(@PathVariable Long patientId) {
         try {
-
+            // Retrieve the last 5 logs for the given client
             List<MedicationLog> logs = medicationLogService.findMedicalLogByClientMedication(patientId);
             List<Medication> meds = new ArrayList<>();
             List<Long> medsId = clientMedicationService.getClientMedicationByUserId(patientId);
 
-            for(Long i : medsId) {
-                meds.add(medicationService.getMedicationById(i));
+            for (Long id : medsId) {
+                meds.add(medicationService.getMedicationById(id));
             }
 
             if (logs.isEmpty()) {
                 return ResponseEntity.ok("No medication logs found for this medication");
             }
 
+            // Get last 5 logs and medications
             List<MedicationLog> lastFiveLogs = logs.stream()
                     .skip(Math.max(0, logs.size() - 5))
                     .collect(Collectors.toList());
@@ -93,6 +111,7 @@ public class AdherenceLogRestController {
                     .skip(Math.max(0, logs.size() - 5))
                     .collect(Collectors.toList());
 
+            // Prepare data for AI prompt
             List<Map<String, String>> logData = lastFiveLogs.stream()
                     .map(log -> Map.of(
                             "date", log.getScheduledTime() != null ? log.getScheduledTime().toString() : "N/A",
@@ -108,7 +127,7 @@ public class AdherenceLogRestController {
                     ))
                     .collect(Collectors.toList());
 
-            // Create prompt
+            // Compose the prompt for OpenAI
             String prompt = """
                 You are a medical expert analyzing medication adherence patterns.
                 Here are the last 5 medication logs in JSON format:
@@ -128,28 +147,34 @@ public class AdherenceLogRestController {
                     "risks": "Risk factors",
                     "recommendations": "Suggestions"
                 }
-                """.formatted(new ObjectMapper().writeValueAsString(logData),
+                """.formatted(
+                    new ObjectMapper().writeValueAsString(logData),
                     new ObjectMapper().writeValueAsString(medsData));
 
-            // Get AI response - OpenAI version
+            // Send prompt to OpenAI and parse the response
             ChatResponse response = chatClient.call(new Prompt(prompt));
             String aiResponse = response.getResult().getOutput().getContent();
 
-            // Parse and validate response
+            // Convert AI response JSON to Java object
             AiAnalysisResponse analysisResponse = parseAiResponse(aiResponse);
-
-
 
             return ResponseEntity.ok(analysisResponse);
 
         } catch (Exception e) {
+            // Return error message on failure
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Could not generate report", "details", e.getMessage()));
         }
     }
 
+    /**
+     * Helper method to parse AI's raw JSON response string into an AiAnalysisResponse object.
+     * @param aiResponse Raw JSON string (possibly wrapped with ```json)
+     * @return Parsed AiAnalysisResponse
+     * @throws JsonProcessingException If parsing fails
+     */
     private AiAnalysisResponse parseAiResponse(String aiResponse) throws JsonProcessingException {
-        // Clean the response
+        // Remove code block markers from AI's response
         String cleanJson = aiResponse.replaceAll("```json", "")
                 .replaceAll("```", "")
                 .trim();

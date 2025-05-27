@@ -1,6 +1,6 @@
 package com.example.medicationapp.model
 
 data class Role(
-    val roleId: Long = 0,
+    val roleId: Long,
     val roleName: String
 )

@@ -5,7 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1b9f6926-f19c-4c13-91a5-bcc811631982" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Mobile/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Mobile/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/AdminPages/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/AdminPages/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/AdherenceLogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/AdherenceLogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/ClientMedicationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/ClientMedicationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/MedicationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/MedicationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/ReminderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/ReminderController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/ReportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/ReportController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/restcontroller/AdherenceLogRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/restcontroller/AdherenceLogRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/restcontroller/MedicationDetailsRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/controller/restcontroller/MedicationDetailsRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/AdherenceLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/AdherenceLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/ClientDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/ClientDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/ClientMedicationDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/ClientMedicationDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/MedicationInteractionDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/MedicationInteractionDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/MedicationLogDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/MedicationLogDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/ReportDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/ReportDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/dto/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/AdherenceAnalysis.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/AdherenceAnalysis.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/AdherenceLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/AdherenceLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/ClientMedication.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/ClientMedication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/ClientMedsDescriptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/ClientMedsDescriptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Medication.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Medication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/MedicationInteraction.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/MedicationInteraction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/MedicationLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/MedicationLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Reminder.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Reminder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Report.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Report.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Role.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Status.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/Status.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/AdherenceLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/AdherenceLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/ClientMedicationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/ClientMedicationRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/ClientRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/ClientRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/MedicationInteractionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/MedicationInteractionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/MedicationLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/MedicationLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/MedicationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/MedicationRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/ReminderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/ReminderRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/RoleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/security/CustomLoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/security/CustomLoginSuccessHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/service/AdherenceLogService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/service/AdherenceLogService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/service/MedicationLogService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ServerProject/src/main/java/com/example/meditime/service/MedicationLogService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,7 +55,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\anmol\.android\avd\Pixel_6.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -30,12 +70,12 @@
     &quot;assignee&quot;: &quot;relife-e&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/RoshanPhakamiPunmagar/medication-app.git",
-    "accountId": "7f1d82ad-0e4c-435e-ac08-35b1d2ae5f6e"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/RoshanPhakamiPunmagar/medication-app.git&quot;,
+    &quot;accountId&quot;: &quot;7f1d82ad-0e4c-435e-ac08-35b1d2ae5f6e&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -55,9 +95,9 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Server&&Mobile",
+    "git-widget-placeholder": "APIRenderCloudCopy",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/GithubRepo/medication-app/ServerProject",
+    "last_opened_file_path": "C:/Users/rajup/Desktop/medication-app/Mobile",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",

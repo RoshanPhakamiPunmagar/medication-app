@@ -10,5 +10,4 @@ public class LoginRequest {
     @Getter
     @Setter
     private String password;
-    // getters and setters
 }

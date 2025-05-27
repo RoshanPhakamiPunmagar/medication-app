@@ -2,7 +2,7 @@ package com.example.medicationapp.model
 
 
 data class Medication(
-    val medicationId: Int = 0,
+    val medicationId: Int,
     val name: String,
     val description: String,
     val sideEffects: String,

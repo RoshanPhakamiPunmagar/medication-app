@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**","/mobile/**",
+                                "/faq",
                                 "/api/medication/get/{carerId}",
                                 "/logs/get/{id}",
                                 "logs/get/ai/{patientId}",

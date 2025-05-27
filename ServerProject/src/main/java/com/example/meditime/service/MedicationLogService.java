@@ -1,4 +1,4 @@
-//Amy Wickham 121785021
+// Amy Wickham 121785021
 package com.example.meditime.service;
 
 import com.example.meditime.dto.MedicationLogDTO;
@@ -10,50 +10,70 @@ import com.example.meditime.repository.AdherenceLogRepository;
 import com.example.meditime.repository.ClientMedicationRepository;
 import com.example.meditime.repository.MedicationLogRepository;
 import com.example.meditime.repository.UserRepository;
-import java.time.LocalDateTime;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Service class for managing MedicationLog entities.
+ * Handles CRUD operations and business logic around medication logs,
+ * including adherence calculation and logging medication statuses.
+ */
 @Service
 public class MedicationLogService {
 
-
     @Autowired
     private MedicationLogRepository medicationLogRepository;
-     @Autowired
-    private ClientMedicationRepository clientMedicationRepository;
-      @Autowired
-    private UserRepository userRepository;
 
+    @Autowired
+    private ClientMedicationRepository clientMedicationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final AdherenceLogService adherenceLogService;
     private final AdherenceLogRepository adherenceLogRepository;
 
+    /**
+     * Constructor to inject dependencies related to adherence logs.
+     */
     public MedicationLogService(AdherenceLogService adherenceLogService, AdherenceLogRepository adherenceLogRepository) {
         this.adherenceLogService = adherenceLogService;
         this.adherenceLogRepository = adherenceLogRepository;
     }
 
+    /**
+     * Fetch all medication logs.
+     * @return list of all MedicationLog entities.
+     */
     public List<MedicationLog> findAll() {
         return medicationLogRepository.findAll();
     }
 
+    /**
+     * Save a medication log based on the provided DTO.
+     * Validates input, converts DTO to entity, manages related entities,
+     * and updates adherence logs accordingly.
+     *
+     * @param logDto the DTO containing medication log data
+     * @throws IllegalArgumentException if the DTO is null or time format is invalid
+     * @throws EntityNotFoundException if related ClientMedication or Carer is not found
+     */
     @Transactional
     public void save(MedicationLogDTO logDto) {
         if (logDto == null) {
             throw new IllegalArgumentException("MedicationLogDTO cannot be null");
         }
 
-        // 1. Fetch related entities first (fail fast)
+        // Fetch related entities to ensure they exist before proceeding
         ClientMedication clientMedication = clientMedicationRepository
                 .findById(logDto.getClientMedicationId())
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -63,12 +83,11 @@ public class MedicationLogService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Carer not found with id: " + logDto.getCarerId()));
 
-        // 2. Convert DTO to entity
+        // Map DTO to entity and handle time parsing
         MedicationLog medicationLog = new MedicationLog();
         medicationLog.setStatus(MedicationLog.Status.valueOf(logDto.getStatus().toString()));
         medicationLog.setNotes(logDto.getNotes());
 
-        // Handle times with proper exception handling
         try {
             if (logDto.getScheduledTime() != null) {
                 medicationLog.setScheduledTime(logDto.getScheduledTime());
@@ -83,33 +102,40 @@ public class MedicationLogService {
         medicationLog.setClientMedication(clientMedication);
         medicationLog.setCarer(carer);
 
-        // 3. Save MedicationLog
+        // Save the medication log to the database
         MedicationLog savedLog = medicationLogRepository.save(medicationLog);
 
-        // 4. Handle AdherenceLog
+        // Update adherence log for this client medication
         updateAdherenceLog(clientMedication.getClientMedicationId(), savedLog);
     }
 
+    /**
+     * Updates or creates an adherence log based on medication logs of a client medication.
+     * Calculates adherence rate from logs and saves it.
+     *
+     * @param clientMedicationId the ID of the client medication
+     * @param savedMedicationLog the newly saved medication log
+     */
     private void updateAdherenceLog(Long clientMedicationId, MedicationLog savedMedicationLog) {
-        // 1. Get all medication logs for this client medication
+        // Retrieve all medication logs for the given client medication
         List<MedicationLog> logs = medicationLogRepository
                 .findByClientMedication_ClientMedicationId(clientMedicationId);
 
         if (logs.isEmpty()) {
-            return;
+            return; // no logs to process
         }
 
-        // 2. Calculate adherence rate
+        // Calculate adherence rate based on log statuses
         double adherenceRate = logs.stream()
                 .mapToDouble(log -> switch (log.getStatus()) {
                     case Given -> 100.0;
                     case Late -> 75.0;
-                    case Skipped , Missed -> 0.0;
+                    case Skipped, Missed -> 0.0;
                 })
                 .average()
                 .orElse(0.0);
 
-        // 3. Find existing adherence log or create new one
+        // Find existing adherence log or create a new one
         AdherenceLog adherenceLog = adherenceLogRepository
                 .findByClientMedication_ClientMedicationId(clientMedicationId)
                 .orElseGet(() -> {
@@ -121,15 +147,29 @@ public class MedicationLogService {
                     return newLog;
                 });
 
-        // 4. Update and save
+        // Update adherence rate and save the adherence log
         adherenceLog.setAdherenceRate(adherenceRate);
         adherenceLogRepository.save(adherenceLog);
     }
 
+    /**
+     * Retrieves medication logs by client medication ID.
+     *
+     * @param id the client medication ID
+     * @return list of medication logs for the specified client medication
+     */
     public List<MedicationLog> findMedicalLogByClientMedication(Long id) {
         return medicationLogRepository.findByClientMedication_ClientMedicationId(id);
     }
 
+    /**
+     * Logs medication status for a specific client and medication name.
+     * Creates and saves a MedicationLog entity with the current timestamp.
+     *
+     * @param clientId the client ID
+     * @param medicationName the name of the medication
+     * @param status the medication status (e.g., Given, Skipped)
+     */
     public void logMedicationStatus(Long clientId, String medicationName, String status) {
         List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(clientId);
 
@@ -140,24 +180,32 @@ public class MedicationLogService {
         if (match.isPresent()) {
             MedicationLog log = new MedicationLog();
             log.setClientMedication(match.get());
-            log.setStatus(MedicationLog.Status.valueOf(status));  // Should be one of: Given, Skipped, Missed, Late
+            log.setStatus(MedicationLog.Status.valueOf(status));  // Should match enum values
             log.setActualTime(LocalTime.now().toString());
-            log.setScheduledTime(LocalTime.now().toString()); // or the intended time if tracked
+            log.setScheduledTime(LocalTime.now().toString()); // or use actual scheduled time if available
 
             medicationLogRepository.save(log);
-            System.out.println("✅ Medication log recorded.");
+            System.out.println("Medication log recorded.");
         } else {
             System.out.println("Medication not found for client.");
         }
     }
 
-
-
-
+    /**
+     * Find a medication log by its ID.
+     *
+     * @param id the ID of the medication log
+     * @return the MedicationLog if found, otherwise null
+     */
     public MedicationLog findById(Long id) {
         return medicationLogRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Delete a medication log by its ID.
+     *
+     * @param id the ID of the medication log to delete
+     */
     public void delete(Long id) {
         medicationLogRepository.deleteById(id);
     }

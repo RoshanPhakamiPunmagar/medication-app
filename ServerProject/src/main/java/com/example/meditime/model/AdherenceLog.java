@@ -1,78 +1,43 @@
-//Amy Wickham 12178502
+// Amy Wickham 12178502
 package com.example.meditime.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Entity representing a log of medication adherence.
+ * Tracks when a user (e.g., carer) checked the medication adherence
+ * for a specific client medication and records the adherence rate.
+ */
 @Entity
+@Getter
+@Setter
 public class AdherenceLog {
+
+    // Primary key for the adherence log
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adherenceId;
 
+    // The client medication associated with this adherence log
     @ManyToOne
     private ClientMedication clientMedication;
 
+    // The user (e.g., carer) who logged the adherence
     @ManyToOne
     private User user;
 
-    private LocalTime checkedTime;
-    private Double adherenceRate;
-
-    // Getters and Setters
-
+    // The specific medication log entry linked to this adherence (optional)
     @ManyToOne
-    @JoinColumn(name= "medication_log_id")
+    @JoinColumn(name = "medication_log_id")
     private MedicationLog medicationLog;
 
-    public Long getAdherenceId() {
-        return adherenceId;
-    }
+    // The time at which adherence was checked
+    private LocalTime checkedTime;
 
-    public void setAdherenceId(Long adherenceId) {
-        this.adherenceId = adherenceId;
-    }
-
-    public ClientMedication getClientMedication() {
-        return clientMedication;
-    }
-
-    public void setClientMedication(ClientMedication clientMedication) {
-        this.clientMedication = clientMedication;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public MedicationLog getMedicationLog() {
-        return medicationLog;
-    }
-
-    public void setMedicationLog(MedicationLog medicationLog) {
-        this.medicationLog = medicationLog;
-    }
-
-    public LocalTime getCheckedTime() {
-        return checkedTime;
-    }
-
-    public void setCheckedTime(LocalTime checkedTime) {
-        this.checkedTime = checkedTime;
-    }
-
-    public Double getAdherenceRate() {
-        return adherenceRate;
-    }
-
-    public void setAdherenceRate(Double adherenceRate) {
-        this.adherenceRate = adherenceRate;
-    }
-
+    // Adherence rate recorded at the check time (e.g., percentage or ratio)
+    private Double adherenceRate;
 }

@@ -28,7 +28,6 @@ public class SecurityConfig {
 
 
     @Bean
-    @Order(1)
     public SecurityFilterChain webFilterChain(HttpSecurity http,
                                               CustomLoginSuccessHandler customLoginSuccessHandler) throws Exception {
         http
@@ -42,7 +41,6 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**","/mobile/**",
                                 "/meds/**",
-                                "/logs/**",
                                 "/api/**"
                                 ).permitAll()
                         .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
@@ -75,7 +73,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/faq",
                                 "/mobile/**",
-                                "/logs/**",
                                 "/api/**",
                                 "/meds/**",
                                 "/login/**",

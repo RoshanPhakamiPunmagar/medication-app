@@ -1,65 +1,90 @@
-// Amy Wickham 121785021
+//Amy Wickham 121785021
 package com.example.meditime.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
 
-/**
- * Entity representing a log entry for a medication administration event.
- * Tracks scheduled vs actual administration times, status, and notes.
- */
 @Entity
-@Getter
-@Setter
 public class MedicationLog {
 
-    /**
-     * Primary key for the medication log entry.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;
 
-    /**
-     * The ClientMedication associated with this log entry.
-     */
     @ManyToOne
     private ClientMedication clientMedication;
 
-    /**
-     * The carer (user) responsible for administering the medication.
-     */
     @ManyToOne
-    // @JoinColumn(name = "carer_id")  // optional: custom DB column name mapping
-    private User carer;
+    //@JoinColumn(name = "carer_id")  // optional: maps to DB column name
+    private User carer;  // this is the "carerId" from the diagram
 
-    /**
-     * The scheduled time for medication administration, stored as a string.
-     */
     private String scheduledTime;
-
-    /**
-     * The actual time medication was administered, stored as a string.
-     */
     private String actualTime;
 
-    /**
-     * Status indicating how the medication administration went.
-     */
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    /**
-     * Additional notes related to this log entry.
-     */
     private String notes;
 
-    /**
-     * Enumeration of possible medication administration statuses.
-     */
     public enum Status {
         Given, Skipped, Missed, Late
     }
 
+    // Getters and Setters
+
+    public Long getLogId() {
+        return logId;
+    }
+
+    public void setLogId(Long logId) {
+        this.logId = logId;
+    }
+
+    public ClientMedication getClientMedication() {
+        return clientMedication;
+    }
+
+    public void setClientMedication(ClientMedication clientMedication) {
+        this.clientMedication = clientMedication;
+    }
+
+    public User getCarer() {
+        return carer;
+    }
+
+    public void setCarer(User carer) {
+        this.carer = carer;
+    }
+
+    public String getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(String scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
+
+    public String getActualTime() {
+        return actualTime;
+    }
+
+    public void setActualTime(String actualTime) {
+        this.actualTime = actualTime;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 }

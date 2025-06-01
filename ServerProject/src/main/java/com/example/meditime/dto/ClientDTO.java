@@ -1,20 +1,56 @@
 package com.example.meditime.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-/**
- * Data Transfer Object (DTO) for representing client information.
- * Uses Lombok annotations to reduce boilerplate code.
- */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ClientDTO {
-    private Long clientId;     // Unique identifier for the client
-    private String name;       // Full name of the client
-    private String dob;        // Date of birth of the client
-    private String contact;    // Contact information for the client
-    private Long carerUserId;  // User ID of the carer assigned to the client
+    private Long clientId;
+    private String name;
+    private String dob;
+    private String contact;
+    private Long carerUserId;
+
+    public ClientDTO(Long clientId, String name, String dob, String contact, Long carerUserId) {
+        this.clientId = clientId;
+        this.name = name;
+        this.dob = dob;
+        this.contact = contact;
+        this.carerUserId = carerUserId;
+    }
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public Long getCarerUserId() {
+        return carerUserId;
+    }
+
+    public void setCarerUserId(Long carerUserId) {
+        this.carerUserId = carerUserId;
+    }
 }

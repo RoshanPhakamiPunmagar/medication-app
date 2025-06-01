@@ -35,13 +35,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**","/mobile/**",
-                                "/faq",
-                                "/api/medication/get/{carerId}",
-                                "/logs/get/{id}",
-                                "logs/get/ai/{patientId}",
-                                "/logs/post/log",
-                                "/meds/details",
+                        .requestMatchers("/faq",
+                                "/login",
+                                "/signup",
+                                "/download",
+                                "/css/**",
+                                "/js/**","/mobile/**",
+                                "/meds/**",
+                                "/logs/**",
                                 "/api/**"
                                 ).permitAll()
                         .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
@@ -72,13 +73,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/mobile/secureData", "/mobile/test-email", "/mobile/is_verified", "/mobile/verify",
-                                "/mobile/login", "/mobile/removeCarerFromClient",
-                                "/api/medication/clients-with-medications/{carerId}",
-                                "/api/medication/schedule/{clientId}", "api/medication/names/{clientId}",
-                                "/mobile/**", "/mobile/userCarer", "mobile/check",
-                                "api/clients", "api/medications", "api/medication/assign", "/meds/**", "/login/**", "/meds/details",
-                                "/api/auth/**", "/mobile/user", "/signup", "/download", "/css/**", "/js/**"
+                                "/faq",
+                                "/mobile/**",
+                                "/api/**",
+                                "/meds/**",
+                                "/login/**",
+                                "/signup",
+                                "/download",
+                                "/css/**",
+                                "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -88,6 +91,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 
 

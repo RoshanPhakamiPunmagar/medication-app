@@ -1,67 +1,94 @@
-// Amy Wickham 12178502
-package com.example.meditime.model;
+    // Amy Wickham 12178502
+    package com.example.meditime.model;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+    import jakarta.persistence.*;
+    import java.time.LocalDate;
+    import java.time.LocalTime;
+    import java.util.List;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+    @Entity
+    public class ClientMedication {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long clientMedicationId;
 
-/**
- * Entity representing the medication prescribed to a client.
- * Tracks details about the medication, dosage, schedule, and status.
- */
-@Entity
-@Getter
-@Setter
-public class ClientMedication {
+        @ManyToOne
+        private Client client;
 
-    /**
-     * Primary key for the client medication record.
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clientMedicationId;
+        @ManyToOne
+        private Medication medication;
 
-    /**
-     * The client to whom this medication is assigned.
-     */
-    @ManyToOne
-    private Client client;
+        private String dosage;
+        private LocalDate startDate;
+        private LocalDate endDate;
 
-    /**
-     * The medication prescribed to the client.
-     */
-    @ManyToOne
-    private Medication medication;
+        private boolean isPaused;
 
-    /**
-     * Dosage information for the medication (e.g., "10 mg once daily").
-     */
-    private String dosage;
+        @ElementCollection
+        private List<LocalTime> scheduledTimes;
 
-    /**
-     * The start date when the medication regimen begins.
-     */
-    private LocalDate startDate;
+        // Getters and Setters
+        public Long getClientMedicationId() {
+            return clientMedicationId;
+        }
 
-    /**
-     * The end date when the medication regimen ends.
-     */
-    private LocalDate endDate;
+        public void setClientMedicationId(Long clientMedicationId) {
+            this.clientMedicationId = clientMedicationId;
+        }
 
-    /**
-     * Flag indicating whether the medication is currently paused.
-     */
-    private boolean isPaused;
+        public Client getClient() {
+            return client;
+        }
 
-    /**
-     * Scheduled times of day when the medication should be taken.
-     * Stored as a collection of LocalTime objects.
-     */
-    @ElementCollection
-    private List<LocalTime> scheduledTimes;
+        public void setClient(Client client) {
+            this.client = client;
+        }
 
-}
+        public Medication getMedication() {
+            return medication;
+        }
+
+        public void setMedication(Medication medication) {
+            this.medication = medication;
+        }
+
+        public String getDosage() {
+            return dosage;
+        }
+
+        public void setDosage(String dosage) {
+            this.dosage = dosage;
+        }
+
+        public LocalDate getStartDate() {
+            return startDate;
+        }
+
+        public void setStartDate(LocalDate startDate) {
+            this.startDate = startDate;
+        }
+
+        public LocalDate getEndDate() {
+            return endDate;
+        }
+
+        public void setEndDate(LocalDate endDate) {
+            this.endDate = endDate;
+        }
+
+        public boolean isPaused() {
+            return isPaused;
+        }
+
+        public void setPaused(boolean paused) {
+            isPaused = paused;
+        }
+
+        public List<LocalTime> getScheduledTimes() {
+            return scheduledTimes;
+        }
+
+        public void setScheduledTimes(List<LocalTime> scheduledTimes) {
+            this.scheduledTimes = scheduledTimes;
+        }
+    }

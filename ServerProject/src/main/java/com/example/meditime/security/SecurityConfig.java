@@ -75,6 +75,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/faq",
                                 "/mobile/**",
+                                "/logs/**",
                                 "/api/**",
                                 "/meds/**",
                                 "/login/**",

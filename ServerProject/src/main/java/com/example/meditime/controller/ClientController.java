@@ -22,19 +22,11 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    /**
-     * REST endpoint to retrieve a paginated list of all clients.
-     *
-     * @param page the page number to retrieve (default is 0)
-     * @param size the number of clients per page (default is 10)
-     * @return a ResponseEntity containing a paginated list of ClientDTOs and metadata
-     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllClients(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
-        // Create a Pageable object based on the requested page and size
         Pageable pageable = PageRequest.of(page, size);
 
         // Fetch a paginated list of clients from the service layer
@@ -50,14 +42,12 @@ public class ClientController {
                         client.getCarerUserId()))
                 .collect(Collectors.toList());
 
-        // Prepare the response map containing client data and pagination metadata
         Map<String, Object> response = new HashMap<>();
         response.put("clients", clientDTOs);                      // The list of client DTOs
         response.put("currentPage", clientPage.getNumber());      // Current page index
         response.put("totalItems", clientPage.getTotalElements()); // Total number of clients
         response.put("totalPages", clientPage.getTotalPages());    // Total number of pages
 
-        // Return the response with HTTP 200 OK status
         return ResponseEntity.ok(response);
     }
 

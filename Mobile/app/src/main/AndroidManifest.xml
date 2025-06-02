@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MedicationApp"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+
+        <!-- Main launcher activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MedicationApp">
+
+            <!-- Main app launcher -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep link for email verification -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                android:host="dd5c-203-164-254-42.ngrok-free.app"
+                    android:pathPrefix="/mobile/verify" />
+            </intent-filter>
+        </activity>
+
+        <!-- Alarm dialog popup -->
+        <activity
+            android:name=".view.popup.AlarmDialogActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.medicationapp.ACTION_ALARM_DIALOG" />
+            </intent-filter>
+        </activity>
+
+        <!-- Alarm broadcast receiver -->
+        <receiver
+            android:name=".view.alarm.AlarmReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.example.medication.ALARM_ACTION" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

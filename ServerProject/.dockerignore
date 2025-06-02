@@ -1,7 +1,0 @@
-target
-.idea
-*.iml
-*.log
-*.tmp
-Dockerfile
-.dockerignore

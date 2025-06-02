@@ -18,6 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing client medication assignments and retrieval.
+ *
+ * Provides functionality to:
+ * - Assign medications to clients based on DTO input.
+ * - Retrieve medication names assigned to a specific client.
+ * - Retrieve clients assigned to a specific carer, along with their medication details.
+ * - Calculate medication adherence rates for a client.
+ *
+ * Interacts with repositories for Client, Medication, ClientMedication, and MedicationLog entities
+ * to perform database operations and data aggregation.
+ */
 @Service
 public class ClientMedicationService {
 
@@ -64,7 +76,6 @@ public class ClientMedicationService {
 
         return names;
     }
-
 
 
     /**
@@ -125,23 +136,6 @@ public class ClientMedicationService {
         return dto;
     }
 
-
-//    public List<ClientMedicationDTO> getClientMedicationDTOs(Long clientId) {
-//        List<ClientMedication> meds = clientMedicationRepository.findByClient_ClientId(clientId);
-//        List<ClientMedicationDTO> dtos = new ArrayList<>();
-//
-//        for (ClientMedication cm : meds) {
-//            ClientMedicationDTO dto = new ClientMedicationDTO();
-//            dto.setMedicationName(cm.getMedication().getName());
-//            dto.setDosage(cm.getDosage());
-//            dto.setFrequency(cm.getFrequency());
-//            dto.setStartDate(cm.getStartDate());
-//            dto.setEndDate(cm.getEndDate());
-//            dtos.add(dto);
-//        }
-//
-//        return dtos;
-//    }
 
     public List<Long> getClientMedicationByUserId(Long clientMedId) {
         List<Long> meds = clientMedicationRepository.findMedicationIdsByClientId(clientMedId);

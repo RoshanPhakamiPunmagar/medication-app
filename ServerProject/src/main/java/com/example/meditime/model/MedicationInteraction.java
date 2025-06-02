@@ -3,6 +3,12 @@ package com.example.meditime.model;
 
 import jakarta.persistence.*;
 
+
+/**
+ * Entity class representing a medication interaction between two medications.
+ * Stores details about the interaction, including a description and severity level.
+ * Each interaction involves exactly two medications.
+ */
 @Entity
 public class MedicationInteraction {
     

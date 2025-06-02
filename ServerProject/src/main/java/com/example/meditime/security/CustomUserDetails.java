@@ -7,7 +7,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
-
+/**
+ * Custom implementation of UserDetails to bridge the application's User entity
+ * with Spring Security's authentication system.
+ *
+ * Provides user information and authorities based on the user's role.
+ */
 public class CustomUserDetails implements UserDetails {
 
     private final User user;

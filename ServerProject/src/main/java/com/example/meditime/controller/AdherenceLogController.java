@@ -18,7 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * REST controller for managing adherence logs.
+ * Handles logging and retrieving adherence records for client medications.
+ *
+ * Base URL: /api/adherence
+ */
 @RestController
 @RequestMapping("/api/adherence")
 public class AdherenceLogController {

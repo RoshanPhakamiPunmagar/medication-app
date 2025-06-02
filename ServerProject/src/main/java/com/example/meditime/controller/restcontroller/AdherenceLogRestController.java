@@ -17,6 +17,28 @@ import org.springframework.ai.openai.OpenAiChatClient;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * AdherenceLogRestController handles mobile-facing REST endpoints related to medication adherence logging.
+ *
+ * Responsibilities:
+ * - Retrieve adherence logs for a specific patient.
+ * - Save new medication log entries.
+ * - Generate AI-based reports analyzing adherence behavior using OpenAI.
+ *
+ * Endpoints:
+ * - GET  /mobile/logs/get/{id}      : Retrieves adherence logs for a given patient ID.
+ * - POST /mobile/logs/post/log      : Saves a new medication log submitted by the mobile client.
+ * - GET  /mobile/logs/get/ai/{id}   : Generates an AI report analyzing adherence patterns, risks, and recommendations.
+ *
+ * Integrations:
+ * - OpenAiChatClient: Communicates with an OpenAI-powered service for natural language processing.
+ * - AdherenceLogService, MedicationLogService, ClientMedicationService, MedicationService: Used to access and manage patient data and logs.
+ *
+ * Notes:
+ * - The AI analysis endpoint prepares a prompt using recent logs and prescribed medications,
+ *   then parses the AI's JSON-formatted medical insights into a structured response.
+ */
+
 @RestController
 @RequestMapping("mobile/logs")
 public class AdherenceLogRestController {

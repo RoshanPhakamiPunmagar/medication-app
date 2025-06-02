@@ -32,21 +32,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         String email = null;
         String jwt = null;
-
+        // Skip JWT validation for any endpoint under /mobile
         if (path.startsWith("/mobile")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-
+        // Extract JWT token from Authorization header if it starts with "Bearer "
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
             email = jwtUtil.extractEmail(jwt);
         }
-
+        // Validate token and set authentication if not already set in context
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Optional<User> user = userRepository.findByEmail(email);
             if (user != null && jwtUtil.validateToken(jwt)) {
+                // Create auth token with user's roles/authorities
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(user, null, null);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

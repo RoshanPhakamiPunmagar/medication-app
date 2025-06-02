@@ -7,7 +7,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-
+/**
+ * UserController handles user registration, login, and access to the download page.
+ *
+ * This controller provides endpoints for displaying the signup and login forms,
+ * processing new user registrations, and directing users to the download page after successful signup.
+ *
+ * Endpoints:
+ * - GET /signup    : Displays the signup form.
+ * - POST /signup   : Processes new user registration. Adds user if email doesn't already exist.
+ * - GET /login     : Displays the login form.
+ * - GET /download  : Displays the download page after successful signup.
+ *
+ * Dependencies:
+ * - UserService: for business logic related to user registration and email checking.
+ */
 @Controller
 public class UserController {
 

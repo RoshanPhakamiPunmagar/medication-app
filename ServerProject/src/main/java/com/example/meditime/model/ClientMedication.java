@@ -5,7 +5,13 @@
     import java.time.LocalDate;
     import java.time.LocalTime;
     import java.util.List;
-
+    /**
+     * Entity representing the medication assigned to a specific client.
+     *
+     * Includes details such as the medication itself, dosage, treatment start and end dates,
+     * the current pause status, and scheduled times for medication intake.
+     * Links to both the Client and Medication entities.
+     */
     @Entity
     public class ClientMedication {
         @Id

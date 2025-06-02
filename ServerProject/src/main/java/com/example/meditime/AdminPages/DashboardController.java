@@ -8,7 +8,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+/**
+ * DashboardController manages the display of the user dashboard page.
+ *
+ * This controller retrieves the currently authenticated user's details based on their email,
+ * maps their role ID to a role name, and passes relevant information (name and role) to the
+ * dashboard view.
+ *
+ * Endpoint:
+ * - GET /dashboard : Displays the dashboard page with the user's name and role.
+ *
+ * Dependencies:
+ * - UserRepository: to retrieve user data from the database.
+ * - Spring Security Authentication: to identify the currently logged-in user.
+ */
 @Controller
 public class DashboardController {
 

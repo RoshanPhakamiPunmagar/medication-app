@@ -8,7 +8,14 @@ package com.example.meditime.dto;
 import com.example.meditime.model.Medication;
 import lombok.Data;
 import com.example.meditime.model.MedicationInteraction;
-
+/**
+ * Data Transfer Object representing an interaction between two medications.
+ *
+ * Contains details about the interaction, including the involved medications,
+ * a description of the interaction, and its severity level.
+ *
+ * Provides a static method to create a DTO instance from a MedicationInteraction entity.
+ */
 @Data
 public class MedicationInteractionDTO {
     private Long interactionId;

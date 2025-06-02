@@ -23,6 +23,25 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * MedicationLogService
+ *
+ * This service manages the creation, retrieval, updating, and deletion of MedicationLog records,
+ * which track the administration status of medications for clients. It handles:
+ *
+ * - Saving new medication logs with validation and linked entities (ClientMedication, Carer).
+ * - Calculating and updating adherence rates based on medication logs for each client medication.
+ * - Fetching medication logs by client medication.
+ * - Logging medication status by client ID and medication name.
+ * - Basic CRUD operations on MedicationLog entities.
+ *
+ * The service collaborates with related repositories for MedicationLog, ClientMedication, User,
+ * and AdherenceLog, and uses an AdherenceLogService to encapsulate adherence-related logic.
+ *
+ * Transactions are managed to ensure data consistency when saving logs and updating adherence.
+ *
+ * Proper exception handling ensures that invalid data or missing entities are handled gracefully.
+ */
 @Service
 public class MedicationLogService {
 
@@ -151,14 +170,4 @@ public class MedicationLogService {
         }
     }
 
-
-
-
-    public MedicationLog findById(Long id) {
-        return medicationLogRepository.findById(id).orElse(null);
-    }
-
-    public void delete(Long id) {
-        medicationLogRepository.deleteById(id);
-    }
 }

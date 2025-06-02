@@ -3,7 +3,11 @@ package com.example.meditime.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
+/**
+ * Entity class representing a log entry for medication administration.
+ * Tracks the scheduled and actual times the medication was given, the status of administration,
+ * notes, and the carer responsible for administering the medication.
+ */
 @Entity
 public class MedicationLog {
 

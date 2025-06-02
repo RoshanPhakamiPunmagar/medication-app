@@ -10,7 +10,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Set;
-
+/**
+ * Handles successful user authentication by redirecting users
+ * to different URLs based on their assigned roles.
+ *
+ * - Admin users are redirected to "/dashboard".
+ * - Carer users are redirected to "/download".
+ * - All other users are redirected to the login page with an unauthorized error.
+ */
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 

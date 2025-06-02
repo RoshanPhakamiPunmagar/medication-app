@@ -15,6 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for managing client data.
+ * Provides endpoints for CRUD operations and paginated retrieval of clients.
+ *
+ * Base URL: /api/clients
+ */
+
 @RestController
 @RequestMapping("api/clients")
 public class ClientController {

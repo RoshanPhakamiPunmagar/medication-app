@@ -6,6 +6,13 @@ package com.example.meditime.service;
 
 import org.springframework.stereotype.Service;
 
+/**
+ * ReportService
+ *
+ * Handles report generation tasks.
+ * Currently supports generating reports for managers by their ID.
+ */
+
 @Service
 public class ReportService {
 

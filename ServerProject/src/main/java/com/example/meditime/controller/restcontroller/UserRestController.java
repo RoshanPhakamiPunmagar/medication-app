@@ -16,7 +16,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-
+/**
+ * UserRestController handles user-related operations including:
+ * - User registration
+ * - Login validation
+ * - Assigning and removing carers to/from clients
+ * - Retrieving carers
+ *
+ * Base URL: /mobile
+ */
 @RestController
 @RequestMapping("mobile")
 public class UserRestController {

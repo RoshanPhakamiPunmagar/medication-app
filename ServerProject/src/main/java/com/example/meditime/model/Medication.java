@@ -3,6 +3,11 @@ package com.example.meditime.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity class representing a Medication.
+ * Contains basic medication details including name, description,
+ * side effects, and interaction information.
+ */
 @Entity
 public class Medication {
     @Id

@@ -7,17 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+/**
+ * Repository interface for managing MedicationInteraction entities.
+ * Provides methods to find interactions between two medications by their IDs.
+ */
 public interface MedicationInteractionRepository extends JpaRepository<MedicationInteraction, Long> {
 
-    // Return interactions for a given medication (both sides)
-  //  List<MedicationInteraction> findByMedicationId_1AndMedicationId_2(Long medicationId_1, Long medicationId_2);
-
-    // Check if two medications interact (specific pair)
-
-    
   Optional<MedicationInteraction> findByMedication1MedicationIdAndMedication2MedicationId(Medication med1, Medication med2);
 Optional<MedicationInteraction> findByMedication1MedicationIdAndMedication2MedicationId(Long med1Id, Long med2Id);
 
-
-    
 }

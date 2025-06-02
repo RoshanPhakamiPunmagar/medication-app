@@ -15,8 +15,21 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.Optional;
 
-// For mobile
-
+/**
+ * AuthApiController handles user authentication for the application.
+ *
+ * This REST controller provides an endpoint for user login. It verifies the user's credentials,
+ * and upon successful authentication, generates and returns a JWT token along with the user's
+ * name and role ID.
+ *
+ * Endpoint:
+ * - POST /api/login : Authenticates a user using email and password.
+ *
+ * Dependencies:
+ * - UserRepository: to retrieve user details from the database.
+ * - JwtUtil: to generate JWT tokens.
+ * - PasswordEncoder: to verify hashed passwords.
+ */
 @RestController
 @RequestMapping("/api")
 public class AuthApiController {

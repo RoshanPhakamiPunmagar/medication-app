@@ -5,7 +5,16 @@ import com.example.meditime.repository.RoleRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-
+/**
+ * MediTimeApplication
+ *
+ * Main Spring Boot application class.
+ *
+ * Responsibilities:
+ * - Starts the Spring Boot application.
+ * - Initializes essential roles ("Manager" and "Carer") in the database at startup
+ *   if they do not already exist.
+ */
 @SpringBootApplication
 public class MediTimeApplication {
 

@@ -9,6 +9,13 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object representing a client along with their list of assigned medications.
+ *
+ * Contains the client's ID, name, and a list of ClientMedicationDTO objects representing
+ * the medications associated with the client.
+ */
+
 @Getter
 @Setter
 public class ClientWithMedicationsDTO {

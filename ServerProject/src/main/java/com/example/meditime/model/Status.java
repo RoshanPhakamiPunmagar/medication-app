@@ -1,5 +1,7 @@
 package com.example.meditime.model;
-
+/**
+ * Simple class representing a login status with a string value.
+ */
 public class Status {
     private String status;
 

@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+
+/**
+ * Represent a client's medication details summary.
+ * Includes a list of medication names, along with associated recommendations
+ * and potential interaction warnings.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

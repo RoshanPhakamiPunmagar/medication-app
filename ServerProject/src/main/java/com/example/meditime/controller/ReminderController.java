@@ -12,7 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * REST controller for managing reminders.
+ *
+ * Provides endpoints to:
+ * - Create a new reminder
+ * - Retrieve all reminders for a specific client by client ID
+ *
+ * All endpoints are prefixed with "/api/reminders".
+ */
 @RestController
 @RequestMapping("/api/reminders")
 public class ReminderController {

@@ -10,6 +10,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class for managing medication interactions.
+ *
+ * Provides CRUD operations for MedicationInteraction entities via
+ * MedicationInteractionRepository. Also includes a method to check
+ * if a newly prescribed medication interacts with any existing
+ * medications assigned to a specific client.
+ *
+ * The checkInteractions method queries existing medications for the client
+ * and verifies if any interaction exists between those and the new medication,
+ * considering both directions of the interaction.
+ */
 @Service
 public class MedicationInteractionService {
 

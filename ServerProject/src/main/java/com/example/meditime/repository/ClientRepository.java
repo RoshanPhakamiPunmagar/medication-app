@@ -7,7 +7,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-
+/**
+ * Repository interface for managing Client entities.
+ * Provides methods to retrieve clients associated with a specific carer,
+ * as well as standard CRUD operations.
+ */
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
 

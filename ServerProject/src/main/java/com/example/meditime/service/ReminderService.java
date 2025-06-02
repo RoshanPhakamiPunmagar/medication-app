@@ -7,7 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * ReminderService
+ *
+ * Provides operations related to Reminder entities, including:
+ * - Creating new reminders
+ * - Retrieving reminders associated with a specific client by their client ID
+ *
+ * Interacts with the ReminderRepository for persistence.
+ */
 @Service
 public class ReminderService {
 

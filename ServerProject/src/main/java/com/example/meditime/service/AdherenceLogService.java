@@ -7,7 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * Service class for managing adherence logs related to client medications.
+ *
+ * Provides methods to retrieve all adherence logs, save new logs,
+ * fetch logs by client medication ID, and update adherence rates.
+ *
+ * Interacts with the AdherenceLogRepository to perform database operations.
+ */
 @Service
 public class AdherenceLogService {
 

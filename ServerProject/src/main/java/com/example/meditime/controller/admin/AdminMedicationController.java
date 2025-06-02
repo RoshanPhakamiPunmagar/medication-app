@@ -6,7 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+/**
+ * AdminMedicationController provides administrative functionality for managing medications.
+ *
+ * This controller allows administrators to view a list of medications, add new medications,
+ * edit existing ones, and delete medications from the system.
+ *
+ * Endpoints:
+ * - GET  /admin/medications           : Displays a list of all medications.
+ * - GET  /admin/medications/add       : Shows the form to add a new medication.
+ * - POST /admin/medications/save      : Saves a new or edited medication to the database.
+ * - GET  /admin/medications/edit/{id} : Displays the form to edit an existing medication.
+ * - GET  /admin/medications/delete/{id} : Deletes the specified medication.
+ *
+ * Dependencies:
+ * - MedicationRepository: used for CRUD operations on Medication entities.
+ */
 @Controller
 @RequestMapping("/admin/medications")
 public class AdminMedicationController {

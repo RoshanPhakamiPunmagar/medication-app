@@ -18,7 +18,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
+/**
+ * UserService
+ *
+ * Provides user-related operations including:
+ * - User retrieval by ID, email, or role
+ * - Adding new users with role assignment
+ * - Deleting users
+ * - Assigning and removing carers from clients
+ * - User validation (password check)
+ * - Integration with Spring Security's UserDetailsService for authentication
+ */
 @Service
 public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
 

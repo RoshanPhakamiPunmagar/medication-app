@@ -2,7 +2,12 @@ package com.example.meditime.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
+/**
+ * Entity representing a Client in the system.
+ *
+ * Contains basic client details such as ID, name, date of birth,
+ * contact information, and the ID of the associated carer user.
+ */
 @Entity
 public class Client {
 

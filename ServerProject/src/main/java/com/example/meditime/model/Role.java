@@ -2,7 +2,9 @@
 package com.example.meditime.model;
 
 import jakarta.persistence.*;
-
+/**
+ * Entity representing a user role with a unique role name.
+ */
 @Entity
 public class Role {
     @Id

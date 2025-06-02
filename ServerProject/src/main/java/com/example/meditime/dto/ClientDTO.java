@@ -1,5 +1,10 @@
 package com.example.meditime.dto;
-
+/**
+ * Data Transfer Object for Client entity.
+ *
+ * Used to transfer client data across layers, encapsulating
+ * client ID, name, date of birth, contact information, and assigned carer ID.
+ */
 public class ClientDTO {
     private Long clientId;
     private String name;

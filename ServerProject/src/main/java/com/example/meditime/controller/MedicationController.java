@@ -14,6 +14,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing medications.
+ *
+ * Provides endpoints to:
+ * - Retrieve a list of all medications
+ * - Assign medications to clients
+ *
+ * All endpoints are prefixed with "/api/medications".
+ */
 @RestController
 @RequestMapping("/api/medications")
 public class MedicationController {

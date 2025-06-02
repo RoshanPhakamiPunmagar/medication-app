@@ -8,14 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Repository interface for Medication entities.
+ * Provides method to find a medication by its unique name.
+ */
 @Repository
 public interface MedicationRepository extends JpaRepository<Medication, Long> {
-
-
     Optional<Medication> findByName(String name);
-
-    // Get all logs for a specific client
-
 
 }

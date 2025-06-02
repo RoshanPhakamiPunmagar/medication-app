@@ -9,7 +9,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+/**
+ * AdminController provides administrative functionality for managing users.
+ *
+ * This controller allows an admin to list all users, add new users, edit existing user details,
+ * and delete users. It handles password encoding for new and updated users and ensures that
+ * existing passwords are preserved if not explicitly changed.
+ *
+ * Endpoints:
+ * - GET  /admin/users           : Displays a list of all users.
+ * - GET  /admin/users/add       : Shows the form to add a new user.
+ * - POST /admin/users/save      : Saves a new or updated user (with password hashing and role handling).
+ * - GET  /admin/users/edit/{id} : Displays the form to edit an existing user.
+ * - GET  /admin/users/delete/{id} : Deletes the user with the specified ID.
+ *
+ * Dependencies:
+ * - UserRepository: to access user data from the database.
+ * - PasswordEncoder: to securely hash user passwords.
+ */
 @Controller
 @RequestMapping("/admin/users")
 public class AdminController {

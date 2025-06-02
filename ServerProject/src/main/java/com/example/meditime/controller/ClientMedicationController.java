@@ -18,6 +18,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * REST controller for managing medication assignments and schedules for clients.
+ *
+ * Provides endpoints to:
+ * - Retrieve clients along with their medications based on carer ID
+ * - Assign medications to clients
+ * - Fetch medication schedules for individual clients
+ * - Get detailed medication assignments for clients of a specific carer
+ * - Retrieve medication names and adherence rates for clients
+ *
+ * All endpoints are prefixed with "/api/medication".
+ */
 @RestController
 @RequestMapping("/api/medication")
 public class ClientMedicationController {
@@ -30,11 +42,6 @@ public class ClientMedicationController {
         this.clientService = clientService;
     }
 
-//    @GetMapping("/carer/{carerId}/clients-with-medications")
-//    public ResponseEntity<List<ClientMedicationDTO>> getClientsWithMedications(@PathVariable Long carerId) {
-//        List<ClientMedicationDTO> result = clientMedicationService.getClientsWithMedications(carerId);
-//        return ResponseEntity.ok(result);
-//    }
 
     @GetMapping("/clients-with-medications/{carerId}")
     public List<ClientWithMedicationsDTO> getClientsWithMedications(@PathVariable Long carerId) {

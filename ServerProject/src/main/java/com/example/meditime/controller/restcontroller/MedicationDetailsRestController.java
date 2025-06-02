@@ -16,7 +16,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * MedicationDetailsRestController provides mobile clients with detailed medication information,
+ * including drug interactions and clinical recommendations using AI.
+ *
+ * Endpoints:
+ * - GET /mobile/meds/details?medicationList=1,2,3
+ *   Accepts a list of medication IDs, retrieves their names, and sends them to an AI service for analysis.
+ *
+ * Integration:
+ * - OpenAiChatClient: Provides drug interaction analysis using a GPT-based language model.
+ * - MedicationService: Retrieves medication entities from the database.
+ *
+ * Output Format:
+ * {
+ *   "medications": ["Med1", "Med2"],
+ *   "interactions": "Possible side effects or interactions",
+ *   "recommendations": "Clinical suggestions"
+ * }
+ */
 @RestController
 @RequestMapping("mobile/meds")
 public class MedicationDetailsRestController {

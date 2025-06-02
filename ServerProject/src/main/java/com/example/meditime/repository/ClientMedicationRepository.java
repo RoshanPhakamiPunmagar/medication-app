@@ -10,6 +10,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * Repository interface for managing ClientMedication entities.
+ * Provides methods to find medications associated with a specific client,
+ * including fetching medication IDs by client ID and finding by client and medication IDs.
+ */
 public interface ClientMedicationRepository extends JpaRepository<ClientMedication, Long> {
     List<ClientMedication> findByClient_ClientId(Long clientId);
 

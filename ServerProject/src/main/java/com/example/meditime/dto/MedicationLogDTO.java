@@ -9,7 +9,16 @@ import lombok.Data;
 import com.example.meditime.model.MedicationLog;
 
 import java.time.format.DateTimeParseException;
-
+/**
+ * Data Transfer Object representing a medication log entry.
+ *
+ * Contains information about a specific medication administration event,
+ * including the associated client medication ID, carer ID, scheduled and actual times,
+ * status, and any notes.
+ *
+ * Includes a static method to create a DTO from a MedicationLog entity.
+ * Time fields are represented as Strings for easier JSON serialization and deserialization.
+ */
 @Data
 public class MedicationLogDTO {
     private Long logId;

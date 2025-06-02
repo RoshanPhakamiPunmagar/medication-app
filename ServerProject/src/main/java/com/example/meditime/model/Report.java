@@ -2,7 +2,10 @@ package com.example.meditime.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
+/**
+ * Entity representing a report written by a carer about a client.
+ * Stores notes and the date the report was created.
+ */
 @Entity
 public class Report {
 

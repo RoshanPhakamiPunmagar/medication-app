@@ -2,6 +2,10 @@ package com.example.meditime.model;
 
 import jakarta.persistence.*;
 
+
+/**
+ * Entity representing a user with identification, contact, authentication, and role information.
+ */
 @Entity
 public class User {
 

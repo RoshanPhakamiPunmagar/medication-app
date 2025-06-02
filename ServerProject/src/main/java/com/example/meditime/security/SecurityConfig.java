@@ -13,7 +13,30 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
+/**
+ * Security configuration class for the application, defining security filter chains and authentication management.
+ *
+ * This class sets up two SecurityFilterChains:
+ * 1. webFilterChain (Order 1) - For web-based access:
+ *    - Disables CSRF protection (typically for APIs or non-browser clients).
+ *    - Configures form login with a custom login success handler.
+ *    - Defines public endpoints (e.g., login, signup, static resources, some APIs).
+ *    - Restricts access to admin URLs to users with ADMIN role.
+ *    - Denies all other requests.
+ *    - Uses session-based authentication with stateful sessions.
+ *
+ * 2. filterChain - For mobile and API access:
+ *    - Disables CSRF protection.
+ *    - Defines publicly accessible mobile and API endpoints.
+ *    - Requires authentication for all other endpoints.
+ *    - Uses stateless session management suitable for JWT token-based authentication.
+ *
+ * Other configurations:
+ * - PasswordEncoder bean using BCrypt for password hashing.
+ * - AuthenticationManager bean for authentication handling.
+ *
+ * This class integrates JWT Authentication Filter and CustomUserDetailsService for user management and security enforcement.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

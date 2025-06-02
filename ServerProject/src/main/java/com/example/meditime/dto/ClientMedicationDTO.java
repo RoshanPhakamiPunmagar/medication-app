@@ -11,6 +11,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Data Transfer Object representing the medication details assigned to a client.
+ *
+ * Contains identifiers for client, medication, and client-medication mapping,
+ * along with medication dosage, client and medication names, start/end dates,
+ * scheduled intake times, and pause status.
+ *
+ * Also supports nested lists of medications, useful for aggregating multiple medications for a client.
+ */
 public class ClientMedicationDTO {
 
     // Getters and Setters

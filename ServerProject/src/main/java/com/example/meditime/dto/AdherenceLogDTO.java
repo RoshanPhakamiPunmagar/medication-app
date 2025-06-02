@@ -7,7 +7,12 @@ package com.example.meditime.dto;
 
 import lombok.Data;
 import com.example.meditime.model.AdherenceLog;
-
+/**
+ * Data Transfer Object for AdherenceLog entity.
+ *
+ * Encapsulates adherence log details including user name, medication name,
+ * checked time, and adherence rate for use in API responses or UI layers.
+ */
 @Data
 public class AdherenceLogDTO {
     private Long adherenceId;

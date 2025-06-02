@@ -5,7 +5,12 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
+/**
+ * Entity representing an adherence log entry for medication administration.
+ *
+ * Tracks when a medication was checked, the user who checked it, and the adherence rate.
+ * Links to the associated ClientMedication, User (carer), and MedicationLog entities.
+ */
 @Entity
 public class AdherenceLog {
     @Id

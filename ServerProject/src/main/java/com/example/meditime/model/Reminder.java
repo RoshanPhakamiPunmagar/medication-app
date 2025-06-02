@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 
 import java.time.LocalTime;
 
+/**
+ * Entity class representing a reminder for a specific client medication.
+ * Contains the time of the reminder and the type/category of reminder (e.g., notification type).
+ */
 @Entity
 public class Reminder {
     @Id

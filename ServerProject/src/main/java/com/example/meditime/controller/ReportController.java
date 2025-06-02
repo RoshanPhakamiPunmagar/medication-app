@@ -8,7 +8,12 @@ package com.example.meditime.controller;
 import com.example.meditime.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+/**
+ * REST controller for generating reports.
+ *
+ * Provides endpoints to generate reports, such as manager-specific reports.
+ * All endpoints are prefixed with "/api/reports".
+ */
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {

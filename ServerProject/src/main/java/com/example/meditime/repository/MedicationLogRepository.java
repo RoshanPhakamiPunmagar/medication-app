@@ -8,6 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing MedicationLog entities.
+ * Provides methods to retrieve and count medication logs based on client, status, and medication details.
+ */
 @Repository
 public interface MedicationLogRepository extends JpaRepository<MedicationLog, Long> {
 

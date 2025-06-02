@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
@@ -40,10 +39,5 @@ public class UserController {
     @GetMapping("/download")
     public String showDownloadPage() {
         return "download";
-    }
-
-    @GetMapping("/faq")
-    public String showFaqPage() {
-        return "faq"; // Returns the download.html template
     }
 }

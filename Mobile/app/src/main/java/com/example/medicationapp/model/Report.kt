@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 
 data class Report @RequiresApi(Build.VERSION_CODES.O) constructor(
-    val reportId: Long,
+    val reportId: Long = 0,
 
     val carerId: Int,
     val clientId: Long,

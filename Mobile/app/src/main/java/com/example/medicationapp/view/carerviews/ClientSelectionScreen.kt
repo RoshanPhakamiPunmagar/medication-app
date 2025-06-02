@@ -46,6 +46,7 @@ fun ClientSelectionScreen(
     carerId: Long,
     clientMedicationViewModel: ClientMedicationViewModel = viewModel(),
     clientMedsDetailsViewModel: MedicationDetailsViewModel = viewModel(),
+    clientMedsDTOs : List<ClientMedicationDTO>?
 ) {
 
     // Observe the list of clients with their medications from the ViewModel
@@ -149,7 +150,10 @@ fun ClientSelectionScreen(
                         item { Text("No medications assigned.") }
                     } else {
                         items(selectedClient?.medications ?: emptyList()) { med ->
-                            MedicationCard(med) {
+                            MedicationCard(
+                                med,
+                                clientMedicationDto = clientMedsDTOs
+                            ) {
                                 selectedMedication = med
                                 showLogDialog = true
                             }
@@ -182,11 +186,15 @@ fun ClientSelectionScreen(
                 item {
                     Button(
                         onClick = {
-                            showMedicalAiDetails = !showMedicalAiDetails
-                            if (showMedicalAiDetails) {
-                                selectedClient?.let {
-                                    medicationLogViewModel.fetchLogs(it.clientId)
-                                }
+                            selectedClient?.let { client ->
+                                // Always fetch first
+                                Log.d("checking","beep clcicked")
+                                medicationLogViewModel.fetchAiLogs(client.clientId)
+                                // Then toggle the UI
+                                showMedicalAiDetails = !showMedicalAiDetails
+                            } ?: run {
+                                // Handle null client case
+                                Log.e("ClientError", "No client selected")
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -197,11 +205,15 @@ fun ClientSelectionScreen(
 
                 if (showMedicalAiDetails) {
                     item {
-                        val response = aiAnalysis
-                        if (response != null) {
-                            AiAnalysisCard(response)
-                        } else {
-                            NoAdherenceMessage()
+                        // Get the same ViewModel instance
+
+                        val aiAnalysis by medicationLogViewModel.aiAnalysis.collectAsState()
+                        val isLoading = medicationLogViewModel.isLoading
+
+                        when {
+                            isLoading -> CircularProgressIndicator()
+                            aiAnalysis != null -> AiAnalysisCard(viewModel = medicationLogViewModel, response = aiAnalysis!!)
+                            else -> NoAdherenceMessage()
                         }
                     }
                 }
@@ -310,30 +322,7 @@ fun NoAdherenceMessage() {
         )
     }
 }
-@Composable
-private fun MedicationListSection(
-    selectedClient: ClientWithMedicationsDTO?,
-    onMedicationClick: (ClientMedication) -> Unit
-) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            "Medications for ${selectedClient?.clientName}:",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
 
-        if (selectedClient?.medications.isNullOrEmpty()) {
-            Text("No medications assigned.")
-        } else {
-            selectedClient?.medications?.forEach { med ->
-                MedicationCard(
-                    medication = med,
-                    onClick = { onMedicationClick(med) }
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun ClientCard(
@@ -354,11 +343,18 @@ private fun ClientCard(
     }
 }
 
+
 @Composable
 private fun MedicationCard(
     medication: ClientMedication,
+    clientMedicationDto: List<ClientMedicationDTO>?,
     onClick: () -> Unit
 ) {
+
+
+    val viewModelClientMeds: ClientMedicationViewModel = viewModel()
+    val clientMedsData by viewModelClientMeds.clientsMedsLoggedUser.collectAsState()
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -373,17 +369,46 @@ private fun MedicationCard(
         )
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("Dosage: ${medication.dosage}", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "Medication: ${getMedsName(clientMedicationDto, medication.medicationId)}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                "Dosage: ${medication.dosage}",
+                style = MaterialTheme.typography.bodyMedium
+            )
             Text("From: ${medication.startDate}", style = MaterialTheme.typography.bodySmall)
             Text("To: ${medication.endDate}", style = MaterialTheme.typography.bodySmall)
-            Text("Times: ${medication.scheduledTimes.joinToString()}", style = MaterialTheme.typography.bodySmall)
+            Text(
+                "Times: ${medication.scheduledTimes.joinToString()}",
+                style = MaterialTheme.typography.bodySmall
+            )
             if (medication.isPaused) {
                 Text("Status: Paused", color = MaterialTheme.colorScheme.error)
             }
         }
+
     }
 }
 
+//returns name
+fun getMedsName(clientMedicationDtos: List<ClientMedicationDTO>?, medsId: Long): String {
+    Log.d("debug", "Looking for medication ID: $medsId")
+    if (clientMedicationDtos == null || clientMedicationDtos.isEmpty()) {
+        Log.d("debug", "DTO list is null or empty.")
+        return ""
+    }
+
+    clientMedicationDtos.forEach { dto ->
+        Log.d("debug", "Checking dto.medicationId: ${dto.medicationId}")
+        if (dto.medicationId != null && dto.medicationId == medsId) {
+            Log.d("debug", "Match found: ${dto.medicationName}")
+            return dto.medicationName ?: ""
+        }
+    }
+    Log.d("debug", "No match found.")
+    return ""
+}
 @Composable
 fun MedicationLogDialog(
     carerId: Long,
@@ -495,67 +520,58 @@ fun MedicationLogDialog(
         }
     )
 }
-
 @Composable
-fun AiAnalysisCard(response: AiAnalysisResponse) {
+fun AiAnalysisCard(
+    viewModel: MedicationLogViewModel = viewModel(),
+    response: AiAnalysisResponse
+) {
+    // Observe the state from the same ViewModel instance
+    val aiAnalysis by viewModel.aiAnalysis.collectAsState()
+    val isLoading = viewModel.isLoading
+    val error = viewModel.error
 
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Patterns Section
+            if (response.patterns.isNotEmpty()) {
+                AnalysisSection(
+                    title = "Patterns Identified",
+                    content = response.patterns,
+                    icon = Icons.Default.Insights,
+                    color = Color(0xFF6200EE)
+                )
+            }
 
-    val medicationViewModel: MedicationLogViewModel = viewModel()
-    val error = medicationViewModel.error
-    val isLoading = medicationViewModel.isLoading
-    when {
-        isLoading -> {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-        }
+            // Risks Section
+            if (response.risks.isNotEmpty()) {
+                AnalysisSection(
+                    title = "Potential Risks",
+                    content = response.risks,
+                    icon = Icons.Default.Warning,
+                    color = Color(0xFFD32F2F)
+                )
+            }
 
-        else -> {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    // Patterns Section
-                    if (response.patterns.isNotEmpty()) {
-                        AnalysisSection(
-                            title = "Patterns Identified",
-                            content = response.patterns,
-                            icon = Icons.Default.Insights,
-                            color = Color(0xFF6200EE) // Purple
-                        )
-                    }
-
-                    // Risks Section
-                    if (response.risks.isNotEmpty()) {
-                        AnalysisSection(
-                            title = "Potential Risks",
-                            content = response.risks,
-                            icon = Icons.Default.Warning,
-                            color = Color(0xFFD32F2F) // Red
-                        )
-                    }
-
-                    // Recommendations Section
-                    if (response.recommendations.isNotEmpty()) {
-                        AnalysisSection(
-                            title = "Recommendations",
-                            content = response.recommendations,
-                            icon = Icons.Default.Lightbulb,
-                            color = Color(0xFF388E3C) // Green
-                        )
-                    }
-                }
+            // Recommendations Section
+            if (response.recommendations.isNotEmpty()) {
+                AnalysisSection(
+                    title = "Recommendations",
+                    content = response.recommendations,
+                    icon = Icons.Default.Lightbulb,
+                    color = Color(0xFF388E3C)
+                )
             }
         }
     }
 }
-
 @Composable
 private fun AnalysisSection(
     title: String,

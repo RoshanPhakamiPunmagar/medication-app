@@ -143,7 +143,8 @@ fun AppNavigation(navController: NavHostController) {
             CarrerMainScreen(
                 navController = navController,
                 carerId = carerId.value,
-                context = context
+                context = context,
+                clientMedsDTO = clientMedsData
             )
         }
 
@@ -179,7 +180,9 @@ fun AppNavigation(navController: NavHostController) {
             ClientSelectionScreen(
                 clientMedicationViewModel = viewModel(),
                 clientMedsDetailsViewModel = viewModel(),
+                clientMedsDTOs = clientMedsData,
                 carerId = storedUserId.value
+
             )
         }
 

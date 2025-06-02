@@ -28,19 +28,19 @@ public class SecurityConfig {
 
 
     @Bean
+    @Order(1)
     public SecurityFilterChain webFilterChain(HttpSecurity http,
                                               CustomLoginSuccessHandler customLoginSuccessHandler) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(userDetailsService)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/faq",
-                                "/login",
-                                "/signup",
-                                "/download",
-                                "/css/**",
-                                "/js/**","/mobile/**",
-                                "/meds/**",
+                        .requestMatchers("/login", "/signup", "/download", "/css/**", "/js/**","/mobile/**","/meds/**",
+                                "/api/medication/get/{carerId}",
+                                "/logs/get/{id}",
+                                "logs/get/ai/{patientId}",
+                                "/logs/post/log",
+                                "/meds/details",
                                 "/api/**"
                                 ).permitAll()
                         .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
@@ -71,15 +71,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/faq",
-                                "/mobile/**",
-                                "/api/**",
-                                "/meds/**",
-                                "/login/**",
-                                "/signup",
-                                "/download",
-                                "/css/**",
-                                "/js/**"
+                                "/mobile/secureData", "/mobile/test-email", "/mobile/is_verified", "/mobile/verify",
+                                "/mobile/login", "/mobile/removeCarerFromClient",
+                                "/api/medication/clients-with-medications/{carerId}",
+                                "/api/medication/schedule/{clientId}", "api/medication/names/{clientId}",
+                                "/mobile/**", "/mobile/userCarer", "mobile/check",
+                                "api/clients", "api/medications", "api/medication/assign", "/meds/**", "/login/**", "/meds/details",
+                                "/api/auth/**", "/mobile/user", "/signup", "/download", "/css/**", "/js/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -89,7 +87,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 
 
 

@@ -20,6 +20,8 @@ import com.example.medicationapp.model.dto.MedicationLogDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.net.SocketTimeoutException
 import kotlin.jvm.java
 
 
@@ -31,10 +33,6 @@ class MedicationLogViewModel : ViewModel() {
     val adhlogs: StateFlow<List<AdherenceLogDTO>?> = _logs
 
 
-    private val _aiAnalysis  = MutableStateFlow<AiAnalysisResponse?>(null)
-    val aiAnalysis : StateFlow<AiAnalysisResponse?> = _aiAnalysis
-
-
     var success by mutableStateOf(false)
     private val api = RetrofitService.retrofit.create(ApiService::class.java)
 
@@ -42,9 +40,11 @@ class MedicationLogViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
 
-
     var error by mutableStateOf("")
         private set
+
+    private val _aiAnalysis = MutableStateFlow<AiAnalysisResponse?>(null)
+    val aiAnalysis: StateFlow<AiAnalysisResponse?> = _aiAnalysis
 
     fun postLog(log: MedicationLogDTO) {
         viewModelScope.launch {
@@ -72,10 +72,12 @@ class MedicationLogViewModel : ViewModel() {
         error = ""
         api.getAdherenceLogs(id).enqueue(object: Callback<List<AdherenceLogDTO>>
         {
+
             override fun onResponse(
                 call: Call<List<AdherenceLogDTO>>,
                 response: Response<List<AdherenceLogDTO>>
             ) {
+                isLoading = false
                 if(response.isSuccessful)
                 {
                     _logs.value = response.body()!!
@@ -87,7 +89,8 @@ class MedicationLogViewModel : ViewModel() {
                 call: Call<List<AdherenceLogDTO>?>,
                 t: Throwable
             ) {
-                TODO("Not yet implemented")
+                isLoading = false
+                error = "Failure: ${t.localizedMessage}"
             }
 
         }
@@ -97,30 +100,29 @@ class MedicationLogViewModel : ViewModel() {
     fun fetchAiLogs(id: Long) {
         isLoading = true
         error = ""
-        api.getAiAnalysis(id).enqueue(object: Callback<AiAnalysisResponse>
-        {
+        api.getAiAnalysis(id).enqueue(object : Callback<AiAnalysisResponse> {
             override fun onResponse(
                 call: Call<AiAnalysisResponse>,
                 response: Response<AiAnalysisResponse>
             ) {
                 isLoading = false
-                if(response.isSuccessful)
-                {
-                    _aiAnalysis.value = response.body()!!
-
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _aiAnalysis.value = it
+                    } ?: run {
+                        error = "Empty response"
+                    }
+                } else {
+                    error = "Server error: ${response.code()}"
                 }
             }
 
-            override fun onFailure(
-                call: Call<AiAnalysisResponse>,
-                t: Throwable
-            ) {
+            override fun onFailure(call: Call<AiAnalysisResponse>, t: Throwable) {
                 isLoading = false
-                error = "Failure: ${t.localizedMessage}"
+                error = "Network error: ${t.localizedMessage}"
+                Log.e("FetchAI", "Network error", t)
             }
-
-        }
-        )
+        })
     }
 
 

@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class Reminder(
-    val reminderId: Long,
+    val reminderId: Long = 0,
 
     val clientMedicationId: Long,
 

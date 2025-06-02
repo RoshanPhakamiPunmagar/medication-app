@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.medicationapp.model.*
 import com.example.medicationapp.model.dto.ClientMedicationDTO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalTime
 import com.example.medicationapp.model.ClientMedication
 class ClientMedicationViewModel : ViewModel() {
 
@@ -172,5 +174,26 @@ class ClientMedicationViewModel : ViewModel() {
                 }
             })
     }
+
+//    fun fetchMedications(medsId: Long, onResult: (String?) -> Unit) {
+//        apiService.getMeds(medsId).enqueue(object : Callback<String> {
+//            override fun onResponse(call: Call<String>, response: Response<String>) {
+//                if (response.isSuccessful) {
+//                    onResult(response.body())
+//                } else {
+//                    onResult(null)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<String>, t: Throwable) {
+//                onResult(null)
+//            }
+//        })
+//    }
+
+
+
+
+
 
 }

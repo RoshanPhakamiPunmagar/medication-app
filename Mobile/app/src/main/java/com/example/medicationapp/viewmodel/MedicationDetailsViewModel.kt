@@ -1,5 +1,6 @@
 package com.example.medicationapp.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,11 +30,11 @@ class MedicationDetailsViewModel : ViewModel() {
 
         apiService.getMedicationWithName(medsName).enqueue(object : Callback<ClientMedsDescriptions> {
             override fun onResponse(call: Call<ClientMedsDescriptions>, response: Response<ClientMedsDescriptions>) {
+
                 isLoading = false
                 if (response.isSuccessful) {
                     medsDetails = response.body()
-                    println(medsDetails?.getInteractions())
-                    println(medsDetails?.getRecommendations())
+
                 } else {
                     error = "Error: Try again"
                 }

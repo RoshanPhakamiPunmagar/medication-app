@@ -3,7 +3,7 @@ package com.example.medicationapp.model
 
 
 data class MedicationInteraction(
-    val interactionId: Long,
+    val interactionId: Long = 0,
 
     val medication1Id: Long,
 

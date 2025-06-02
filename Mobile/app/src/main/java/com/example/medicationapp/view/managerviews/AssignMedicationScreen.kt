@@ -26,6 +26,21 @@ import androidx.compose.runtime.livedata.observeAsState
 import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.TimeWheelPickerDialog
 import com.example.medicationapp.viewmodel.ClientMedicationViewModel
+/**
+ * Composable screen for assigning medications to clients.
+ *
+ * Features:
+ * - Dropdown selectors for clients and medications fetched from respective ViewModels.
+ * - Input fields for dosage, start date, end date, and scheduled times.
+ * - Date pickers for selecting start and end dates.
+ * - Custom time picker dialog for adding multiple scheduled medication times.
+ * - Validation to ensure all necessary inputs are provided before enabling assignment.
+ * - Displays success or error messages after assignment attempts.
+ * - Clear button to reset the entire form.
+ * - Uses vertical scrolling to accommodate all input fields and selections.
+ * - Toast notifications to provide immediate feedback on assignment results.
+ */
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

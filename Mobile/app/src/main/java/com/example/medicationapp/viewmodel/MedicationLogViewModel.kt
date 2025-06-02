@@ -23,6 +23,17 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.SocketTimeoutException
 import kotlin.jvm.java
+/**
+ * ViewModel managing medication adherence logs and AI analysis data.
+ *
+ * Responsibilities:
+ * - Posting medication adherence logs asynchronously to the backend.
+ * - Fetching adherence logs and AI analysis results for a specific client.
+ * - Managing loading state, success flags, and error messages using Compose mutable state and StateFlow.
+ * - Handling Retrofit network calls with proper error handling and state updates.
+ * - Exposes StateFlows and mutable states for reactive UI updates.
+ */
+
 
 
 class MedicationLogViewModel : ViewModel() {

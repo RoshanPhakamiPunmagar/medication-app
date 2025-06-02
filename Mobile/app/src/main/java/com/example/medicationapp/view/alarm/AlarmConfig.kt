@@ -5,6 +5,12 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 
+/**
+ * Singleton object managing alarm ringtone playback.
+ * Provides functions to play the default alarm ringtone or notification sound if alarm sound is unavailable.
+ * Allows stopping the ringtone playback.
+ */
+
 object AlarmConfig {
     var ringtone: Ringtone? = null
 

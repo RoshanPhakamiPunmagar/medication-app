@@ -8,6 +8,18 @@ import android.widget.NumberPicker
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.example.medicationapp.R
+/**
+ * Composable function that displays a native Android AlertDialog containing
+ * NumberPickers for selecting hour and minute values.
+ *
+ * This dialog allows the user to pick a time by selecting an hour (0-23) and a minute (0-59).
+ * The dialog uses a custom layout resource with NumberPickers and integrates it within Compose.
+ *
+ * @param onDismiss Callback invoked when the dialog is dismissed or cancelled.
+ * @param onTimeSelected Callback invoked with the selected hour and minute when the user confirms the selection.
+ */
+
+
 
 @Composable
 fun TimeWheelPickerDialog(

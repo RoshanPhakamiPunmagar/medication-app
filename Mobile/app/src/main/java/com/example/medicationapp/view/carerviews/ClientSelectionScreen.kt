@@ -40,6 +40,15 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.forEach
 import androidx.compose.foundation.lazy.items
 
+/**
+ * Composable screen that displays a list of clients for a given carer, allowing selection to view their medications.
+ * - Shows a scrollable list of clients with basic info.
+ * - On client selection, displays the medications assigned to that client.
+ * - Provides buttons to navigate back to client list and to toggle showing additional AI-generated medication details.
+ * - Uses ViewModels to observe and fetch client-medication data.
+ * - Handles UI state for selected client and visibility of detailed info.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientSelectionScreen(

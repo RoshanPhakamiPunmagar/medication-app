@@ -52,6 +52,19 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.forEach
 import androidx.compose.foundation.lazy.items
 
+/**
+ * Composable screen that displays a paginated list of clients.
+ *
+ * Features:
+ * - Fetches clients data with pagination via ClientViewModel.
+ * - Shows a loading indicator while clients list is empty.
+ * - Displays clients in a scrollable LazyColumn using ClientItem composable.
+ * - Provides pagination controls ("Previous" and "Load More") to navigate through pages.
+ * - Each client item displays basic information: name, date of birth, and contact phone.
+ * - Uses Material3 components for styling and layout.
+ */
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

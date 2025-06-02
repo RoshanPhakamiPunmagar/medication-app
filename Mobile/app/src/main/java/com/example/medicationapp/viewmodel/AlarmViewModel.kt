@@ -9,6 +9,15 @@ import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.alarm.AlarmScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+/**
+ * ViewModel class for managing alarm-related data and logic.
+ *
+ * Extends AndroidViewModel to have access to the Application context,
+ * which can be used for operations requiring context within the ViewModel.
+ *
+ * @param application The Application instance used to retrieve the application context.
+ */
+
 
 class AlarmViewModel(application: Application) : AndroidViewModel(application) {
 

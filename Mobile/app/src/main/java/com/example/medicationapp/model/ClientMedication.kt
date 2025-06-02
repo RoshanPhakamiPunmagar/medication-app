@@ -1,10 +1,17 @@
+
 package com.example.medicationapp.model
 
 import java.time.LocalDate
 import java.time.LocalTime
-import kotlinx.parcelize.Parcelize
-import android.os.Parcelable
 import java.io.Serializable
+
+/**Defines the ClientMedication entity representing the relationship between clients and their medications.
+Each entry links a client to a specific medication, with details like dosage, start/end dates, and scheduled times.
+This entity uses Room annotations to define table structure, foreign key relationships, and indexing.
+Parcelable implementation allows ClientMedication instances to be passed between Android components.
+ **/
+
+
 
 data class ClientMedication(
     val clientMedicationId: Long,

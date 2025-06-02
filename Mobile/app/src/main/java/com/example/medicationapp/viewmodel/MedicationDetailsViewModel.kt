@@ -10,6 +10,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * ViewModel responsible for fetching and managing detailed medication information.
+ *
+ * Responsibilities:
+ * - Retrieves medication details from the backend based on a list of medication IDs.
+ * - Maintains UI state for loading status, fetched medication details, and error messages using Compose's mutableStateOf.
+ * - Handles API responses asynchronously via Retrofit, updating state accordingly.
+ * - Exposes state variables to allow UI components to reactively display loading, data, or error states.
+ */
+
 class MedicationDetailsViewModel : ViewModel() {
 
     // Use the singleton RetrofitService object

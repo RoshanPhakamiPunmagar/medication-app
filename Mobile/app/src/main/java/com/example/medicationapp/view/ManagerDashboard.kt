@@ -20,6 +20,21 @@ import com.example.medicationapp.view.managerviews.ClientListScreen
 import com.example.medicationapp.view.managerviews.ReportScreen
 import com.example.medicationapp.viewmodel.ClientViewModel
 
+/**
+ * Composable function for the Manager main screen with bottom navigation.
+ *
+ * Features:
+ * - Displays a top app bar with the app title.
+ * - Provides a bottom navigation bar with tabs for managing clients, assigning carers,
+ *   assigning medication, generating reports, and accessing settings.
+ * - Uses a nested NavHost for navigating between different manager-related screens.
+ * - Maintains and restores navigation state for smooth user experience.
+ *
+ * @param context Context used for navigation and other operations.
+ * @param navController NavHostController for managing navigation at the app level.
+ */
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

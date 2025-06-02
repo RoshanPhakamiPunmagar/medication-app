@@ -18,6 +18,22 @@ import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.carer.IncidentNotesScreen
 import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 
+/**
+ * Composable function that represents the main screen for Carer users with bottom navigation.
+ *
+ * Features:
+ * - Displays a TopAppBar with the app name.
+ * - Implements a bottom navigation bar with three items: See Client, Incident Reports, and Settings.
+ * - Uses a nested NavHost to handle navigation within the Carer section.
+ * - Maintains the selected bottom navigation item state across recompositions.
+ * - Passes the carerId argument to relevant screens for personalized content.
+ * - Integrates ViewModels scoped to the composables for managing UI data.
+ *
+ * @param navController The NavHostController for overall app navigation.
+ * @param carerId The unique ID of the logged-in carer to fetch relevant data.
+ * @param context The Android Context used for some composables like settings.
+ */
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

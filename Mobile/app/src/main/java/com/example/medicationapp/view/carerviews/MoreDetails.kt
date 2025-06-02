@@ -23,6 +23,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.viewmodel.MedicationDetailsViewModel
 
+/**
+ * Composable function displaying detailed medication information.
+ *
+ * Shows loading indicator while data is loading.
+ * Displays medication recommendations and interactions when data is available.
+ * Shows error message in red if an error occurs.
+ * Uses a Card with rounded corners and padding for content presentation.
+ * Applies background and centered alignment for overall layout.
+ */
+
+
 @Composable
 fun MoreDetails(viewModel: MedicationDetailsViewModel = viewModel() ){
     val meds = viewModel.medsDetails

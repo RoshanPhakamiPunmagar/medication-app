@@ -12,6 +12,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.medicationapp.ui.theme.MedicationAppTheme
 import com.example.medicationapp.view.AppNavigation
 
+/**
+ * MainActivity serves as the entry point of the MedicationApp.
+ *
+ * - Initializes the application's UI using Jetpack Compose.
+ * - Sets up the navigation controller for handling screen navigation.
+ */
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

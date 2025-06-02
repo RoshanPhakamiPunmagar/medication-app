@@ -18,6 +18,18 @@ import com.example.medicationapp.view.carerviews.ClientSelectionScreen
 import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 import kotlinx.coroutines.NonCancellable.isActive
 
+/**
+ * Composable function representing the Settings screen.
+ *
+ * Displays a simple settings UI with a top app bar and a logout button.
+ * When the logout button is clicked, the user session data is cleared from
+ * shared preferences, and the app navigates back to the login screen,
+ * clearing the navigation back stack.
+ *
+ * @param context Context used for accessing shared preferences.
+ * @param navController NavHostController used to handle navigation actions.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(context:Context, navController: NavHostController) {

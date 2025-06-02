@@ -14,6 +14,12 @@ import com.example.medicationapp.model.dto.ClientMedicationDTO
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
+/**
+ * Class responsible for scheduling alarms for client medications using Android's AlarmManager.
+ * Provides methods to set alarms at specific times, for a date range, and handles exact alarm scheduling with required permissions.
+ * Uses PendingIntent to trigger AlarmReceiver broadcasts when alarms go off.
+ * Maintains a reference to the current ClientMedication for use within the alarm intents.
+ */
 
 class AlarmScheduler(private val context: Context) {
     private val today = LocalDate.now()

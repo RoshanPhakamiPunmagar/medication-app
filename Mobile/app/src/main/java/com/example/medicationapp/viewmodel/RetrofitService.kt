@@ -7,6 +7,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.LocalTime
+/**
+ * Singleton object that provides a configured Retrofit instance for network operations.
+ *
+ * Key Features:
+ * - Uses a custom `GsonBuilder` to support serialization/deserialization of `LocalDate` and `LocalTime`
+ *   via custom adapters (`LocalDateAdapter`, `LocalTimeAdapter`).
+ * - Configured with the base URL for the deployed backend service.
+ * - Exposes a globally accessible `retrofit` instance for use throughout the app.
+ *
+ * Notes:
+ * - The base URL can be switched between local emulator and cloud deployment.
+ */
+
 
 object RetrofitService {
 

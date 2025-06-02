@@ -10,6 +10,14 @@ import androidx.annotation.RequiresApi
 import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.view.popup.AlarmDialogActivity
 
+/**
+ * BroadcastReceiver to handle alarm trigger events.
+ * Plays the alarm sound using AlarmConfig when receiving the broadcast.
+ * Logs and retrieves extra data from the intent.
+ * Launches AlarmDialogActivity as a new task to notify the user.
+ * Includes a method to stop the ringtone playback.
+ */
+
 
 class AlarmReceiver() : BroadcastReceiver() {
 

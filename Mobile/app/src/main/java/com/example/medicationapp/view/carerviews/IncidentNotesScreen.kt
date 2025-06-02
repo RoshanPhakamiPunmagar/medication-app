@@ -7,6 +7,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Composable screen for entering and submitting incident notes.
+ * - Displays a text input field for the user to type notes.
+ * - Includes a submit button (currently without implemented action).
+ * - Uses a Scaffold with a centered top app bar titled "Upload Incident Notes".
+ * - Layout is padded and spaced for user-friendly input.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IncidentNotesScreen() {

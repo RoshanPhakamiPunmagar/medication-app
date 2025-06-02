@@ -22,6 +22,19 @@ import com.example.medicationapp.viewmodel.ClientViewModel
 import com.example.medicationapp.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Composable screen for assigning carers to clients with pagination support.
+ *
+ * Displays a list of clients and carers fetched from their respective ViewModels.
+ * Allows selecting a client and a carer, then assigning the selected carer to the selected client.
+ * Provides a button to remove the current carer assignment from the selected client.
+ * Shows confirmation dialogs before assigning or removing carers.
+ * Supports pagination with "Previous" and "Next" buttons to navigate client pages.
+ * Displays status messages for assignment/removal actions.
+ * Highlights selected client and carer in the UI.
+ * Uses vertical scrolling to accommodate long lists of clients and carers.
+ */
+
 @Composable
 fun SectionHeader(title: String, icon: ImageVector) {
     Row(verticalAlignment = Alignment.CenterVertically) {

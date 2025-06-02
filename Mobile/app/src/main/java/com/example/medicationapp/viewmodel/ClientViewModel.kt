@@ -9,6 +9,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * ViewModel responsible for managing paged retrieval of client data from the backend.
+ *
+ * Features:
+ * - Fetches a paginated list of clients from the API with specified page number and page size.
+ * - Parses and converts the raw response into a list of Client objects using Gson.
+ * - Exposes LiveData for the clients list as well as pagination details (current page, total pages, total items).
+ * - Handles API response success and failure, logging errors accordingly.
+ * - Allows updating the current page number to support pagination controls in the UI.
+ *
+ * Utilizes Retrofit for network communication and Gson for JSON parsing.
+ */
+
+
 class ClientViewModel : ViewModel() {
     private val apiService = RetrofitService.retrofit.create(ApiService::class.java)
 

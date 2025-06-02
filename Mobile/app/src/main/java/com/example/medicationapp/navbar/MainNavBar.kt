@@ -24,6 +24,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
+/**
+ * MainScreen.kt
+ *
+ * This composable defines the main scaffold structure of the application,
+ * including a top app bar and a bottom navigation bar.
+
+ * - Displays a consistent top app bar titled "MediTime".
+ * - Defines a bottom navigation bar with four items: Home, Add, Report, and Settings.
+ **/
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -33,6 +33,20 @@ import com.example.medicationapp.model.Medication
 import com.example.medicationapp.model.dto.ClientMedicationDTO
 import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 
+/**
+ * Composable dialog popup for medication alarm reminders.
+ *
+ * AlarmAlertPopUp:
+ * - Displays an AlertDialog with a customizable title, text, and icon.
+ * - Provides two actions: "Taken" and "Skip" buttons, both stopping the alarm via AlarmConfig.
+ *
+ * AlarmDialogScreen:
+ * - Displays the AlarmAlertPopUp centered on the screen.
+ * - Retrieves the current ClientMedication and displays relevant medication and client info.
+ * - Handles dismissal and confirmation by invoking the passed callbacks.
+ * - Logs if the ClientMedication is null.
+ */
+
 @Composable
 fun AlarmAlertPopUp (
     onConfirmation: () -> Unit,

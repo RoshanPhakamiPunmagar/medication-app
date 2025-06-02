@@ -16,6 +16,28 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * ViewModel responsible for managing user-related operations such as authentication,
+ * registration, and assigning/removing carers for clients.
+ *
+ * Core Responsibilities:
+ * - Handles login and registration by communicating with the backend API.
+ * - Manages state for loading indicators and error messages.
+ * - Uses MutableStateFlow and LiveData to expose user status and carer information to the UI.
+ * - Provides methods to assign and remove carers for clients.
+ *
+ * Key Features:
+ * - Asynchronous network calls with Retrofit and proper response/error handling.
+ * - Integrates with a TokenManager (for token storage/access, if needed).
+ * - Filters and exposes only users with a "carer" role (roleId == 2).
+ *
+ * Dependencies:
+ * - RetrofitService: For making API calls.
+ * - TokenManager: For managing authentication tokens (optional depending on app design).
+ * - Status & User models, LoginRequest DTO.
+ */
+
+
 class UserViewModel() : ViewModel() {
 
     private val apiService = RetrofitService.retrofit.create(ApiService::class.java)

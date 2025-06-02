@@ -19,6 +19,23 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.util.TokenManager
 import com.example.medicationapp.viewmodel.UserViewModel
 
+/**
+ * Composable function for the Login screen UI.
+ *
+ * Features:
+ * - Provides input fields for email and password.
+ * - Displays error messages for invalid login attempts.
+ * - Handles login logic via the UserViewModel.
+ * - Calls onLoginSuccess callback with user role and ID on successful login.
+ * - Allows navigation to the Signup screen via onNavigateToSignup callback.
+ *
+ * @param onLoginSuccess Callback invoked when login is successful, providing the user role and user ID.
+ * @param onNavigateToSignup Callback to navigate to the signup screen.
+ * @param userViewModel ViewModel instance managing user authentication state.
+ */
+
+
+
 
 @Composable
 fun LoginScreen(

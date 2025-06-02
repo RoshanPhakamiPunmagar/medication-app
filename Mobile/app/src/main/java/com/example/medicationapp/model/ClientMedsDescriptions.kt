@@ -1,4 +1,12 @@
+
+
 package com.example.medicationapp.model
+
+/** A simple model class to hold descriptive details about a client's medications.
+Contains a list of medication names, recommendations, and interaction information.
+Provides getter methods for recommendations and interactions but does not expose setters or the medication list.
+ **/
+
 
 
 class ClientMedsDescriptions {

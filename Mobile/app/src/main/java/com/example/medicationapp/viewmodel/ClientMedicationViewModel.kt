@@ -18,6 +18,20 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
 import com.example.medicationapp.model.ClientMedication
+/**
+ * ViewModel responsible for managing medication assignments and fetching medication data for clients.
+ *
+ * Features:
+ * - Assign medication to clients and handle API response statuses.
+ * - Periodically fetch medication data for clients assigned to the logged-in carer.
+ * - Periodically fetch clients along with their assigned medications.
+ * - Expose LiveData and StateFlow for UI components to observe medication and client data updates.
+ * - Handle API errors and provide feedback through LiveData.
+ * - Manage coroutines for periodic data fetching, with functions to start and stop these background jobs.
+ *
+ * Uses Retrofit API service to communicate with backend endpoints asynchronously.
+ */
+
 class ClientMedicationViewModel : ViewModel() {
 
     private val apiService: ApiService = RetrofitService.retrofit.create(ApiService::class.java)

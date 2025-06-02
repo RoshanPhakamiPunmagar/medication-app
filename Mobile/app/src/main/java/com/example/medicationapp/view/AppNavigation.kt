@@ -43,6 +43,24 @@ import com.example.medicationapp.viewmodel.ClientMedicationViewModel
 import com.example.medicationapp.viewmodel.ClientViewModel
 import com.example.medicationapp.viewmodel.UserViewModel
 
+/**
+ * Defines the navigation graph and routes for the Medication App using Jetpack Compose Navigation.
+ *
+ * This file includes:
+ * - Sealed classes for bottom navigation items tailored for Manager and Carer roles.
+ * - The AppNavigation composable which sets up navigation between different screens such as
+ *   login, signup, dashboards for manager and carer, client management, medication assignment,
+ *   reports, incident notes, and settings.
+ *
+ * Key Features:
+ * - Role-based navigation: directs users to different dashboards based on their role after login.
+ * - Supports passing arguments (e.g., carerId) via routes.
+ * - Uses ViewModels scoped to composables for state management.
+ * - Stores user session data in shared preferences after login.
+ * - Handles navigation with popUpTo and argument passing to maintain navigation stack integrity.
+ */
+
+
 
 sealed class BottomNavItemForManager(val route: String, val icon: ImageVector, val label: String) {
     object ManageClients : BottomNavItemForManager("manage_clients", Icons.Default.Home, "Clients")

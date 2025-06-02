@@ -12,6 +12,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.medicationapp.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
+/**
+ * Composable function representing the Signup screen.
+ *
+ * Provides a form for users to register by entering their full name, email,
+ * password, and confirming the password. The user role is fixed as "Carer".
+ *
+ * Handles form validation and displays error messages if input is invalid.
+ * On successful signup, shows a verification message before navigating back to the login screen.
+ * Displays a toast message if the email is already taken.
+ *
+ * @param context Context used for showing Toast messages.
+ * @param onSignupSuccessNavigateToLogin Callback invoked to navigate to the login screen after successful signup.
+ * @param viewModel UserViewModel used to manage signup logic and observe signup status.
+ */
 
 @Composable
 fun SignupScreen(

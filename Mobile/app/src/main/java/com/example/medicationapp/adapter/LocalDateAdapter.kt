@@ -1,3 +1,4 @@
+
 package com.example.medicationapp.adapter
 
 
@@ -6,6 +7,14 @@ package com.example.medicationapp.adapter
     import java.time.LocalDate
     import java.time.LocalTime
     import java.time.format.DateTimeFormatter
+
+/**
+ * Gson adapters for serializing and deserializing Java 8 LocalDate and LocalTime objects.
+ * LocalDateAdapter converts LocalDate to and from ISO-8601 formatted strings for JSON.
+ * LocalTimeAdapter converts LocalTime to and from ISO-8601 formatted strings for JSON.
+ * These adapters enable seamless JSON parsing and generation when working with date and time types.
+ */
+
 
     class LocalDateAdapter : JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
         private val formatter = DateTimeFormatter.ISO_LOCAL_DATE

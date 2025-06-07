@@ -1,6 +1,7 @@
 package com.example.meditime.controller.restcontroller;
 
 import com.example.meditime.dto.AdherenceLogDTO;
+import com.example.meditime.dto.AiReport;
 import com.example.meditime.dto.MedicationLogDTO;
 import com.example.meditime.model.*;
 import com.example.meditime.service.*;
@@ -89,6 +90,8 @@ public class AdherenceLogRestController {
 
     }
 
+
+
     @GetMapping("get/ai/{patientId}")
     public ResponseEntity<?> getAiReportMedicalLog(@PathVariable Long patientId) {
         try {
@@ -107,11 +110,11 @@ public class AdherenceLogRestController {
             List<Medication> medications = getPatientMedications(patientId);
 
             //Prepare data for AI analysis
-            List<Map<String, String>> logData = prepareLogData(allLogs);
-            List<Map<String, String>> medData = prepareMedicationData(medications);
+            List<Map<String, String>> allLogData = prepareAllLogData(allLogs);
+            List<Map<String, String>> allMedData = prepareAllMedicationData(medications);
 
             //Generate AI prompt
-            String prompt = buildAnalysisPrompt(logData, medData);
+            String prompt = buildAnalysisPrompt(allLogData, allMedData);
 
             // Get AI response
             AiAnalysisResponse analysisResponse = getAiAnalysis(prompt);
@@ -140,6 +143,26 @@ public class AdherenceLogRestController {
         return clientMedicationService.getClientMedicationByUserId(patientId).stream()
                 .map(medicationService::getMedicationById)
                 .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private List<Map<String, String>> prepareAllLogData(List<MedicationLog> logs) {
+        return logs.stream()
+                .sorted(Comparator.comparing(MedicationLog::getScheduledTime).reversed())
+                .map(log -> Map.of(
+                        "date", log.getScheduledTime() != null ? log.getScheduledTime().toString() : "N/A",
+                        "status", log.getStatus().name(),
+                        "time", log.getActualTime() != null ? log.getActualTime().toString() : "N/A",
+                        "notes", StringUtils.defaultString(log.getNotes())
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private List<Map<String, String>> prepareAllMedicationData(List<Medication> medications) {
+        return medications.stream()
+                .map(med -> Map.of(
+                        "name", StringUtils.defaultString(med.getName(), "N/A")
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -194,6 +217,9 @@ public class AdherenceLogRestController {
         );
     }
 
+
+
+
     private AiAnalysisResponse getAiAnalysis(String prompt) throws JsonProcessingException {
         ChatResponse response = chatClient.call(new Prompt(prompt));
         String aiResponse = response.getResult().getOutput().getContent();
@@ -207,5 +233,85 @@ public class AdherenceLogRestController {
                 .replaceAll("```", "")
                 .trim();
         return new ObjectMapper().readValue(cleanJson, AiAnalysisResponse.class);
+    }
+
+    @GetMapping("get/ai/report/{patientId}")
+    public  ResponseEntity<?> getAiReport(@PathVariable Long patientId) {
+        try {
+            //Validate input
+            if (patientId == null || patientId <= 0) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid patient ID"));
+            }
+
+            // Get medication logs
+            List<MedicationLog> allLogs = getPatientMedicationLogs(patientId);
+            if (allLogs.isEmpty()) {
+                return ResponseEntity.ok(Map.of("message", "No medication logs found for this patient"));
+            }
+
+            //Get medications
+            List<Medication> medications = getPatientMedications(patientId);
+
+            //Prepare data for AI analysis
+            List<Map<String, String>> logData = prepareLogData(allLogs);
+            List<Map<String, String>> medData = prepareMedicationData(medications);
+
+            //Generate AI prompt
+            String prompt = buildReportPrompt(logData, medData);
+
+            // Get AI response
+            AiReport analysisResponse = getAiReport(prompt);
+
+            return ResponseEntity.ok(analysisResponse);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Could not generate report",
+                            "details", e.getMessage()));
+        }
+    }
+
+    private String buildReportPrompt(List<Map<String, String>> logData,
+                                     List<Map<String, String>> medData) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return """
+        You are a medical expert analyzing medication logs and patterns.
+        Here are the medication logs in JSON format:
+        
+        %s
+        
+        Here are the patient's medications in JSON format:
+        %s
+        
+        Please analyze this data and provide the report:
+        1. patterns in which medication is taken
+        2. alerts in patterns and recommendation to apply
+      
+        
+                Respond in EXACTLY this JSON format:
+                            {
+                                          "patterns": "in bullet points patterns in which medication is taken",
+                                          "alerts": "in bullet points, alerts in patterns and recommendation to apply"
+                                      }
+        
+        """.formatted(
+                mapper.writerWithDefaultPrettyPrinter().writeValueAsString(logData),
+                mapper.writerWithDefaultPrettyPrinter().writeValueAsString(medData)
+        );
+    }
+    private AiReport getAiReport(String prompt) throws JsonProcessingException {
+        ChatResponse response = chatClient.call(new Prompt(prompt));
+        String aiResponse = response.getResult().getOutput().getContent();
+        return parseAiReportResponse(aiResponse);
+    }
+
+
+    private AiReport parseAiReportResponse(String aiResponse) throws JsonProcessingException {
+        // Clean the response
+        String cleanJson = aiResponse.replaceAll("```json", "")
+                .replaceAll("```", "")
+                .trim();
+        return new ObjectMapper().readValue(cleanJson, AiReport.class);
     }
 }

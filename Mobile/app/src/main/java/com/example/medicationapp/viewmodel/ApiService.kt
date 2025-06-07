@@ -1,6 +1,7 @@
 package com.example.medicationapp.viewmodel
 
 import com.example.medicationapp.model.AiAnalysisResponse
+import com.example.medicationapp.model.AiReport
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.ClientMedsDescriptions
 import com.example.medicationapp.model.ClientWithMedicationsDTO
@@ -52,6 +53,9 @@ interface ApiService {
 
     @GET("mobile/logs/get/ai/{patientId}")
     fun getAiAnalysis(@Path("patientId") patientId: Long): Call<AiAnalysisResponse>
+
+    @GET("mobile/logs/get/ai/report/{patientId}")
+    fun getAiReport(@Path("patientId") patientId: Long): Call<AiReport>
 
     @POST("mobile/logs/post/log")
     suspend fun postMedicationLog(@Body dto: MedicationLogDTO): Response<Unit>

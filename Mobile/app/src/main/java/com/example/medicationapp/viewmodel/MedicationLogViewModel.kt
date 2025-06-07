@@ -14,6 +14,7 @@ import retrofit2.Response
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.example.medicationapp.model.AiAnalysisResponse
+import com.example.medicationapp.model.AiReport
 import com.example.medicationapp.model.Client
 import com.example.medicationapp.model.dto.AdherenceLogDTO
 import com.example.medicationapp.model.dto.MedicationLogDTO
@@ -56,6 +57,12 @@ class MedicationLogViewModel : ViewModel() {
 
     private val _aiAnalysis = MutableStateFlow<AiAnalysisResponse?>(null)
     val aiAnalysis: StateFlow<AiAnalysisResponse?> = _aiAnalysis
+
+
+    private val _aiReport = MutableStateFlow<AiReport?>(null)
+    val aiReport: StateFlow<AiReport?> = _aiReport
+
+
 
     fun postLog(log: MedicationLogDTO) {
         viewModelScope.launch {
@@ -137,6 +144,33 @@ class MedicationLogViewModel : ViewModel() {
     }
 
 
+    fun fetchAiReport(id: Long) {
+        isLoading = true
+        error = ""
+        api.getAiReport(id).enqueue(object : Callback<AiReport> {
+            override fun onResponse(
+                call: Call<AiReport>,
+                response: Response<AiReport>
+            ) {
+                isLoading = false
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _aiReport.value = it
+                    } ?: run {
+                        error = "Empty response"
+                    }
+                } else {
+                    error = "Server error: ${response.code()}"
+                }
+            }
+
+            override fun onFailure(call: Call<AiReport>, t: Throwable) {
+                isLoading = false
+                error = "Network error: ${t.localizedMessage}"
+                Log.e("FetchAI", "Network error", t)
+            }
+        })
+    }
 
 
 }

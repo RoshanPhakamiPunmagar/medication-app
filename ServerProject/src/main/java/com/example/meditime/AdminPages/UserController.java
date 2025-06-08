@@ -54,4 +54,9 @@ public class UserController {
     public String showDownloadPage() {
         return "download";
     }
+
+    @GetMapping("/faq")
+    public String showFaqPage() {
+        return "faq";
+    }
 }

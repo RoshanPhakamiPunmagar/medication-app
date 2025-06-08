@@ -23,9 +23,9 @@ import java.time.LocalTime
 
 object RetrofitService {
 
-    private const val BASE_URL = "http://10.0.2.2:8080/" // For Android Emulator localhost
+//    private const val BASE_URL = "http://10.0.2.2:8080/" // For Android Emulator localhost
 
-//    private const val BASE_URL = "https://medication-app-deployment.onrender.com/" // For Render Cloud
+   private const val BASE_URL = "https://medication-app-deployment.onrender.com/" // For Render Cloud
 
     // Custom Gson to handle LocalDate and LocalTime
     private val gson = GsonBuilder()

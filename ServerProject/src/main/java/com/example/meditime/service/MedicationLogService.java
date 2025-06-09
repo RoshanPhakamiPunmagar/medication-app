@@ -110,40 +110,46 @@ public class MedicationLogService {
     }
 
     private void updateAdherenceLog(Long clientMedicationId, MedicationLog savedMedicationLog) {
-        // 1. Get all medication logs for this client medication
+        // 1. Retrieve all medication logs associated with the given client medication ID
         List<MedicationLog> logs = medicationLogRepository
                 .findByClientMedication_ClientMedicationId(clientMedicationId);
 
+        // If there are no logs, exit early as there is nothing to process
         if (logs.isEmpty()) {
             return;
         }
 
-        // 2. Calculate adherence rate
+        // 2. Calculate the adherence rate based on the status of each medication log
+        // - Given = 100%
+        // - Late = 75%
+        // - Skipped or Missed = 0%
         double adherenceRate = logs.stream()
                 .mapToDouble(log -> switch (log.getStatus()) {
                     case Given -> 100.0;
                     case Late -> 75.0;
-                    case Skipped , Missed -> 0.0;
+                    case Skipped, Missed -> 0.0;
                 })
-                .average()
-                .orElse(0.0);
+                .average() // Calculate the average adherence score
+                .orElse(0.0); // Default to 0.0 if there are no values to average
 
-        // 3. Find existing adherence log or create new one
+        // 3. Retrieve the existing adherence log or create a new one if it doesn't exist
         AdherenceLog adherenceLog = adherenceLogRepository
                 .findByClientMedication_ClientMedicationId(clientMedicationId)
                 .orElseGet(() -> {
+                    // Create and initialize a new adherence log
                     AdherenceLog newLog = new AdherenceLog();
                     newLog.setClientMedication(savedMedicationLog.getClientMedication());
                     newLog.setUser(savedMedicationLog.getCarer());
                     newLog.setMedicationLog(savedMedicationLog);
-                    newLog.setCheckedTime(LocalTime.now());
+                    newLog.setCheckedTime(LocalTime.now()); // Set the current time
                     return newLog;
                 });
 
-        // 4. Update and save
+        // 4. Update the adherence rate and save the adherence log to the repository
         adherenceLog.setAdherenceRate(adherenceRate);
         adherenceLogRepository.save(adherenceLog);
     }
+
 
     public List<MedicationLog> findMedicalLogByClientMedication(Long id) {
         return medicationLogRepository.findByClientMedication_ClientMedicationId(id);
@@ -164,7 +170,7 @@ public class MedicationLogService {
             log.setScheduledTime(LocalTime.now().toString()); // or the intended time if tracked
 
             medicationLogRepository.save(log);
-            System.out.println("✅ Medication log recorded.");
+            System.out.println("Medication log recorded.");
         } else {
             System.out.println("Medication not found for client.");
         }

@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 "logs/get/ai/{patientId}",
                                 "/logs/post/log",
                                 "/meds/details",
-                                "/api/**"
+                                "/api/**",
+                                "/faq"
                                 ).permitAll()
                         .requestMatchers("/admin/**", "/dashboard").hasRole("ADMIN")
                         .requestMatchers("/admin/medications/").hasRole("ADMIN")
@@ -100,7 +101,7 @@ public class SecurityConfig {
                                 "/api/medication/schedule/{clientId}", "api/medication/names/{clientId}",
                                 "/mobile/**", "/mobile/userCarer", "mobile/check",
                                 "api/clients", "api/medications", "api/medication/assign", "/meds/**", "/login/**", "/meds/details",
-                                "/api/auth/**", "/mobile/user", "/signup", "/download", "/css/**", "/js/**"
+                                "/api/auth/**", "/mobile/user", "/signup", "/download", "/css/**", "/js/**", "/faq"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

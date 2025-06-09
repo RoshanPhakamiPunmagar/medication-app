@@ -257,7 +257,7 @@ public class AdherenceLogRestController {
             List<Map<String, String>> medData = prepareMedicationData(medications);
 
             //Generate AI prompt
-            String prompt = buildReportPrompt(logData, medData);
+            String prompt =  buildReportPrompt(logData, medData);
 
             // Get AI response
             AiReport analysisResponse = getAiReport(prompt);
